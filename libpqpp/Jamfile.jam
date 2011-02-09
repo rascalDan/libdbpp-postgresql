@@ -1,0 +1,25 @@
+alias glibmm : : : :
+	<cflags>"`pkg-config --cflags glibmm-2.4`"
+	<linkflags>"`pkg-config --libs glibmm-2.4`"
+	;
+
+lib pq ;
+
+alias libpq : : : :
+	<cflags>"-I`pg_config --includedir`"
+	<linkflags>"-L`pg_config --libdir`"
+	<library>pq
+	;
+	
+
+lib pqpp :
+	[ glob *.cpp ] :
+	<cflags>-fPIC
+	<library>glibmm 
+	<library>libpq
+	: :
+	<include>.
+	<cflags>"-I`pg_config --includedir`"
+	<library>glibmm 
+	<library>../libdbpp
+	;
