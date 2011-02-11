@@ -107,14 +107,14 @@ void
 PQ::Command::bindParamF(unsigned int n, double v)
 {
 	paramsAtLeast(n);
-	lengths[n] = asprintf(&values[n], "%f", v);
+	lengths[n] = asprintf(&values[n], "%g", v);
 	formats[n] = 0;
 }
 void
 PQ::Command::bindParamF(unsigned int n, float v)
 {
 	paramsAtLeast(n);
-	lengths[n] = asprintf(&values[n], "%f", v);
+	lengths[n] = asprintf(&values[n], "%g", v);
 	formats[n] = 0;
 }
 void
