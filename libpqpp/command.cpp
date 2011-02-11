@@ -121,9 +121,9 @@ void
 PQ::Command::bindParamS(unsigned int n, const Glib::ustring & s)
 {
 	paramsAtLeast(n);
-	values[n] = strndup(s.c_str(), s.length());
+	values[n] = strndup(s.c_str(), s.bytes());
 	formats[n] = 0;
-	lengths[n] = s.length();
+	lengths[n] = s.bytes();
 }
 void
 PQ::Command::bindParamT(unsigned int n, const tm * v)
