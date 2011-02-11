@@ -129,9 +129,9 @@ void
 PQ::Command::bindParamT(unsigned int n, const tm * v)
 {
 	paramsAtLeast(n);
-	values[n] = static_cast<char *>(malloc(19));
+	values[n] = static_cast<char *>(malloc(20));
 	formats[n] = 0;
-	strftime(values[n], 19, "%F %T", v);
+	strftime(values[n], 20, "%F %T", v);
 	lengths[n] = 19;
 }
 void
