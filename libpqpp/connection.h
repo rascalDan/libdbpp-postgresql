@@ -15,6 +15,8 @@ namespace PQ {
 			int rollbackTx() const;
 			bool inTx() const;
 			void ping() const;
+			DB::BulkDeleteStyle bulkDeleteStyle() const;
+			DB::BulkUpdateStyle bulkUpdateStyle() const;
 
 			DB::SelectCommand * newSelectCommand(const std::string & sql) const;
 			DB::ModifyCommand * newModifyCommand(const std::string & sql) const;

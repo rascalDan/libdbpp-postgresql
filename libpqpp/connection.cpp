@@ -3,6 +3,11 @@
 #include "selectcommand.h"
 #include "modifycommand.h"
 
+static void
+noNoticeProcessor(void * arg, const char * message)
+{
+}
+
 PQ::Connection::Connection(const std::string & info) :
 	conn(PQconnectdb(info.c_str())),
 	txDepth(0),
@@ -11,6 +16,7 @@ PQ::Connection::Connection(const std::string & info) :
 	if (PQstatus(conn) != CONNECTION_OK) {
 		throw ConnectionError();
 	}
+	PQsetNoticeProcessor(conn, noNoticeProcessor, NULL);
 }
 
 PQ::Connection::~Connection()
@@ -49,6 +55,18 @@ bool
 PQ::Connection::inTx() const
 {
 	return txDepth;
+}
+
+DB::BulkDeleteStyle
+PQ::Connection::bulkDeleteStyle() const
+{
+	return DB::BulkDeleteUsingUsing;
+}
+
+DB::BulkUpdateStyle
+PQ::Connection::bulkUpdateStyle() const
+{
+	return DB::BulkUpdateUsingFromSrc;
 }
 
 void
