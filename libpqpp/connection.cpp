@@ -60,7 +60,7 @@ PQ::Connection::inTx() const
 DB::BulkDeleteStyle
 PQ::Connection::bulkDeleteStyle() const
 {
-	return DB::BulkDeleteUsingUsing;
+	return DB::BulkDeleteUsingSubSelect;
 }
 
 DB::BulkUpdateStyle
