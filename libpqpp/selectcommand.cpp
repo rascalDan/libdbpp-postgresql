@@ -30,7 +30,7 @@ PQ::SelectCommand::execute()
 	if (!executed) {
 		prepare();
 		execRes = PQexecPrepared(c->conn, stmntName.c_str(), values.size(), &values.front(), &lengths.front(), &formats.front(), 0);
-		c->checkResult(execRes, PGRES_TUPLES_OK, __PRETTY_FUNCTION__);
+		c->checkResult(execRes, PGRES_TUPLES_OK);
 		unsigned int nFields = PQnfields(execRes);
 		fields.resize(nFields);
 		for (unsigned int f = 0; f < nFields; f += 1) {

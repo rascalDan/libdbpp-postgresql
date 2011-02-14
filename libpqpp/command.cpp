@@ -48,7 +48,7 @@ PQ::Command::prepare() const
 			}
 		}
 		c->checkResultFree(PQprepare(
-					c->conn, stmntName.c_str(), psql.c_str(), values.size(), NULL), PGRES_COMMAND_OK, __PRETTY_FUNCTION__);
+					c->conn, stmntName.c_str(), psql.c_str(), values.size(), NULL), PGRES_COMMAND_OK);
 		prepared = true;
 	}
 }

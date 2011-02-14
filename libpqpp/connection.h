@@ -21,8 +21,8 @@ namespace PQ {
 			DB::SelectCommand * newSelectCommand(const std::string & sql) const;
 			DB::ModifyCommand * newModifyCommand(const std::string & sql) const;
 
-			void checkResult(PGresult * res, int expected, const char * doing) const;
-			void checkResultFree(PGresult * res, int expected, const char * doing) const;
+			void checkResult(PGresult * res, int expected) const;
+			void checkResultFree(PGresult * res, int expected) const;
 
 			PGconn * conn;
 

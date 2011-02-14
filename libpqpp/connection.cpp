@@ -4,7 +4,7 @@
 #include "modifycommand.h"
 
 static void
-noNoticeProcessor(void * arg, const char * message)
+noNoticeProcessor(void *, const char *)
 {
 }
 
@@ -28,7 +28,7 @@ int
 PQ::Connection::beginTx() const
 {
 	if (txDepth == 0) {
-		checkResultFree(PQexec(conn, "BEGIN"), PGRES_COMMAND_OK, __PRETTY_FUNCTION__);
+		checkResultFree(PQexec(conn, "BEGIN"), PGRES_COMMAND_OK);
 	}
 	return ++txDepth;
 }
@@ -37,7 +37,7 @@ int
 PQ::Connection::commitTx() const
 {
 	if (--txDepth == 0) {
-		checkResultFree(PQexec(conn, "COMMIT"), PGRES_COMMAND_OK, __PRETTY_FUNCTION__);
+		checkResultFree(PQexec(conn, "COMMIT"), PGRES_COMMAND_OK);
 	}
 	return txDepth;
 }
@@ -46,7 +46,7 @@ int
 PQ::Connection::rollbackTx() const
 {
 	if (--txDepth == 0) {
-		checkResultFree(PQexec(conn, "ROLLBACK"), PGRES_COMMAND_OK, __PRETTY_FUNCTION__);
+		checkResultFree(PQexec(conn, "ROLLBACK"), PGRES_COMMAND_OK);
 	}
 	return txDepth;
 }
@@ -94,7 +94,7 @@ PQ::Connection::checkResultInt(PGresult * res, int expected)
 }
 
 void
-PQ::Connection::checkResult(PGresult * res, int expected, const char * doing) const
+PQ::Connection::checkResult(PGresult * res, int expected) const
 {
 	if (!checkResultInt(res, expected)) {
 		PQclear(res);
@@ -103,7 +103,7 @@ PQ::Connection::checkResult(PGresult * res, int expected, const char * doing) co
 }
 
 void
-PQ::Connection::checkResultFree(PGresult * res, int expected, const char * doing) const
+PQ::Connection::checkResultFree(PGresult * res, int expected) const
 {
 	if (!checkResultInt(res, expected)) {
 		PQclear(res);
