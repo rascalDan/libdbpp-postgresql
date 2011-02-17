@@ -26,6 +26,7 @@ PQ::Column::apply(DB::HandleField & h) const
 	struct tm tm;
 	switch (oid) {
 		case 18: //CHAROID:
+		case 1043: //VARCHAROID:
 		case 25: //TEXTOID:
 		case 142: //XMLOID:
 			h.string(PQgetvalue(sc->execRes, sc->tuple, colNo), PQgetlength(sc->execRes, sc->tuple, colNo));

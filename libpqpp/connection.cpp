@@ -11,7 +11,8 @@ noNoticeProcessor(void *, const char *)
 PQ::Connection::Connection(const std::string & info) :
 	conn(PQconnectdb(info.c_str())),
 	txDepth(0),
-	pstmntNo(0)
+	pstmntNo(0),
+	rolledback(false)
 {
 	if (PQstatus(conn) != CONNECTION_OK) {
 		throw ConnectionError();
@@ -24,11 +25,21 @@ PQ::Connection::~Connection()
 	PQfinish(conn);
 }
 
+void
+PQ::Connection::finish() const
+{
+	if (txDepth != 0) {
+		rollbackTx();
+		throw Error("Transaction still open");
+	}
+}
+
 int
 PQ::Connection::beginTx() const
 {
 	if (txDepth == 0) {
 		checkResultFree(PQexec(conn, "BEGIN"), PGRES_COMMAND_OK);
+		rolledback = false;
 	}
 	return ++txDepth;
 }
@@ -36,6 +47,9 @@ PQ::Connection::beginTx() const
 int
 PQ::Connection::commitTx() const
 {
+	if (rolledback) {
+		return rollbackTx();
+	}
 	if (--txDepth == 0) {
 		checkResultFree(PQexec(conn, "COMMIT"), PGRES_COMMAND_OK);
 	}
@@ -47,6 +61,9 @@ PQ::Connection::rollbackTx() const
 {
 	if (--txDepth == 0) {
 		checkResultFree(PQexec(conn, "ROLLBACK"), PGRES_COMMAND_OK);
+	}
+	else {
+		rolledback = true;
 	}
 	return txDepth;
 }
@@ -93,13 +110,14 @@ PQ::Connection::checkResultInt(PGresult * res, int expected)
 	return (PQresultStatus(res) == expected);
 }
 
-void
+PGresult *
 PQ::Connection::checkResult(PGresult * res, int expected) const
 {
 	if (!checkResultInt(res, expected)) {
 		PQclear(res);
 		throw Error(PQerrorMessage(conn));
 	}
+	return res;
 }
 
 void

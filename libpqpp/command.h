@@ -29,9 +29,7 @@ namespace PQ {
 			
 			void bindNull(unsigned int);
 		protected:
-			void prepare() const;
 			const std::string stmntName;
-			mutable bool prepared;
 			const Connection * c;
 
 			void paramsAtLeast(unsigned int);

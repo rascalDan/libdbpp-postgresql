@@ -10,6 +10,7 @@ namespace PQ {
 			Connection(const std::string & info);
 			~Connection();
 
+			void finish() const;
 			int beginTx() const;
 			int commitTx() const;
 			int rollbackTx() const;
@@ -21,7 +22,7 @@ namespace PQ {
 			DB::SelectCommand * newSelectCommand(const std::string & sql) const;
 			DB::ModifyCommand * newModifyCommand(const std::string & sql) const;
 
-			void checkResult(PGresult * res, int expected) const;
+			PGresult * checkResult(PGresult * res, int expected) const;
 			void checkResultFree(PGresult * res, int expected) const;
 
 			PGconn * conn;
@@ -31,6 +32,7 @@ namespace PQ {
 
 			mutable unsigned int txDepth;
 			mutable unsigned int pstmntNo;
+			mutable bool rolledback;
 	};
 }
 

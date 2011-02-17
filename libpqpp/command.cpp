@@ -6,14 +6,13 @@
 static std::string addrStr(void * p, unsigned int no) {
 	std::string r;
 	r.resize(30);
-	r.resize(snprintf(const_cast<char *>(r.c_str()), 30, "pStatement-%u-%p", no, p));
+	r.resize(snprintf(const_cast<char *>(r.c_str()), 30, "pStatement_%u_%p", no, p));
 	return r;
 }
 
 PQ::Command::Command(const Connection * conn, const std::string & sql, unsigned int no) :
 	DB::Command(sql),
 	stmntName(addrStr(this, no)),
-	prepared(false),
 	c(conn)
 {
 }
@@ -22,34 +21,6 @@ PQ::Command::~Command()
 {
 	for (std::vector<char *>::const_iterator i = values.begin(); i != values.end(); i++) {
 		free(*i);
-	}
-}
-
-void
-PQ::Command::prepare() const
-{
-	if (!prepared) {
-		std::string psql;
-		psql.reserve(sql.length() + 20);
-		char buf[4];
-		int p = 1;
-		bool inquote = false;
-		for(std::string::const_iterator i = sql.begin(); i != sql.end(); i++) {
-			if (*i == '?' && !inquote) {
-				snprintf(buf, 4, "$%d", p++);
-				psql += buf;
-			}
-			else if (*i == '\'') {
-				inquote = !inquote;
-				psql += *i;
-			}
-			else {
-				psql += *i;
-			}
-		}
-		c->checkResultFree(PQprepare(
-					c->conn, stmntName.c_str(), psql.c_str(), values.size(), NULL), PGRES_COMMAND_OK);
-		prepared = true;
 	}
 }
 
@@ -63,6 +34,7 @@ PQ::Command::paramsAtLeast(unsigned int n)
 	}
 	else {
 		free(values[n]);
+		values[n] = NULL;
 	}
 }
 

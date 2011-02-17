@@ -12,6 +12,11 @@ namespace PQ {
 			virtual ~ModifyCommand();
 
 			unsigned int execute(bool);
+
+		private:
+			const std::string stmntName;
+			void prepare() const;
+			mutable bool prepared;
 	};
 }
 
