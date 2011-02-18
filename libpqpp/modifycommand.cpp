@@ -15,8 +15,8 @@ PQ::ModifyCommand::~ModifyCommand()
 {
 }
 
-unsigned int
-PQ::ModifyCommand::execute(bool anc)
+void
+PQ::ModifyCommand::prepare() const
 {
 	if (!prepared) {
 		std::string psql;
@@ -41,6 +41,12 @@ PQ::ModifyCommand::execute(bool anc)
 					c->conn, stmntName.c_str(), psql.c_str(), values.size(), NULL), PGRES_COMMAND_OK);
 		prepared = true;
 	}
+}
+
+unsigned int
+PQ::ModifyCommand::execute(bool anc)
+{
+	prepare();
 	PGresult * res = PQexecPrepared(c->conn, stmntName.c_str(), values.size(), &values.front(), &lengths.front(), &formats.front(), 0);
 	c->checkResult(res, PGRES_COMMAND_OK);
 	unsigned int rows = atoi(PQcmdTuples(res));
