@@ -63,4 +63,4 @@ actions slice.slice2cpp
 } 
 IMPORT $(__name__) : slice.slice2cpp : : slice.slice2cpp ;
 
-alias all : project2 netfs ;
+alias all : project2 netfs ytfs ;
