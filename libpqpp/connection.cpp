@@ -105,15 +105,15 @@ PQ::Connection::newModifyCommand(const std::string & sql) const
 }
 
 bool
-PQ::Connection::checkResultInt(PGresult * res, int expected)
+PQ::Connection::checkResultInt(PGresult * res, int expected, int alt)
 {
-	return (PQresultStatus(res) == expected);
+	return (PQresultStatus(res) == expected) || (alt != -1 && (PQresultStatus(res) == alt));
 }
 
 PGresult *
-PQ::Connection::checkResult(PGresult * res, int expected) const
+PQ::Connection::checkResult(PGresult * res, int expected, int alt) const
 {
-	if (!checkResultInt(res, expected)) {
+	if (!checkResultInt(res, expected, alt)) {
 		PQclear(res);
 		throw Error(PQerrorMessage(conn));
 	}
@@ -121,9 +121,9 @@ PQ::Connection::checkResult(PGresult * res, int expected) const
 }
 
 void
-PQ::Connection::checkResultFree(PGresult * res, int expected) const
+PQ::Connection::checkResultFree(PGresult * res, int expected, int alt) const
 {
-	if (!checkResultInt(res, expected)) {
+	if (!checkResultInt(res, expected, alt)) {
 		PQclear(res);
 		throw Error(PQerrorMessage(conn));
 	}

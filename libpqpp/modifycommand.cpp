@@ -48,7 +48,7 @@ PQ::ModifyCommand::execute(bool anc)
 {
 	prepare();
 	PGresult * res = PQexecPrepared(c->conn, stmntName.c_str(), values.size(), &values.front(), &lengths.front(), &formats.front(), 0);
-	c->checkResult(res, PGRES_COMMAND_OK);
+	c->checkResult(res, PGRES_COMMAND_OK, PGRES_TUPLES_OK);
 	unsigned int rows = atoi(PQcmdTuples(res));
 	PQclear(res);
 	if (rows == 0 && !anc) {

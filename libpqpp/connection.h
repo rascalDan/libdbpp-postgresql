@@ -22,13 +22,13 @@ namespace PQ {
 			DB::SelectCommand * newSelectCommand(const std::string & sql) const;
 			DB::ModifyCommand * newModifyCommand(const std::string & sql) const;
 
-			PGresult * checkResult(PGresult * res, int expected) const;
-			void checkResultFree(PGresult * res, int expected) const;
+			PGresult * checkResult(PGresult * res, int expected, int alternative = -1) const;
+			void checkResultFree(PGresult * res, int expected, int alternative = -1) const;
 
 			PGconn * conn;
 
 		private:
-			static bool checkResultInt(PGresult * res, int expected);
+			static bool checkResultInt(PGresult * res, int expected, int alternative);
 
 			mutable unsigned int txDepth;
 			mutable unsigned int pstmntNo;
