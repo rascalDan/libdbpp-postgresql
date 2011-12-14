@@ -20,7 +20,9 @@ PQ::SelectCommand::~SelectCommand()
 	c->commitTx();
 	if (executed) {
 		PQclear(PQexec(c->conn, ("CLOSE " + stmntName).c_str()));
-		PQclear(execRes);
+		if (execRes) {
+			PQclear(execRes);
+		}
 	}
 	for (unsigned int f = 0; f < fields.size(); f += 1) {
 		delete fields[f];
@@ -67,8 +69,9 @@ PQ::SelectCommand::fetch()
 		if (execRes) {
 			PQclear(execRes);
 		}
+		execRes = NULL;
 		execRes = c->checkResult(PQexec(c->conn, ("FETCH 35 IN " + stmntName).c_str()), PGRES_TUPLES_OK);
-        nTuples = PQntuples(execRes);
+		nTuples = PQntuples(execRes);
 		tuple = -1;
 	}
 	if (fields.empty()) {
