@@ -130,3 +130,41 @@ PQ::Connection::checkResultFree(PGresult * res, int expected, int alt) const
 	PQclear(res);
 }
 
+void
+PQ::Connection::beginBulkUpload(const char * table, const char * extra) const
+{
+	char buf[BUFSIZ];
+	snprintf(buf, BUFSIZ, "COPY %s FROM STDIN %s", table, extra);
+	checkResultFree(PQexec(conn, buf), PGRES_COPY_IN);
+}
+
+void
+PQ::Connection::endBulkUpload(const char * msg) const
+{
+	switch (PQputCopyEnd(conn, msg)) {
+		case 0:// block
+			sleep(1);
+			endBulkUpload(msg);
+			return;
+		case 1:// success
+			checkResultFree(PQgetResult(conn), PGRES_COMMAND_OK);
+			return;
+		default:// -1 is error
+			throw Error(PQerrorMessage(conn));
+	}
+}
+
+size_t
+PQ::Connection::bulkUploadData(const char * data, size_t len) const
+{
+	switch (PQputCopyData(conn, data, len)) {
+		case 0:// block
+			sleep(1);
+			return bulkUploadData(data, len);
+		case 1:// success
+			return len;
+		default:// -1 is error
+			throw Error(PQerrorMessage(conn));
+	}
+}
+
