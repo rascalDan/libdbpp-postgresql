@@ -41,7 +41,7 @@ PQ::SelectCommand::execute()
 		psql += "DECLARE ";
 		psql += stmntName;
 		psql += " CURSOR FOR ";
-		for(std::string::const_iterator i = sql.begin(); i != sql.end(); i++) {
+		for(std::string::const_iterator i = sql.begin(); i != sql.end(); ++i) {
 			if (*i == '?' && !inquote) {
 				snprintf(buf, 4, "$%d", p++);
 				psql += buf;

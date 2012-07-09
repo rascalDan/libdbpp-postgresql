@@ -19,7 +19,7 @@ PQ::Command::Command(const Connection * conn, const std::string & sql, unsigned 
 
 PQ::Command::~Command()
 {
-	for (std::vector<char *>::const_iterator i = values.begin(); i != values.end(); i++) {
+	for (std::vector<char *>::const_iterator i = values.begin(); i != values.end(); ++i) {
 		free(*i);
 	}
 }

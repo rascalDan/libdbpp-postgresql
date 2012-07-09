@@ -24,7 +24,7 @@ PQ::ModifyCommand::prepare() const
 		char buf[4];
 		int p = 1;
 		bool inquote = false;
-		for(std::string::const_iterator i = sql.begin(); i != sql.end(); i++) {
+		for(std::string::const_iterator i = sql.begin(); i != sql.end(); ++i) {
 			if (*i == '?' && !inquote) {
 				snprintf(buf, 4, "$%d", p++);
 				psql += buf;
