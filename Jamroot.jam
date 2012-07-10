@@ -3,6 +3,13 @@ using gcc ;
 import type : register ;
 import generators : register-standard ;
 
+project
+  : requirements
+      <variant>release:<cflags>"-std=c++0x"
+      <variant>debug:<cflags>"-W -Wall -Werror -Wwrite-strings -std=c++0x"
+      <variant>debug:<linkflags>"-Wl,-z,defs"
+	;
+
 import type ; 
 import generators ; 
 import feature ; 

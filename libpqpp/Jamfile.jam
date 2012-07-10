@@ -17,6 +17,7 @@ lib pqpp :
 	<cflags>-fPIC
 	<library>glibmm 
 	<library>libpq
+	<library>../libdbpp
 	: :
 	<include>.
 	<cflags>"-I`pg_config --includedir`"
