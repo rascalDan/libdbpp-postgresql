@@ -61,8 +61,7 @@ PQ::Column::apply(DB::HandleField & h) const
 			h.timestamp(tm);
 			break;
 		default:
-			fprintf(stderr, "Unknown Oid %d\n", oid);
-			throw Error("Unknown Oid");
+			h.string(PQgetvalue(sc->execRes, sc->tuple, colNo), PQgetlength(sc->execRes, sc->tuple, colNo));
 	}
 }
 
