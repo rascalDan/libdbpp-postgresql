@@ -8,6 +8,7 @@ PQ::SelectCommand::SelectCommand(const Connection * conn, const std::string & sq
 	DB::SelectCommand(sql),
 	PQ::Command(conn, sql, no),
 	executed(false),
+	txOpened(false),
 	nTuples(0),
 	tuple(0),
 	execRes(NULL)
@@ -16,8 +17,10 @@ PQ::SelectCommand::SelectCommand(const Connection * conn, const std::string & sq
 
 PQ::SelectCommand::~SelectCommand()
 {
-	if (executed) {
+	if (txOpened) {
 		c->commitTx();
+	}
+	if (executed) {
 		PQclear(PQexec(c->conn, ("CLOSE " + stmntName).c_str()));
 		if (execRes) {
 			PQclear(execRes);
@@ -54,6 +57,7 @@ PQ::SelectCommand::execute()
 			}
 		}
 		c->beginTx();
+		txOpened = true;
 		c->checkResultFree(
 				PQexecParams(c->conn, psql.c_str(), values.size(), NULL, &values.front(), &lengths.front(), &formats.front(), 0),
 				PGRES_COMMAND_OK);

@@ -22,6 +22,7 @@ namespace PQ {
 			unsigned int getOrdinal(const Glib::ustring&) const;
 		private:
 			mutable bool executed;
+			mutable bool txOpened;
 			std::vector<Column *> fields;
 			std::map<Glib::ustring, Column *> fieldsName;
 			int nTuples, tuple;
