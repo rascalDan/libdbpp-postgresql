@@ -12,13 +12,12 @@ PQ::SelectCommand::SelectCommand(const Connection * conn, const std::string & sq
 	tuple(0),
 	execRes(NULL)
 {
-	c->beginTx();
 }
 
 PQ::SelectCommand::~SelectCommand()
 {
-	c->commitTx();
 	if (executed) {
+		c->commitTx();
 		PQclear(PQexec(c->conn, ("CLOSE " + stmntName).c_str()));
 		if (execRes) {
 			PQclear(execRes);
@@ -54,6 +53,7 @@ PQ::SelectCommand::execute()
 				psql += *i;
 			}
 		}
+		c->beginTx();
 		c->checkResultFree(
 				PQexecParams(c->conn, psql.c_str(), values.size(), NULL, &values.front(), &lengths.front(), &formats.front(), 0),
 				PGRES_COMMAND_OK);

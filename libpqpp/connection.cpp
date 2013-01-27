@@ -89,6 +89,15 @@ PQ::Connection::bulkUpdateStyle() const
 void
 PQ::Connection::ping() const
 {
+	if (PQstatus(conn) != CONNECTION_OK) {
+		if (inTx()) {
+			throw ConnectionError();
+		}
+		PQreset(conn);
+		if (PQstatus(conn) != CONNECTION_OK) {
+			throw ConnectionError();
+		}
+	}
 }
 
 
