@@ -4,9 +4,8 @@
 #include <string.h>
 
 static std::string addrStr(void * p, unsigned int no) {
-	std::string r;
-	r.resize(50);
-	r.resize(snprintf(const_cast<char *>(r.c_str()), 30, "pStatement_%u_%p", no, p));
+	std::string r(50, ' ');
+	r.resize(snprintf(const_cast<char *>(r.c_str()), r.length(), "pStatement_%u_%p", no, p));
 	return r;
 }
 
