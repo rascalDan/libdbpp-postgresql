@@ -2,6 +2,7 @@
 #include "error.h"
 #include "selectcommand.h"
 #include "modifycommand.h"
+#include <unistd.h>
 
 static void
 noNoticeProcessor(void *, const char *)
