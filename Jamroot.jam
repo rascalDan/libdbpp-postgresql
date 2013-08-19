@@ -1,4 +1,6 @@
-using gcc ;
+import os ;
+
+using gcc : : [ os.environ CXX ] ;
 
 import type : register ;
 import generators : register-standard ;
