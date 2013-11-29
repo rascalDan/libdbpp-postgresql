@@ -21,6 +21,7 @@ namespace PQ {
 			unsigned int columnCount() const;
 			unsigned int getOrdinal(const Glib::ustring&) const;
 		private:
+			void fetchTuples();
 			mutable bool executed;
 			mutable bool txOpened;
 			std::vector<Column *> fields;

@@ -58,27 +58,10 @@ PQ::SelectCommand::execute()
 		}
 		c->beginTx();
 		txOpened = true;
-		c->checkResultFree(
+		c->checkResult(
 				PQexecParams(c->conn, psql.c_str(), values.size(), NULL, &values.front(), &lengths.front(), &formats.front(), 0),
 				PGRES_COMMAND_OK);
-		executed = true;
-	}
-}
-
-bool
-PQ::SelectCommand::fetch()
-{
-	execute();
-	if (tuple >= (nTuples - 1)) {
-		if (execRes) {
-			PQclear(execRes);
-		}
-		execRes = NULL;
-		execRes = c->checkResult(PQexec(c->conn, ("FETCH 35 IN " + stmntName).c_str()), PGRES_TUPLES_OK);
-		nTuples = PQntuples(execRes);
-		tuple = -1;
-	}
-	if (fields.empty()) {
+		fetchTuples();
 		unsigned int nFields = PQnfields(execRes);
 		fields.resize(nFields);
 		for (unsigned int f = 0; f < nFields; f += 1) {
@@ -86,6 +69,28 @@ PQ::SelectCommand::fetch()
 			fields[f] = c;
 			fieldsName[c->name] = c;
 		}
+		executed = true;
+	}
+}
+
+void
+PQ::SelectCommand::fetchTuples()
+{
+	if (execRes) {
+		PQclear(execRes);
+	}
+	execRes = NULL;
+	execRes = c->checkResult(PQexec(c->conn, ("FETCH 35 IN " + stmntName).c_str()), PGRES_TUPLES_OK);
+	nTuples = PQntuples(execRes);
+	tuple = -1;
+}
+
+bool
+PQ::SelectCommand::fetch()
+{
+	execute();
+	if (tuple >= (nTuples - 1)) {
+		fetchTuples();
 	}
 	if (tuple++ < (nTuples - 1)) {
 		return true;
