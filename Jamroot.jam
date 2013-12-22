@@ -18,31 +18,11 @@ import feature ;
 import "class" : new ; 
 import scanner ; 
 type.register SLICE : ice ; 
-class slice-scanner : scanner 
+class slice-scanner : common-scanner
 { 
-    import path property-set regex scanner type virtual-target ; 
-    rule __init__ ( includes * ) 
-    { 
-        scanner.__init__ ; 
-        self.includes = $(includes) ; 
-    } 
     rule pattern ( ) 
     { 
-        return "^[ \t]*#[ \t]*include[ ]*(<(.*)>|\"(.*)\")" ; 
-    } 
-    rule process ( target : matches * : binding ) 
-    { 
-        local included = [ regex.transform $(matches) : "\"(.*)\"" : 1 ] ; 
-        local g = [ on $(target) return $(HDRGRIST) ] ; 
-        local b = [ NORMALIZE_PATH $(binding:D) ] ; 
-        local g2 = $(g)"#"$(b) ; 
-        included = $(included:G=$(g2)) ; 
-        #this seems to add the dependency ok to the tree, but 
-        #I can't get these new dependencies to build 
-        #I've seen virtual-target.register but I don't have access to properties 
-        #and project names to do that here. 
-        INCLUDES $(target) : $(included) ; 
-        scanner.propagate $(__name__) : $(matches) : $(target) ; 
+        return "^[ \t]*#[ \t]*include[ ]*[<\"]([^>\"]*)[>\"]" ; 
     } 
 } 
 scanner.register slice-scanner : include ; 
