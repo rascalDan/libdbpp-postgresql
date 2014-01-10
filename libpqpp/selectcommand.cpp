@@ -58,7 +58,7 @@ PQ::SelectCommand::execute()
 		}
 		c->beginTx();
 		txOpened = true;
-		c->checkResult(
+		execRes = c->checkResult(
 				PQexecParams(c->conn, psql.c_str(), values.size(), NULL, &values.front(), &lengths.front(), &formats.front(), 0),
 				PGRES_COMMAND_OK);
 		fetchTuples();
