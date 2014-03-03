@@ -2,6 +2,7 @@
 #include "selectcommand.h"
 #include "error.h"
 #include <string.h>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 PQ::Column::Column(const SelectCommand * s, unsigned int i) :
 	DB::Column(PQfname(s->execRes, i), i),
@@ -23,7 +24,6 @@ PQ::Column::apply(DB::HandleField & h) const
 		h.null();
 		return;
 	}
-	struct tm tm;
 	switch (oid) {
 		case 18: //CHAROID:
 		case 1043: //VARCHAROID:
@@ -44,21 +44,28 @@ PQ::Column::apply(DB::HandleField & h) const
 		case 701: //FLOAT8OID:
 			h.floatingpoint(atof(PQgetvalue(sc->execRes, sc->tuple, colNo)));
 			break;
+		case 704: //TINTERVALOID
 		case 1083: //TIMEOID:
-			memset(&tm, 0, sizeof(tm));
-			strptime(PQgetvalue(sc->execRes, sc->tuple, colNo), "%T", &tm);
-			h.timestamp(tm);
-			break;
-		case 1082: //DATEOID:
-			memset(&tm, 0, sizeof(tm));
-			strptime(PQgetvalue(sc->execRes, sc->tuple, colNo), "%F", &tm);
-			h.timestamp(tm);
-			break;
+		case 1186: //INTERVALOID
+			{
+				int days = 0, hours = 0, minutes = 0, seconds = 0, fractions = 0, flen1 = 0, flen2 = 0;
+				const char * val = PQgetvalue(sc->execRes, sc->tuple, colNo);
+				if (sscanf(val, "%d days %d:%d:%d.%n%d%n", &days, &hours, &minutes, &seconds, &flen1, &fractions, &flen2) >= 4) {
+					h.interval(boost::posix_time::time_duration((24 * days) + hours, minutes, seconds, fractions * pow(10, boost::posix_time::time_res_traits::num_fractional_digits() + flen1 - flen2)));
+				}
+				else if (sscanf(val, "%d day %d:%d:%d.%n%d%n", &days, &hours, &minutes, &seconds, &flen1, &fractions, &flen2) >= 4) {
+					h.interval(boost::posix_time::time_duration((24 * days) + hours, minutes, seconds, fractions * pow(10, boost::posix_time::time_res_traits::num_fractional_digits() + flen1 - flen2)));
+				}
+				else {
+					h.interval(boost::posix_time::duration_from_string(PQgetvalue(sc->execRes, sc->tuple, colNo)));
+				}
+				break;
+			}
 		case 702: //ABSTIMEOID:
+		case 1082: //DATEOID:
 		case 1114: //TIMESTAMPOID:
 		case 1184: //TIMESTAMPTZOID:
-			strptime(PQgetvalue(sc->execRes, sc->tuple, colNo), "%F %T", &tm);
-			h.timestamp(tm);
+			h.timestamp(boost::posix_time::time_from_string(PQgetvalue(sc->execRes, sc->tuple, colNo)));
 			break;
 		default:
 			h.string(PQgetvalue(sc->execRes, sc->tuple, colNo), PQgetlength(sc->execRes, sc->tuple, colNo));

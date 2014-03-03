@@ -24,8 +24,8 @@ namespace PQ {
 			
 			void bindParamS(unsigned int, const Glib::ustring&);
 			
-			void bindParamT(unsigned int, const tm*);
-			void bindParamT(unsigned int, time_t);
+			void bindParamT(unsigned int, const boost::posix_time::time_duration &);
+			void bindParamT(unsigned int, const boost::posix_time::ptime &);
 			
 			void bindNull(unsigned int);
 		protected:

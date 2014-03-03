@@ -2,6 +2,7 @@
 #include "connection.h"
 #include <stdlib.h>
 #include <string.h>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 static std::string addrStr(void * p, unsigned int no) {
 	std::string r(50, ' ');
@@ -102,20 +103,22 @@ PQ::Command::bindParamS(unsigned int n, const Glib::ustring & s)
 	lengths[n] = s.bytes();
 }
 void
-PQ::Command::bindParamT(unsigned int n, const tm * v)
+PQ::Command::bindParamT(unsigned int n, const boost::posix_time::time_duration & v)
 {
 	paramsAtLeast(n);
-	values[n] = static_cast<char *>(malloc(20));
+	auto buf = boost::posix_time::to_simple_string(v);
+	values[n] = strdup(buf.c_str());
 	formats[n] = 0;
-	strftime(values[n], 20, "%F %T", v);
-	lengths[n] = 19;
+	lengths[n] = buf.length();
 }
 void
-PQ::Command::bindParamT(unsigned int n, time_t v)
+PQ::Command::bindParamT(unsigned int n, const boost::posix_time::ptime & v)
 {
-	struct tm t;
-	gmtime_r(&v, &t);
-	bindParamT(n, &t);
+	paramsAtLeast(n);
+	auto buf = boost::posix_time::to_iso_extended_string(v);
+	values[n] = strdup(buf.c_str());
+	formats[n] = 0;
+	lengths[n] = buf.length();
 }
 void
 PQ::Command::bindNull(unsigned int n)
