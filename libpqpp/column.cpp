@@ -61,8 +61,11 @@ PQ::Column::apply(DB::HandleField & h) const
 				}
 				break;
 			}
-		case 702: //ABSTIMEOID:
 		case 1082: //DATEOID:
+			h.timestamp(boost::posix_time::ptime(
+						boost::gregorian::from_string(PQgetvalue(sc->execRes, sc->tuple, colNo))));
+			break;
+		case 702: //ABSTIMEOID:
 		case 1114: //TIMESTAMPOID:
 		case 1184: //TIMESTAMPTZOID:
 			h.timestamp(boost::posix_time::time_from_string(PQgetvalue(sc->execRes, sc->tuple, colNo)));
