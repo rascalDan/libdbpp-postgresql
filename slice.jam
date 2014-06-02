@@ -1,0 +1,39 @@
+import type : register ;
+import generators : register-standard ;
+import type ; 
+import feature : feature ; 
+import scanner ; 
+
+type.register SLICE : ice ; 
+
+feature slicer : no yes : propagated ;
+
+class slice-scanner : common-scanner
+{ 
+    rule pattern ( ) 
+    { 
+        return "^[ \t]*#[ \t]*include[ ]*[<\"]([^>\"]*)[>\"]" ; 
+    } 
+} 
+
+scanner.register slice-scanner : include ; 
+
+type.set-scanner SLICE : slice-scanner ; 
+
+generators.register-standard slice.slice2cpp : SLICE : CPP H : <slicer>no ; 
+generators.register-standard slice.slicer : SLICE : CPP H : <slicer>yes ; 
+
+actions slice.slice2cpp 
+{ 
+  slice2cpp --checksum --output-dir $(1[1]:D) $(2) 
+}
+
+actions slice.slicer 
+{
+  slice2cpp --checksum --output-dir $(1[1]:D) $(2) 
+	slicer $(2) $(1[1])
+} 
+
+IMPORT $(__name__) : slice.slice2cpp : : slice.slice2cpp ;
+IMPORT $(__name__) : slice.slicer : : slice.slicer ;
+
