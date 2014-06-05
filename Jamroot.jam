@@ -7,7 +7,7 @@ project
   : requirements
       <variant>release:<cflags>"-std=c++0x"
       <variant>debug:<cflags>"-W -Wall -Werror -Wwrite-strings -std=c++0x"
-      <variant>debug:<linkflags>"-Wl,-z,defs"
+      <linkflags>"-Wl,-z,defs,--warn-once"
 	;
 
 
