@@ -11,4 +11,4 @@ project
 	;
 
 
-alias all : project2 netfs ytfs ;
+alias all : project2 netfs libjsonpp p2pvr libtmdb slicer ;
