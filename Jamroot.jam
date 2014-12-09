@@ -3,11 +3,16 @@ import slice ;
 
 using gcc : : [ os.environ CXX ] ;
 
+variant component ;
+
 project
   : requirements
       <variant>release:<cflags>"-std=c++0x"
+      <variant>release:<linkflags>"-Wl,-z,defs,--warn-once"
       <variant>debug:<cflags>"-W -Wall -Werror -Wwrite-strings -std=c++0x"
-      <linkflags>"-Wl,-z,defs,--warn-once"
+      <variant>debug:<linkflags>"-Wl,-z,defs,--warn-once"
+      <variant>component:<cflags>"-W -Wall -Werror -Wwrite-strings -std=c++0x -fPIC"
+			<variant>component:<linkflags>"-Wl,-z,lazy,--warn-once,-fPIC"
 	;
 
 
