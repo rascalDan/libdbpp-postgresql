@@ -26,9 +26,6 @@ PQ::SelectCommand::~SelectCommand()
 			PQclear(execRes);
 		}
 	}
-	for (unsigned int f = 0; f < fields.size(); f += 1) {
-		delete fields[f];
-	}
 }
 
 void
@@ -63,11 +60,8 @@ PQ::SelectCommand::execute()
 				PGRES_COMMAND_OK);
 		fetchTuples();
 		unsigned int nFields = PQnfields(execRes);
-		fields.resize(nFields);
 		for (unsigned int f = 0; f < nFields; f += 1) {
-			Column * c = new Column(this, f);
-			fields[f] = c;
-			fieldsName[c->name] = c;
+			columns.insert(DB::ColumnPtr(new Column(this, f)));
 		}
 		executed = true;
 	}
@@ -101,40 +95,5 @@ PQ::SelectCommand::fetch()
 		executed = false;
 		return false;
 	}
-}
-
-const DB::Column&
-PQ::SelectCommand::operator[](unsigned int n) const
-{
-	if (n < fields.size()) {
-		return *fields[n];
-	}
-	throw Error();
-}
-
-const DB::Column&
-PQ::SelectCommand::operator[](const Glib::ustring & n) const
-{
-	std::map<Glib::ustring, Column *>::const_iterator i = fieldsName.find(n);
-	if (i != fieldsName.end()) {
-		return *i->second;
-	}
-	throw Error();
-}
-
-unsigned int
-PQ::SelectCommand::getOrdinal(const Glib::ustring & n) const
-{
-	std::map<Glib::ustring, Column *>::const_iterator i = fieldsName.find(n);
-	if (i != fieldsName.end()) {
-		return i->second->colNo;
-	}
-	throw Error();
-}
-
-unsigned int
-PQ::SelectCommand::columnCount() const
-{
-	return fields.size();
 }
 

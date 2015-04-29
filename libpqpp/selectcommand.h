@@ -16,16 +16,11 @@ namespace PQ {
 
 			bool fetch();
 			void execute();
-			const DB::Column& operator[](unsigned int) const;
-			const DB::Column& operator[](const Glib::ustring&) const;
-			unsigned int columnCount() const;
-			unsigned int getOrdinal(const Glib::ustring&) const;
+
 		private:
 			void fetchTuples();
 			mutable bool executed;
 			mutable bool txOpened;
-			std::vector<Column *> fields;
-			std::map<Glib::ustring, Column *> fieldsName;
 			int nTuples, tuple;
 			PGresult * execRes;
 
