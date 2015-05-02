@@ -32,7 +32,7 @@ PQ::Column::apply(DB::HandleField & h) const
 			h.string(PQgetvalue(sc->execRes, sc->tuple, colNo), PQgetlength(sc->execRes, sc->tuple, colNo));
 			break;
 		case 16: //BOOLOID:
-			h.integer(PQgetvalue(sc->execRes, sc->tuple, colNo)[0] == 't' ? 1 : 0);
+			h.boolean(PQgetvalue(sc->execRes, sc->tuple, colNo)[0] == 't' ? 1 : 0);
 			break;
 		case 21: //INT2OID:
 		case 23: //INT4OID:
