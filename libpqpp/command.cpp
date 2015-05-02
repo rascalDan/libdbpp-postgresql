@@ -81,6 +81,13 @@ PQ::Command::bindParamI(unsigned int n, long long unsigned int v)
 	formats[n] = 0;
 }
 void
+PQ::Command::bindParamB(unsigned int n, bool v)
+{
+	paramsAtLeast(n);
+	lengths[n] = asprintf(&values[n], "%s", v ? "true" : "false");
+	formats[n] = 0;
+}
+void
 PQ::Command::bindParamF(unsigned int n, double v)
 {
 	paramsAtLeast(n);

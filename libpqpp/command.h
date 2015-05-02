@@ -19,14 +19,16 @@ namespace PQ {
 			void bindParamI(unsigned int, long unsigned int);
 			void bindParamI(unsigned int, long long unsigned int);
 
+			void bindParamB(unsigned int, bool);
+
 			void bindParamF(unsigned int, double);
 			void bindParamF(unsigned int, float);
-			
+
 			void bindParamS(unsigned int, const Glib::ustring&);
-			
+
 			void bindParamT(unsigned int, const boost::posix_time::time_duration &);
 			void bindParamT(unsigned int, const boost::posix_time::ptime &);
-			
+
 			void bindNull(unsigned int);
 		protected:
 			const std::string stmntName;
