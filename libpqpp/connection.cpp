@@ -75,6 +75,12 @@ PQ::Connection::inTx() const
 	return txDepth;
 }
 
+void
+PQ::Connection::execute(const std::string & sql) const
+{
+	checkResultFree(PQexec(conn, sql.c_str()), PGRES_COMMAND_OK, PGRES_TUPLES_OK);
+}
+
 DB::BulkDeleteStyle
 PQ::Connection::bulkDeleteStyle() const
 {

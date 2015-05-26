@@ -16,6 +16,7 @@ namespace PQ {
 			int rollbackTx() const;
 			bool inTx() const;
 			void ping() const;
+			void execute(const std::string & sql) const override;
 			DB::BulkDeleteStyle bulkDeleteStyle() const;
 			DB::BulkUpdateStyle bulkUpdateStyle() const;
 
