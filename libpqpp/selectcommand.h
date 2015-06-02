@@ -19,10 +19,17 @@ namespace PQ {
 
 		private:
 			void fetchTuples();
+			std::string mkdeclare() const;
+			std::string mkfetch() const;
+			std::string mkclose() const;
+
 			mutable bool executed;
 			mutable bool txOpened;
-			int nTuples, tuple;
+			int nTuples, tuple, fTuples;
 			PGresult * execRes;
+			std::string s_declare;
+			std::string s_fetch;
+			std::string s_close;
 
 			friend class Column;
 	};
