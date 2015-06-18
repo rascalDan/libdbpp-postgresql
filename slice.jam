@@ -7,7 +7,7 @@ import toolset ;
 
 type.register SLICE : ice ;
 
-feature slicer : no yes : propagated ;
+feature slicer : no yes ;
 
 class slice-scanner : common-scanner
 {
