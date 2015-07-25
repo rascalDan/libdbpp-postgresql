@@ -29,12 +29,12 @@ toolset.flags slice.slicer INCLUDES <include> ;
 
 actions slice.slice2cpp
 {
-  slice2cpp -I"$(INCLUDES)" --checksum --output-dir $(1[1]:D) $(2)
+  slice2cpp -I"$(INCLUDES)" --checksum --output-dir $(1[1]:D) $(2) --dll-export JAM_DLL_PUBLIC
 }
 
 actions slice.slicer
 {
-  slice2cpp -I"$(INCLUDES)" --checksum --output-dir $(1[1]:D) $(2)
+  slice2cpp -I"$(INCLUDES)" --checksum --output-dir $(1[1]:D) $(2) --dll-export JAM_DLL_PUBLIC
 	slicer -I"$(INCLUDES)" $(2) $(1[1])
 }
 
