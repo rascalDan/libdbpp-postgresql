@@ -16,4 +16,4 @@ project
 	;
 
 
-alias all : project2 netfs libjsonpp p2pvr libtmdb slicer ;
+alias all : project2 netfs libjsonpp libadhocutil p2pvr libtmdb slicer ;
