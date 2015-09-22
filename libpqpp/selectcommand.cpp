@@ -89,7 +89,7 @@ PQ::SelectCommand::execute()
 		fetchTuples();
 		unsigned int nFields = PQnfields(execRes);
 		for (unsigned int f = 0; f < nFields; f += 1) {
-			columns.insert(DB::ColumnPtr(new Column(this, f)));
+			insertColumn(DB::ColumnPtr(new Column(this, f)));
 		}
 		executed = true;
 	}
