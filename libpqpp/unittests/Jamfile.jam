@@ -1,0 +1,18 @@
+import testing ;
+
+path-constant me : . ;
+
+lib boost_utf : : <name>boost_unit_test_framework ;
+
+run
+	testpq.cpp
+	: : :
+	<define>ROOT=\"$(me)\"
+	<define>BOOST_TEST_DYN_LINK
+	<library>..//dbpp-postgresql
+	<library>../../libdbpp//dbpptestcore
+	<library>boost_utf
+	:
+	testpq
+	;
+

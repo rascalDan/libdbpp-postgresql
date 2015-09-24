@@ -12,15 +12,19 @@ alias libpq : : : :
 	;
 	
 
-lib pqpp :
+lib dbpp-postgresql :
 	[ glob *.cpp ] :
-	<cflags>-fPIC
 	<library>glibmm 
 	<library>libpq
 	<library>../libdbpp
+	<cflags>-fvisibility=hidden
+	<variant>release:<cflags>-flto
 	: :
 	<include>.
 	<cflags>"-I`pg_config --includedir`"
 	<library>glibmm 
 	<library>../libdbpp
 	;
+
+build-project unittests ;
+

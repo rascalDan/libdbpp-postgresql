@@ -4,6 +4,8 @@
 #include "modifycommand.h"
 #include <unistd.h>
 
+NAMEDFACTORY("postgresql", PQ::Connection, DB::ConnectionFactory);
+
 static void
 noNoticeProcessor(void *, const char *)
 {
