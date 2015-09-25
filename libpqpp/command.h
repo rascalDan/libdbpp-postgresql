@@ -1,7 +1,7 @@
 #ifndef PQ_COMMAND_H
 #define PQ_COMMAND_H
 
-#include "../libdbpp/command.h"
+#include <command.h>
 #include <libpq-fe.h>
 #include <vector>
 

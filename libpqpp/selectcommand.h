@@ -1,7 +1,7 @@
 #ifndef PQ_SELECTCOMMAND_H
 #define PQ_SELECTCOMMAND_H
 
-#include "../libdbpp/selectcommand.h"
+#include <selectcommand.h>
 #include "command.h"
 #include <vector>
 #include <map>
