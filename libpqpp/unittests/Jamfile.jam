@@ -3,6 +3,9 @@ import testing ;
 path-constant me : . ;
 
 lib boost_utf : : <name>boost_unit_test_framework ;
+lib boost_filesystem ;
+lib boost_system ;
+lib dbpptestcore : : : : <include>/usr/include/dbpp ;
 
 run
 	testpq.cpp
@@ -10,8 +13,10 @@ run
 	<define>ROOT=\"$(me)\"
 	<define>BOOST_TEST_DYN_LINK
 	<library>..//dbpp-postgresql
-	<library>../../libdbpp//dbpptestcore
+	<library>dbpptestcore
 	<library>boost_utf
+	<library>boost_filesystem
+	<library>boost_system
 	:
 	testpq
 	;

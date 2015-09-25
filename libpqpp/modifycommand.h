@@ -1,7 +1,7 @@
 #ifndef PQ_MODIFYCOMMAND_H
 #define PQ_MODIFYCOMMAND_H
 
-#include "../libdbpp/modifycommand.h"
+#include <modifycommand.h>
 #include "command.h"
 
 namespace PQ {

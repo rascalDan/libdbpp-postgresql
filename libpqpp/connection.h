@@ -1,7 +1,7 @@
 #ifndef PQ_CONNECTION_H
 #define PQ_CONNECTION_H
 
-#include "../libdbpp/connection.h"
+#include <connection.h>
 #include <libpq-fe.h>
 
 namespace PQ {

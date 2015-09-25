@@ -1,7 +1,7 @@
 #ifndef PG_COLUMN_H
 #define PG_COLUMN_H
 
-#include "../libdbpp/column.h"
+#include <column.h>
 #include <libpq-fe.h>
 
 namespace PQ {

@@ -1,7 +1,7 @@
 #ifndef PQ_ERROR_H
 #define PQ_ERROR_H
 
-#include "../libdbpp/error.h"
+#include <error.h>
 
 namespace PQ {
 	class Error : public DB::Error {
