@@ -1,30 +1,39 @@
+import package ;
 alias glibmm : : : :
 	<cflags>"`pkg-config --cflags glibmm-2.4`"
 	<linkflags>"`pkg-config --libs glibmm-2.4`"
 	;
 
 lib pq ;
+lib adhocutil : : : : <include>/usr/include/adhocutil ;
+lib dbppcore : : : : <include>/usr/include/dbpp ;
+lib boost_date_time ;
+lib boost_system ;
 
 alias libpq : : : :
 	<cflags>"-I`pg_config --includedir`"
 	<linkflags>"-L`pg_config --libdir`"
 	<library>pq
 	;
-	
 
 lib dbpp-postgresql :
 	[ glob *.cpp ] :
-	<library>glibmm 
+	<library>glibmm
 	<library>libpq
-	<library>../libdbpp
+	<library>adhocutil
+	<library>dbppcore
+	<library>boost_date_time
+	<library>boost_system
 	<cflags>-fvisibility=hidden
 	<variant>release:<cflags>-flto
 	: :
 	<include>.
 	<cflags>"-I`pg_config --includedir`"
-	<library>glibmm 
-	<library>../libdbpp
+	<library>glibmm
+	<library>dbppcore
 	;
 
 build-project unittests ;
+
+package.install install : <install-source-root>. : : dbpp-postgresql : [ glob *.h ] ;
 
