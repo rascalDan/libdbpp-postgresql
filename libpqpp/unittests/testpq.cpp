@@ -155,5 +155,17 @@ BOOST_AUTO_TEST_CASE( bigIterate )
 	delete ro;
 }
 
+BOOST_AUTO_TEST_CASE( insertId )
+{
+	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
+	auto ins = ro->newModifyCommand("INSERT INTO idtest(foo) VALUES(1)");
+	for (int x = 1; x < 4; x++) {
+		ins->execute();
+		BOOST_REQUIRE_EQUAL(x, ro->insertId());
+	}
+	delete ins;
+	delete ro;
+}
+
 BOOST_AUTO_TEST_SUITE_END();
 

@@ -35,3 +35,7 @@ CREATE TABLE bulktest(
 		id int,
 		string text);
 
+CREATE TABLE idtest(
+		id serial,
+		foo int);
+
