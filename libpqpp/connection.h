@@ -23,6 +23,7 @@ namespace PQ {
 			DB::SelectCommand * newSelectCommand(const std::string & sql) const override;
 			DB::ModifyCommand * newModifyCommand(const std::string & sql) const override;
 
+			int64_t insertId() const override;
 
 			void	beginBulkUpload(const char *, const char *) const override;
 			void	endBulkUpload(const char *) const override;
