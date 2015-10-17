@@ -18,5 +18,18 @@ project
 			<variant>component:<linkflags>"-Wl,-z,lazy,--warn-once,-fPIC"
 	;
 
+alias all :
+		libadhocutil
+		libdbpp
+		libjsonpp
+		libmysqlpp
+		libodbcpp
+		libpqpp
+		libsqlitepp
+		libtmdb
+		netfs
+		p2pvr
+		project2
+		slicer
+	;
 
-alias all : project2 netfs libjsonpp libadhocutil p2pvr libtmdb slicer libpqpp libmysqlpp libodbcpp libsqlitepp ;
