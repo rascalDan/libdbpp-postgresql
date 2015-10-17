@@ -10,22 +10,23 @@ namespace PQ {
 			Connection(const std::string & info);
 			~Connection();
 
-			void finish() const;
-			int beginTx() const;
-			int commitTx() const;
-			int rollbackTx() const;
-			bool inTx() const;
-			void ping() const;
+			void finish() const override;
+			int beginTx() const override;
+			int commitTx() const override;
+			int rollbackTx() const override;
+			bool inTx() const override;
+			void ping() const override;
 			void execute(const std::string & sql) const override;
-			DB::BulkDeleteStyle bulkDeleteStyle() const;
-			DB::BulkUpdateStyle bulkUpdateStyle() const;
+			DB::BulkDeleteStyle bulkDeleteStyle() const override;
+			DB::BulkUpdateStyle bulkUpdateStyle() const override;
 
-			DB::SelectCommand * newSelectCommand(const std::string & sql) const;
-			DB::ModifyCommand * newModifyCommand(const std::string & sql) const;
+			DB::SelectCommand * newSelectCommand(const std::string & sql) const override;
+			DB::ModifyCommand * newModifyCommand(const std::string & sql) const override;
 
-			void	beginBulkUpload(const char *, const char *) const;
-			void	endBulkUpload(const char *) const;
-			size_t bulkUploadData(const char *, size_t) const;
+
+			void	beginBulkUpload(const char *, const char *) const override;
+			void	endBulkUpload(const char *) const override;
+			size_t bulkUploadData(const char *, size_t) const override;
 
 			PGresult * checkResult(PGresult * res, int expected, int alternative = -1) const;
 			void checkResultFree(PGresult * res, int expected, int alternative = -1) const;
