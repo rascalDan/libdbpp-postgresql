@@ -33,3 +33,43 @@ alias all :
 		slicer
 	;
 
+# Some useful aliases
+
+lib xml++-2.6 ;
+lib xml2 ;
+lib glibmm-2.4 ;
+lib gobject-2.0 ;
+lib glib-2.0 ;
+lib sigc-2.0 ;
+
+alias libxmlpp : : : :
+	<include>/usr/include/libxml++-2.6
+	<include>/usr/lib64/libxml++-2.6/include
+	<include>/usr/include/libxml2
+	<include>/usr/include/glibmm-2.4
+	<include>/usr/lib64/glibmm-2.4/include
+	<include>/usr/include/glib-2.0
+	<include>/usr/lib64/glib-2.0/include
+	<include>/usr/include/sigc++-2.0
+	<include>/usr/lib64/sigc++-2.0/include
+	<library>xml++-2.6
+	<library>xml2
+	<library>glibmm-2.4
+	<library>gobject-2.0
+	<library>glib-2.0
+	<library>sigc-2.0
+	;
+
+alias glibmm : : : :
+	<include>/usr/include/glibmm-2.4
+	<include>/usr/lib64/glibmm-2.4/include
+	<include>/usr/include/glib-2.0
+	<include>/usr/lib64/glib-2.0/include
+	<include>/usr/include/sigc++-2.0
+	<include>/usr/lib64/sigc++-2.0/include
+	<library>glibmm-2.4
+	<library>gobject-2.0
+	<library>glib-2.0
+	<library>sigc-2.0
+	;
+
