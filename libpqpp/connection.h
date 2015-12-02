@@ -3,9 +3,10 @@
 
 #include <connection.h>
 #include <libpq-fe.h>
+#include <visibility.h>
 
 namespace PQ {
-	class Connection : public DB::Connection {
+	class DLL_PUBLIC Connection : public DB::Connection {
 		public:
 			Connection(const std::string & info);
 			~Connection();

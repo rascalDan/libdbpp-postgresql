@@ -10,6 +10,7 @@
 #include <fstream>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "../error.h"
+#include "../connection.h"
 
 class StandardMockDatabase : public PQ::Mock {
 	public:
@@ -173,5 +174,15 @@ BOOST_AUTO_TEST_SUITE_END();
 BOOST_AUTO_TEST_CASE( connfail )
 {
 	BOOST_REQUIRE_THROW(DB::ConnectionFactory::createNew("postgresql", "host=localhost user=no"), PQ::ConnectionError);
+}
+
+BOOST_AUTO_TEST_CASE( ssl )
+{
+	auto conn = DB::ConnectionFactory::createNew("postgresql", "host=randomdan.homeip.net user=gentoo dbname=postgres sslmode=require");
+	BOOST_REQUIRE(conn);
+	auto pqconn = dynamic_cast<PQ::Connection *>(conn);
+	BOOST_REQUIRE(pqconn);
+	BOOST_REQUIRE(PQgetssl(pqconn->conn));
+	delete conn;
 }
 
