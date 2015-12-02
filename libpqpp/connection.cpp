@@ -3,8 +3,16 @@
 #include "selectcommand.h"
 #include "modifycommand.h"
 #include <unistd.h>
+#include <boost/assert.hpp>
 
 NAMEDFACTORY("postgresql", PQ::Connection, DB::ConnectionFactory);
+
+static void setup()  __attribute__((constructor(101)));
+static void setup()
+{
+	BOOST_ASSERT(PQisthreadsafe() == 1);
+	PQinitOpenSSL(1, 0);
+}
 
 static void
 noNoticeProcessor(void *, const char *)
