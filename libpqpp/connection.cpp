@@ -18,7 +18,7 @@ PQ::Connection::Connection(const std::string & info) :
 	rolledback(false)
 {
 	if (PQstatus(conn) != CONNECTION_OK) {
-		throw ConnectionError();
+		throw ConnectionError(conn);
 	}
 	PQsetNoticeProcessor(conn, noNoticeProcessor, NULL);
 }
@@ -100,11 +100,11 @@ PQ::Connection::ping() const
 {
 	if (PQstatus(conn) != CONNECTION_OK) {
 		if (inTx()) {
-			throw ConnectionError();
+			throw ConnectionError(conn);
 		}
 		PQreset(conn);
 		if (PQstatus(conn) != CONNECTION_OK) {
-			throw ConnectionError();
+			throw ConnectionError(conn);
 		}
 	}
 }
