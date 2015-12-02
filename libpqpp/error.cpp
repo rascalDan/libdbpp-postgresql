@@ -26,3 +26,8 @@ PQ::Error::what() const throw()
 	return msg ? msg : "No message";
 }
 
+PQ::ConnectionError::ConnectionError(const PGconn * conn) :
+	PQ::Error(PQerrorMessage(conn))
+{
+}
+

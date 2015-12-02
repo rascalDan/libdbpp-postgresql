@@ -2,9 +2,11 @@
 #define PQ_ERROR_H
 
 #include <error.h>
+#include <libpq-fe.h>
+#include <visibility.h>
 
 namespace PQ {
-	class Error : public DB::Error {
+	class DLL_PUBLIC Error : public DB::Error {
 		public:
 			Error();
 			Error(const Error &);
@@ -16,7 +18,9 @@ namespace PQ {
 		private:
 			char * msg;
 	};
-	class ConnectionError : public Error, public virtual DB::ConnectionError {
+	class DLL_PUBLIC ConnectionError : public Error, public virtual DB::ConnectionError {
+		public:
+			ConnectionError(const PGconn *);
 	};
 }
 

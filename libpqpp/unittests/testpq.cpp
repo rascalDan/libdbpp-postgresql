@@ -9,6 +9,7 @@
 #include <testCore.h>
 #include <fstream>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include "../error.h"
 
 class StandardMockDatabase : public PQ::Mock {
 	public:
@@ -168,4 +169,9 @@ BOOST_AUTO_TEST_CASE( insertId )
 }
 
 BOOST_AUTO_TEST_SUITE_END();
+
+BOOST_AUTO_TEST_CASE( connfail )
+{
+	BOOST_REQUIRE_THROW(DB::ConnectionFactory::createNew("postgresql", "host=localhost user=no"), PQ::ConnectionError);
+}
 
