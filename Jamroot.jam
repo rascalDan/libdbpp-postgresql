@@ -9,7 +9,7 @@ variant coverage : debug ;
 project
   : requirements
       <variant>release:<cflags>"-std=c++1y"
-      <variant>release:<linkflags>"-Wl,-z,defs,--warn-once"
+      <variant>release:<linkflags>"-Wl,-z,defs,--warn-once,--gc-sections"
       <variant>debug:<cflags>"-W -Wall -Werror -Wwrite-strings -std=c++1y"
       <variant>debug:<linkflags>"-Wl,-z,defs,--warn-once"
       <variant>coverage:<cflags>"-W -Wall -Werror -Wwrite-strings -std=c++1y --coverage"
