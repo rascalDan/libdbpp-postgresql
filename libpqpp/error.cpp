@@ -18,6 +18,7 @@ PQ::Error::Error(const char * e) :
 
 PQ::Error::~Error() throw()
 {
+	free(msg);
 }
 
 const char *
