@@ -26,7 +26,9 @@ PQ::Connection::Connection(const std::string & info) :
 	rolledback(false)
 {
 	if (PQstatus(conn) != CONNECTION_OK) {
-		throw ConnectionError(conn);
+		ConnectionError ce(conn);
+		PQfinish(conn);
+		throw ce;
 	}
 	PQsetNoticeProcessor(conn, noNoticeProcessor, NULL);
 }
