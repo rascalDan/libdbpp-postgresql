@@ -31,6 +31,7 @@ namespace PQ {
 
 			void bindNull(unsigned int);
 		protected:
+			static void prepareSql(std::string & psql, const std::string & sql);
 			const std::string stmntName;
 			const Connection * c;
 

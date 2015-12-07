@@ -21,22 +21,7 @@ PQ::ModifyCommand::prepare() const
 	if (!prepared) {
 		std::string psql;
 		psql.reserve(sql.length() + 20);
-		char buf[4];
-		int p = 1;
-		bool inquote = false;
-		for(std::string::const_iterator i = sql.begin(); i != sql.end(); ++i) {
-			if (*i == '?' && !inquote) {
-				snprintf(buf, 4, "$%d", p++);
-				psql += buf;
-			}
-			else if (*i == '\'') {
-				inquote = !inquote;
-				psql += *i;
-			}
-			else {
-				psql += *i;
-			}
-		}
+		prepareSql(psql, sql);
 		c->checkResultFree(PQprepare(
 					c->conn, stmntName.c_str(), psql.c_str(), values.size(), NULL), PGRES_COMMAND_OK);
 		prepared = true;

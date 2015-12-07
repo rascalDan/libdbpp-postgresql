@@ -37,25 +37,10 @@ PQ::SelectCommand::mkdeclare() const
 {
 	std::string psql;
 	psql.reserve(sql.length() + 40);
-	char buf[4];
-	int p = 1;
-	bool inquote = false;
 	psql += "DECLARE ";
 	psql += stmntName;
 	psql += " CURSOR FOR ";
-	for(std::string::const_iterator i = sql.begin(); i != sql.end(); ++i) {
-		if (*i == '?' && !inquote) {
-			snprintf(buf, 4, "$%d", p++);
-			psql += buf;
-		}
-		else if (*i == '\'') {
-			inquote = !inquote;
-			psql += *i;
-		}
-		else {
-			psql += *i;
-		}
-	}
+	prepareSql(psql, sql);
 	return psql;
 }
 
