@@ -169,6 +169,44 @@ BOOST_AUTO_TEST_CASE( insertId )
 	delete ro;
 }
 
+BOOST_AUTO_TEST_CASE( reconnect )
+{
+	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
+	auto rok = DB::MockDatabase::openConnectionTo("pqmock");
+	auto pqconn = dynamic_cast<PQ::Connection *>(ro);
+	int pid1 = PQbackendPID(pqconn->conn);
+	BOOST_REQUIRE(pid1);
+	ro->ping();
+	auto kil = rok->newModifyCommand("SELECT pg_terminate_backend(?)");
+	kil->bindParamI(0, pid1);
+	kil->execute();
+	delete kil;
+	ro->ping();
+	int pid2 = PQbackendPID(pqconn->conn);
+	BOOST_REQUIRE(pid2);
+	BOOST_REQUIRE(pid1 != pid2);
+	delete ro;
+	delete rok;
+}
+
+BOOST_AUTO_TEST_CASE( reconnectInTx )
+{
+	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
+	auto rok = DB::MockDatabase::openConnectionTo("pqmock");
+	auto pqconn = dynamic_cast<PQ::Connection *>(ro);
+	int pid1 = PQbackendPID(pqconn->conn);
+	BOOST_REQUIRE(pid1);
+	ro->ping();
+	ro->beginTx();
+	auto kil = rok->newModifyCommand("SELECT pg_terminate_backend(?)");
+	kil->bindParamI(0, pid1);
+	kil->execute();
+	delete kil;
+	BOOST_REQUIRE_THROW(ro->ping(), PQ::ConnectionError);
+	delete ro;
+	delete rok;
+}
+
 BOOST_AUTO_TEST_SUITE_END();
 
 BOOST_AUTO_TEST_CASE( connfail )

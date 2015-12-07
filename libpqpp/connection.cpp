@@ -3,6 +3,7 @@
 #include "selectcommand.h"
 #include "modifycommand.h"
 #include <unistd.h>
+#include <poll.h>
 #include <boost/assert.hpp>
 
 NAMEDFACTORY("postgresql", PQ::Connection, DB::ConnectionFactory);
@@ -108,7 +109,8 @@ PQ::Connection::bulkUpdateStyle() const
 void
 PQ::Connection::ping() const
 {
-	if (PQstatus(conn) != CONNECTION_OK) {
+	struct pollfd fd { PQsocket(conn), POLLRDHUP | POLLERR | POLLHUP | POLLNVAL, 0 };
+	if (PQstatus(conn) != CONNECTION_OK || poll(&fd, 1, 1)) {
 		if (inTx()) {
 			throw ConnectionError(conn);
 		}
