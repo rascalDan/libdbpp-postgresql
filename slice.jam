@@ -42,6 +42,7 @@ actions slice.slicer
 
 actions slice.slicer.pure
 {
+	truncate -c -s 0 $(1[1])
 	slicer -I"$(INCLUDES)" $(2) $(1[1])
 }
 
