@@ -44,14 +44,14 @@ lib sigc-2.0 ;
 
 alias libxmlpp : : : :
 	<include>/usr/include/libxml++-2.6
-	<include>/usr/lib64/libxml++-2.6/include
+	<include>/usr/lib/libxml++-2.6/include
 	<include>/usr/include/libxml2
 	<include>/usr/include/glibmm-2.4
-	<include>/usr/lib64/glibmm-2.4/include
+	<include>/usr/lib/glibmm-2.4/include
 	<include>/usr/include/glib-2.0
-	<include>/usr/lib64/glib-2.0/include
+	<include>/usr/lib/glib-2.0/include
 	<include>/usr/include/sigc++-2.0
-	<include>/usr/lib64/sigc++-2.0/include
+	<include>/usr/lib/sigc++-2.0/include
 	<library>xml++-2.6
 	<library>xml2
 	<library>glibmm-2.4
@@ -62,11 +62,11 @@ alias libxmlpp : : : :
 
 alias glibmm : : : :
 	<include>/usr/include/glibmm-2.4
-	<include>/usr/lib64/glibmm-2.4/include
+	<include>/usr/lib/glibmm-2.4/include
 	<include>/usr/include/glib-2.0
-	<include>/usr/lib64/glib-2.0/include
+	<include>/usr/lib/glib-2.0/include
 	<include>/usr/include/sigc++-2.0
-	<include>/usr/lib64/sigc++-2.0/include
+	<include>/usr/lib/sigc++-2.0/include
 	<library>glibmm-2.4
 	<library>gobject-2.0
 	<library>glib-2.0
