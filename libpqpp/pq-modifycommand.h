@@ -2,7 +2,7 @@
 #define PQ_MODIFYCOMMAND_H
 
 #include <modifycommand.h>
-#include "command.h"
+#include "pq-command.h"
 
 namespace PQ {
 	class Connection;

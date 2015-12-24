@@ -1,6 +1,6 @@
-#include "column.h"
-#include "selectcommand.h"
-#include "error.h"
+#include "pq-column.h"
+#include "pq-selectcommand.h"
+#include "pq-error.h"
 #include <string.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 

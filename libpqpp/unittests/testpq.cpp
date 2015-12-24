@@ -5,12 +5,12 @@
 #include <dbpp/modifycommand.h>
 #include <dbpp/selectcommand.h>
 #include <dbpp/column.h>
-#include "mock.h"
+#include <pq-mock.h>
 #include <testCore.h>
 #include <fstream>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include "../error.h"
-#include "../connection.h"
+#include <pq-error.h>
+#include <pq-connection.h>
 
 class StandardMockDatabase : public PQ::Mock {
 	public:
