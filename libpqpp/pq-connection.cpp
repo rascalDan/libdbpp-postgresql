@@ -110,7 +110,7 @@ void
 PQ::Connection::ping() const
 {
 	struct pollfd fd { PQsocket(conn), POLLRDHUP | POLLERR | POLLHUP | POLLNVAL, 0 };
-	if (PQstatus(conn) != CONNECTION_OK || poll(&fd, 1, 1)) {
+	if (PQstatus(conn) != CONNECTION_OK || poll(&fd, 1, 0)) {
 		if (inTx()) {
 			throw ConnectionError(conn);
 		}

@@ -181,6 +181,7 @@ BOOST_AUTO_TEST_CASE( reconnect )
 	kil->bindParamI(0, pid1);
 	kil->execute();
 	delete kil;
+	usleep(5000);
 	ro->ping();
 	int pid2 = PQbackendPID(pqconn->conn);
 	BOOST_REQUIRE(pid2);
@@ -202,6 +203,7 @@ BOOST_AUTO_TEST_CASE( reconnectInTx )
 	kil->bindParamI(0, pid1);
 	kil->execute();
 	delete kil;
+	usleep(5000);
 	BOOST_REQUIRE_THROW(ro->ping(), PQ::ConnectionError);
 	delete ro;
 	delete rok;
