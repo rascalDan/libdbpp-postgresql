@@ -1,8 +1,4 @@
 import package ;
-alias glibmm : : : :
-	<cflags>"`pkg-config --cflags glibmm-2.4`"
-	<linkflags>"`pkg-config --libs glibmm-2.4`"
-	;
 
 lib pq ;
 lib adhocutil : : : : <include>/usr/include/adhocutil ;
@@ -18,7 +14,7 @@ alias libpq : : : :
 
 lib dbpp-postgresql :
 	[ glob *.cpp ] :
-	<library>glibmm
+	<library>..//glibmm
 	<library>libpq
 	<library>adhocutil
 	<library>dbppcore
@@ -28,7 +24,7 @@ lib dbpp-postgresql :
 	: :
 	<include>.
 	<cflags>"-I`pg_config --includedir`"
-	<library>glibmm
+	<library>..//glibmm
 	<library>dbppcore
 	;
 
