@@ -2,7 +2,7 @@
 #define PQ_SELECTCOMMAND_H
 
 #include <selectcommand.h>
-#include "command.h"
+#include "pq-command.h"
 #include <vector>
 #include <map>
 

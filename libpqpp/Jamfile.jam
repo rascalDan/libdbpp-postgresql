@@ -30,5 +30,5 @@ lib dbpp-postgresql :
 
 build-project unittests ;
 
-package.install install : <install-source-root>. : : dbpp-postgresql : [ glob *.h ] ;
+package.install install : <install-source-root>. : : dbpp-postgresql : [ glob pq-*.h ] ;
 

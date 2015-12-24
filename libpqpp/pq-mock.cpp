@@ -1,5 +1,5 @@
-#include "mock.h"
-#include "connection.h"
+#include "pq-mock.h"
+#include "pq-connection.h"
 #include <buffer.h>
 
 namespace PQ {

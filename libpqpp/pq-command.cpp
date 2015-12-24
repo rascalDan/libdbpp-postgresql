@@ -1,5 +1,5 @@
-#include "command.h"
-#include "connection.h"
+#include "pq-command.h"
+#include "pq-connection.h"
 #include <stdlib.h>
 #include <string.h>
 #include <boost/date_time/posix_time/posix_time.hpp>

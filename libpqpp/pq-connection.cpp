@@ -1,7 +1,7 @@
-#include "connection.h"
-#include "error.h"
-#include "selectcommand.h"
-#include "modifycommand.h"
+#include "pq-connection.h"
+#include "pq-error.h"
+#include "pq-selectcommand.h"
+#include "pq-modifycommand.h"
 #include <unistd.h>
 #include <poll.h>
 #include <boost/assert.hpp>

@@ -1,7 +1,7 @@
-#include "selectcommand.h"
-#include "connection.h"
-#include "column.h"
-#include "error.h"
+#include "pq-selectcommand.h"
+#include "pq-connection.h"
+#include "pq-column.h"
+#include "pq-error.h"
 
 PQ::SelectCommand::SelectCommand(const Connection * conn, const std::string & sql, unsigned int no) :
 	DB::Command(sql),

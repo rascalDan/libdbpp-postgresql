@@ -1,4 +1,4 @@
-#include "error.h"
+#include "pq-error.h"
 #include <string.h>
 
 PQ::Error::Error() :
