@@ -11,7 +11,7 @@ namespace PQ {
 			ModifyCommand(const Connection *, const std::string & sql, unsigned int no);
 			virtual ~ModifyCommand();
 
-			unsigned int execute(bool);
+			unsigned int execute(bool) override;
 
 		private:
 			void prepare() const;

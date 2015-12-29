@@ -14,8 +14,8 @@ namespace PQ {
 			SelectCommand(const Connection *, const std::string & sql, unsigned int no);
 			virtual ~SelectCommand();
 
-			bool fetch();
-			void execute();
+			bool fetch() override;
+			void execute() override;
 
 		private:
 			void fetchTuples();
