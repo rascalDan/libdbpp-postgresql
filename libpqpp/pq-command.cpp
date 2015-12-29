@@ -2,17 +2,12 @@
 #include "pq-connection.h"
 #include <stdlib.h>
 #include <string.h>
+#include <buffer.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
-
-static std::string addrStr(void * p, unsigned int no) {
-	std::string r(50, ' ');
-	r.resize(snprintf(const_cast<char *>(r.c_str()), r.length(), "pStatement_%u_%p", no, p));
-	return r;
-}
 
 PQ::Command::Command(const Connection * conn, const std::string & sql, unsigned int no) :
 	DB::Command(sql),
-	stmntName(addrStr(this, no)),
+	stmntName(stringbf("pStatement_%u_%p", no, this)),
 	c(conn)
 {
 }
