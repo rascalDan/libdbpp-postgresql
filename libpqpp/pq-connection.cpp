@@ -166,7 +166,7 @@ PQ::Connection::checkResultFree(PGresult * res, int expected, int alt) const
 }
 
 void
-PQ::Connection::beginBulkUpload(const char * table, const char * extra) const
+PQ::Connection::beginBulkUpload(const char * table, const char * extra)
 {
 	char buf[BUFSIZ];
 	snprintf(buf, BUFSIZ, "COPY %s FROM STDIN %s", table, extra);
@@ -174,7 +174,7 @@ PQ::Connection::beginBulkUpload(const char * table, const char * extra) const
 }
 
 void
-PQ::Connection::endBulkUpload(const char * msg) const
+PQ::Connection::endBulkUpload(const char * msg)
 {
 	switch (PQputCopyEnd(conn, msg)) {
 		case 0:// block

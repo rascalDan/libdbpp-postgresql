@@ -32,8 +32,8 @@ namespace PQ {
 
 			int64_t insertId() const override;
 
-			void	beginBulkUpload(const char *, const char *) const override;
-			void	endBulkUpload(const char *) const override;
+			void	beginBulkUpload(const char *, const char *) override;
+			void	endBulkUpload(const char *) override;
 			size_t bulkUploadData(const char *, size_t) const override;
 
 			PGresult * checkResult(PGresult * res, int expected, int alternative = -1) const;
