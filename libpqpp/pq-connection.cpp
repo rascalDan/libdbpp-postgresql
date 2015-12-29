@@ -204,7 +204,7 @@ PQ::Connection::bulkUploadData(const char * data, size_t len) const
 }
 
 int64_t
-PQ::Connection::insertId() const
+PQ::Connection::insertId()
 {
 	SelectCommand getId(this, "SELECT lastval()", pstmntNo++);
 	int64_t id = -1;
