@@ -12,7 +12,7 @@ namespace PQ {
 
 			bool isNull() const;
 			void apply(DB::HandleField &) const;
-			void rebind(DB::Command *, unsigned int) const;
+
 		protected:
 			const SelectCommand * sc;
 			const Oid oid;

@@ -75,9 +75,3 @@ PQ::Column::apply(DB::HandleField & h) const
 	}
 }
 
-void
-PQ::Column::rebind(DB::Command *, unsigned int) const
-{
-	throw Error("Not supported");
-}
-
