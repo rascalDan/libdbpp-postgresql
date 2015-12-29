@@ -3,7 +3,7 @@
 #include "pq-column.h"
 #include "pq-error.h"
 
-PQ::SelectCommand::SelectCommand(const Connection * conn, const std::string & sql, unsigned int no) :
+PQ::SelectCommand::SelectCommand(Connection * conn, const std::string & sql, unsigned int no) :
 	DB::Command(sql),
 	DB::SelectCommand(sql),
 	PQ::Command(conn, sql, no),

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "pq-connection.h"
 
-PQ::ModifyCommand::ModifyCommand(const Connection * conn, const std::string & sql, unsigned int no) :
+PQ::ModifyCommand::ModifyCommand(Connection * conn, const std::string & sql, unsigned int no) :
 	DB::Command(sql),
 	DB::ModifyCommand(sql),
 	PQ::Command(conn, sql, no),

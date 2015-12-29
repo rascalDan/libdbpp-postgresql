@@ -5,7 +5,7 @@
 #include <buffer.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-PQ::Command::Command(const Connection * conn, const std::string & sql, unsigned int no) :
+PQ::Command::Command(Connection * conn, const std::string & sql, unsigned int no) :
 	DB::Command(sql),
 	stmntName(stringbf("pStatement_%u_%p", no, this)),
 	c(conn)

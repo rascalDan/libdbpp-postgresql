@@ -55,7 +55,6 @@ BOOST_AUTO_TEST_CASE( bindAndSend )
 	mod->bindParamT(5, testInterval);
 	mod->execute();
 	delete mod;
-	rw->commitTx();
 	delete rw;
 }
 
