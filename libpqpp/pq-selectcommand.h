@@ -11,7 +11,7 @@ namespace PQ {
 	class Column;
 	class SelectCommand : public DB::SelectCommand, public Command {
 		public:
-			SelectCommand(const Connection *, const std::string & sql, unsigned int no);
+			SelectCommand(Connection *, const std::string & sql, unsigned int no);
 			virtual ~SelectCommand();
 
 			bool fetch() override;

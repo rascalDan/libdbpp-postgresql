@@ -17,11 +17,9 @@ namespace PQ {
 			Connection(const std::string & info);
 			~Connection();
 
-			void finish() const override;
-			int beginTx() const override;
-			int commitTx() const override;
-			int rollbackTx() const override;
-			bool inTx() const override;
+			void beginTxInt() override;
+			void commitTxInt() override;
+			void rollbackTxInt() override;
 			void ping() const override;
 			void execute(const std::string & sql) override;
 			DB::BulkDeleteStyle bulkDeleteStyle() const override;
@@ -44,9 +42,7 @@ namespace PQ {
 		private:
 			static bool checkResultInt(PGresult * res, int expected, int alternative);
 
-			mutable unsigned int txDepth;
 			mutable unsigned int pstmntNo;
-			mutable bool rolledback;
 	};
 }
 

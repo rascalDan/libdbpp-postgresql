@@ -9,7 +9,7 @@ namespace PQ {
 	class Connection;
 	class Command : public virtual DB::Command {
 		public:
-			Command(const Connection *, const std::string & sql, unsigned int no);
+			Command(Connection *, const std::string & sql, unsigned int no);
 			virtual ~Command() = 0;
 
 			void bindParamI(unsigned int, int) override;
@@ -33,7 +33,7 @@ namespace PQ {
 		protected:
 			static void prepareSql(std::string & psql, const std::string & sql);
 			const std::string stmntName;
-			const Connection * c;
+			Connection * const c;
 
 			void paramsAtLeast(unsigned int);
 			std::vector<char *> values;

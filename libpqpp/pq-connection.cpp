@@ -27,9 +27,7 @@ PQ::ConnectionError::ConnectionError(const PGconn * conn) :
 
 PQ::Connection::Connection(const std::string & info) :
 	conn(PQconnectdb(info.c_str())),
-	txDepth(0),
-	pstmntNo(0),
-	rolledback(false)
+	pstmntNo(0)
 {
 	if (PQstatus(conn) != CONNECTION_OK) {
 		ConnectionError ce(conn);
@@ -45,52 +43,21 @@ PQ::Connection::~Connection()
 }
 
 void
-PQ::Connection::finish() const
+PQ::Connection::beginTxInt()
 {
-	if (txDepth != 0) {
-		rollbackTx();
-		throw DB::TransactionStillOpen();
-	}
+	checkResultFree(PQexec(conn, "BEGIN"), PGRES_COMMAND_OK);
 }
 
-int
-PQ::Connection::beginTx() const
+void
+PQ::Connection::commitTxInt()
 {
-	if (txDepth == 0) {
-		checkResultFree(PQexec(conn, "BEGIN"), PGRES_COMMAND_OK);
-		rolledback = false;
-	}
-	return ++txDepth;
+	checkResultFree(PQexec(conn, "COMMIT"), PGRES_COMMAND_OK);
 }
 
-int
-PQ::Connection::commitTx() const
+void
+PQ::Connection::rollbackTxInt()
 {
-	if (rolledback) {
-		return rollbackTx();
-	}
-	if (--txDepth == 0) {
-		checkResultFree(PQexec(conn, "COMMIT"), PGRES_COMMAND_OK);
-	}
-	return txDepth;
-}
-
-int
-PQ::Connection::rollbackTx() const
-{
-	if (--txDepth == 0) {
-		checkResultFree(PQexec(conn, "ROLLBACK"), PGRES_COMMAND_OK);
-	}
-	else {
-		rolledback = true;
-	}
-	return txDepth;
-}
-
-bool
-PQ::Connection::inTx() const
-{
-	return txDepth;
+	checkResultFree(PQexec(conn, "ROLLBACK"), PGRES_COMMAND_OK);
 }
 
 void

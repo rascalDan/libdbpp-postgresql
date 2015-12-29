@@ -8,7 +8,7 @@ namespace PQ {
 	class Connection;
 	class ModifyCommand : public DB::ModifyCommand, public Command {
 		public:
-			ModifyCommand(const Connection *, const std::string & sql, unsigned int no);
+			ModifyCommand(Connection *, const std::string & sql, unsigned int no);
 			virtual ~ModifyCommand();
 
 			unsigned int execute(bool) override;
