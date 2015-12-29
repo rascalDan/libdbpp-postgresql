@@ -10,8 +10,8 @@ namespace PQ {
 		public:
 			Column(const SelectCommand *, unsigned int field);
 
-			bool isNull() const;
-			void apply(DB::HandleField &) const;
+			bool isNull() const override;
+			void apply(DB::HandleField &) const override;
 
 		protected:
 			const SelectCommand * sc;
