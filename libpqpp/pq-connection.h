@@ -4,8 +4,14 @@
 #include <connection.h>
 #include <libpq-fe.h>
 #include <visibility.h>
+#include "pq-error.h"
 
 namespace PQ {
+	class ConnectionError : public virtual Error, public virtual DB::ConnectionError {
+		public:
+			ConnectionError(const PGconn *);
+	};
+
 	class DLL_PUBLIC Connection : public DB::Connection {
 		public:
 			Connection(const std::string & info);

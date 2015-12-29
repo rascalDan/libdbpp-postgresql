@@ -20,6 +20,11 @@ noNoticeProcessor(void *, const char *)
 {
 }
 
+PQ::ConnectionError::ConnectionError(const PGconn * conn) :
+	PQ::Error(conn)
+{
+}
+
 PQ::Connection::Connection(const std::string & info) :
 	conn(PQconnectdb(info.c_str())),
 	txDepth(0),
@@ -44,7 +49,7 @@ PQ::Connection::finish() const
 {
 	if (txDepth != 0) {
 		rollbackTx();
-		throw Error("Transaction still open");
+		throw DB::TransactionStillOpen();
 	}
 }
 
@@ -145,7 +150,7 @@ PQ::Connection::checkResult(PGresult * res, int expected, int alt) const
 {
 	if (!checkResultInt(res, expected, alt)) {
 		PQclear(res);
-		throw Error(PQerrorMessage(conn));
+		throw Error(conn);
 	}
 	return res;
 }
@@ -155,7 +160,7 @@ PQ::Connection::checkResultFree(PGresult * res, int expected, int alt) const
 {
 	if (!checkResultInt(res, expected, alt)) {
 		PQclear(res);
-		throw Error(PQerrorMessage(conn));
+		throw Error(conn);
 	}
 	PQclear(res);
 }
@@ -180,7 +185,7 @@ PQ::Connection::endBulkUpload(const char * msg) const
 			checkResultFree(PQgetResult(conn), PGRES_COMMAND_OK);
 			return;
 		default:// -1 is error
-			throw Error(PQerrorMessage(conn));
+			throw Error(conn);
 	}
 }
 
@@ -194,7 +199,7 @@ PQ::Connection::bulkUploadData(const char * data, size_t len) const
 		case 1:// success
 			return len;
 		default:// -1 is error
-			throw Error(PQerrorMessage(conn));
+			throw Error(conn);
 	}
 }
 
