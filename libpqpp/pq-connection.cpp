@@ -94,7 +94,7 @@ PQ::Connection::inTx() const
 }
 
 void
-PQ::Connection::execute(const std::string & sql) const
+PQ::Connection::execute(const std::string & sql)
 {
 	checkResultFree(PQexec(conn, sql.c_str()), PGRES_COMMAND_OK, PGRES_TUPLES_OK);
 }
