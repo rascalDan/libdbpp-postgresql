@@ -128,13 +128,13 @@ PQ::Connection::ping() const
 
 
 DB::SelectCommand *
-PQ::Connection::newSelectCommand(const std::string & sql) const
+PQ::Connection::newSelectCommand(const std::string & sql)
 {
 	return new SelectCommand(this, sql, pstmntNo++);
 }
 
 DB::ModifyCommand *
-PQ::Connection::newModifyCommand(const std::string & sql) const
+PQ::Connection::newModifyCommand(const std::string & sql)
 {
 	return new ModifyCommand(this, sql, pstmntNo++);
 }
