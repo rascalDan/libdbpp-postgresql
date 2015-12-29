@@ -37,7 +37,7 @@ PQ::ModifyCommand::execute(bool anc)
 	unsigned int rows = atoi(PQcmdTuples(res));
 	PQclear(res);
 	if (rows == 0 && !anc) {
-		throw Error("No rows affected");
+		throw DB::NoRowsAffected();
 	}
 	return rows;
 }

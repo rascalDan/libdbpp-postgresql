@@ -3,24 +3,17 @@
 
 #include <error.h>
 #include <libpq-fe.h>
-#include <visibility.h>
+#include <exception.h>
 
 namespace PQ {
-	class DLL_PUBLIC Error : public DB::Error {
+	class Error : public AdHoc::Exception<DB::Error> {
 		public:
-			Error();
-			Error(const Error &);
-			Error(const char *);
-			~Error() throw();
+			Error(const PGconn *);
 
-			const char * what() const throw();
+			std::string message() const throw() override;
 
 		private:
-			char * msg;
-	};
-	class DLL_PUBLIC ConnectionError : public Error, public virtual DB::ConnectionError {
-		public:
-			ConnectionError(const PGconn *);
+			std::string msg;
 	};
 }
 

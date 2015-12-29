@@ -2,9 +2,9 @@
 #include <boost/test/unit_test.hpp>
 
 #include <definedDirs.h>
-#include <dbpp/modifycommand.h>
-#include <dbpp/selectcommand.h>
-#include <dbpp/column.h>
+#include <modifycommand.h>
+#include <selectcommand.h>
+#include <column.h>
 #include <pq-mock.h>
 #include <testCore.h>
 #include <fstream>
@@ -204,7 +204,7 @@ BOOST_AUTO_TEST_CASE( reconnectInTx )
 	kil->execute();
 	delete kil;
 	usleep(5000);
-	BOOST_REQUIRE_THROW(ro->ping(), PQ::ConnectionError);
+	BOOST_REQUIRE_THROW(ro->ping(), DB::ConnectionError);
 	delete ro;
 	delete rok;
 }
@@ -213,7 +213,7 @@ BOOST_AUTO_TEST_SUITE_END();
 
 BOOST_AUTO_TEST_CASE( connfail )
 {
-	BOOST_REQUIRE_THROW(DB::ConnectionFactory::createNew("postgresql", "host=localhost user=no"), PQ::ConnectionError);
+	BOOST_REQUIRE_THROW(DB::ConnectionFactory::createNew("postgresql", "host=localhost user=no"), DB::ConnectionError);
 }
 
 BOOST_AUTO_TEST_CASE( ssl )
