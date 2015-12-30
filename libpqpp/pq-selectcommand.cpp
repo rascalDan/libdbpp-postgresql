@@ -64,7 +64,7 @@ void
 PQ::SelectCommand::execute()
 {
 	if (!executed) {
-		if (!txOpened) {
+		if (!c->inTx()) {
 			c->beginTx();
 			txOpened = true;
 		}
