@@ -80,6 +80,25 @@ BOOST_AUTO_TEST_CASE( bindAndSelect )
 	delete ro;
 }
 
+BOOST_AUTO_TEST_CASE( selectInTx )
+{
+	auto db = DB::MockDatabase::openConnectionTo("pqmock");
+
+	auto select = db->newSelectCommand("SELECT * FROM test");
+	while (select->fetch()) { }
+	delete select;
+	db->finish();
+
+	db->beginTx();
+	select = db->newSelectCommand("SELECT * FROM test");
+	while (select->fetch()) { }
+	delete select;
+	db->commitTx();
+	db->finish();
+
+	delete db;
+}
+
 BOOST_AUTO_TEST_CASE( bindAndSelectOther )
 {
 	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
