@@ -21,14 +21,11 @@ PQ::SelectCommand::SelectCommand(Connection * conn, const std::string & sql, uns
 
 PQ::SelectCommand::~SelectCommand()
 {
+	if (executed) {
+		c->checkResultFree((PQexec(c->conn, s_close.c_str())), PGRES_COMMAND_OK);
+	}
 	if (txOpened) {
 		c->commitTx();
-	}
-	if (executed) {
-		PQclear(PQexec(c->conn, s_close.c_str()));
-		if (execRes) {
-			PQclear(execRes);
-		}
 	}
 }
 

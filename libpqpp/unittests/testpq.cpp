@@ -160,6 +160,15 @@ BOOST_AUTO_TEST_CASE( bulkload )
 	delete ro;
 }
 
+BOOST_AUTO_TEST_CASE( nofetch )
+{
+	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
+	auto count = ro->newSelectCommand("SELECT * FROM bulktest");
+	count->execute();
+	delete count;
+	delete ro;
+}
+
 BOOST_AUTO_TEST_CASE( bigIterate )
 {
 	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
