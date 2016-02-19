@@ -54,6 +54,31 @@ BOOST_AUTO_TEST_CASE( bindAndSend )
 	mod->bindParamT(4, testDateTime);
 	mod->bindParamT(5, testInterval);
 	mod->execute();
+	mod->bindParamI(0, (unsigned int)(testInt + 10));
+	mod->bindParamF(1, (float)(testDouble + 10));
+	mod->bindParamS(2, testString + " something");
+	mod->bindParamB(3, true);
+	mod->bindParamT(4, testDateTime);
+	mod->bindParamT(5, testInterval);
+	mod->execute();
+	mod->bindNull(0);
+	mod->bindParamI(1, (long long unsigned int)(testDouble + 10));
+	mod->bindParamI(2, (long long int)testInt);
+	mod->bindParamB(3, true);
+	mod->bindNull(4);
+	mod->bindNull(5);
+	mod->execute();
+	mod->bindNull(0);
+	mod->bindParamI(1, (long unsigned int)(testDouble + 10));
+	mod->bindParamI(2, (long int)testInt);
+	mod->bindParamB(3, true);
+	mod->bindParamS(4, "2016-01-01T12:34:56");
+	mod->bindNull(5);
+	mod->execute();
+	delete mod;
+	mod = rw->newModifyCommand("DELETE FROM test WHERE string = '?'");
+	BOOST_REQUIRE_THROW(mod->execute(false), DB::NoRowsAffected);
+	BOOST_REQUIRE_EQUAL(0, mod->execute(true));
 	delete mod;
 	delete rw;
 }
@@ -103,8 +128,9 @@ BOOST_AUTO_TEST_CASE( bindAndSelectOther )
 {
 	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
 
-	auto select = ro->newSelectCommand("SELECT * FROM test WHERE id != ?");
+	auto select = ro->newSelectCommand("SELECT * FROM test WHERE id != ? AND id != ?");
 	select->bindParamI(0, testInt);
+	select->bindParamI(1, testInt + 10);
 	select->execute();
 	int rows = 0;
 	while (select->fetch()) {

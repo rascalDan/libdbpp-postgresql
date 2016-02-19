@@ -36,12 +36,14 @@ namespace PQ {
 			Connection * const c;
 
 			void paramsAtLeast(unsigned int);
+			template<typename ... T>
+			void paramSet(unsigned int, const char * fmt, const T & ... t);
+			void paramSet(unsigned int, const std::string &);
 			std::vector<char *> values;
 			std::vector<int> lengths;
-			std::vector<int> formats;
+			std::vector<std::string *> bufs;
 	};
 }
 
 #endif
-
 

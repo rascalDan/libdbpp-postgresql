@@ -21,6 +21,9 @@ PQ::SelectCommand::SelectCommand(Connection * conn, const std::string & sql, uns
 
 PQ::SelectCommand::~SelectCommand()
 {
+	if (execRes) {
+		PQclear(execRes);
+	}
 	if (executed) {
 		c->checkResultFree((PQexec(c->conn, s_close.c_str())), PGRES_COMMAND_OK);
 	}
@@ -66,7 +69,7 @@ PQ::SelectCommand::execute()
 			txOpened = true;
 		}
 		execRes = c->checkResult(
-				PQexecParams(c->conn, s_declare.c_str(), values.size(), NULL, &values.front(), &lengths.front(), &formats.front(), 0),
+				PQexecParams(c->conn, s_declare.c_str(), values.size(), NULL, &values.front(), &lengths.front(), NULL, 0),
 				PGRES_COMMAND_OK);
 		fetchTuples();
 		unsigned int nFields = PQnfields(execRes);
