@@ -14,8 +14,13 @@ PQ::Command::Command(Connection * conn, const std::string & sql, unsigned int no
 
 PQ::Command::~Command()
 {
-	for (std::vector<char *>::const_iterator i = values.begin(); i != values.end(); ++i) {
-		free(*i);
+	for (auto i = values.size(); i-- > 0;) {
+		if (bufs[i]) {
+			delete bufs[i];
+		}
+		else {
+			free(values[i]);
+		}
 	}
 }
 
@@ -46,102 +51,99 @@ PQ::Command::paramsAtLeast(unsigned int n)
 	if (values.size() <= n) {
 		values.resize(n + 1, NULL);
 		lengths.resize(n + 1, 0);
-		formats.resize(n + 1, 0);
+		bufs.resize(n + 1, NULL);
 	}
 	else {
-		free(values[n]);
+		if (bufs[n]) {
+			delete bufs[n];
+			bufs[n] = nullptr;
+		}
+		else {
+			free(values[n]);
+		}
 		values[n] = NULL;
 	}
+}
+
+template<typename ... T>
+void
+PQ::Command::paramSet(unsigned int n, const char * fmt, const T & ... v)
+{
+	paramsAtLeast(n);
+	lengths[n] = asprintf(&values[n], fmt, v...);
+	delete bufs[n];
+	bufs[n] = nullptr;
+}
+
+void
+PQ::Command::paramSet(unsigned int n, const std::string & b)
+{
+	paramsAtLeast(n);
+	delete bufs[n];
+	bufs[n] = new std::string(b);
+	lengths[n] = b.length();
+	values[n] = const_cast<char *>(bufs[n]->data());
 }
 
 void
 PQ::Command::bindParamI(unsigned int n, int v)
 {
-	paramsAtLeast(n);
-	lengths[n] = asprintf(&values[n], "%d", v);
-	formats[n] = 0;
+	paramSet(n, "%d", v);
 }
 void
 PQ::Command::bindParamI(unsigned int n, long int v)
 {
-	paramsAtLeast(n);
-	lengths[n] = asprintf(&values[n], "%ld", v);
-	formats[n] = 0;
+	paramSet(n, "%ld", v);
 }
 void
 PQ::Command::bindParamI(unsigned int n, long long int v)
 {
-	paramsAtLeast(n);
-	lengths[n] = asprintf(&values[n], "%lld", v);
-	formats[n] = 0;
+	paramSet(n, "%lld", v);
 }
 void
 PQ::Command::bindParamI(unsigned int n, unsigned int v)
 {
-	paramsAtLeast(n);
-	lengths[n] = asprintf(&values[n], "%u", v);
-	formats[n] = 0;
+	paramSet(n, "%u", v);
 }
 void
 PQ::Command::bindParamI(unsigned int n, long unsigned int v)
 {
-	paramsAtLeast(n);
-	lengths[n] = asprintf(&values[n], "%lu", v);
-	formats[n] = 0;
+	paramSet(n, "%lu", v);
 }
 void
 PQ::Command::bindParamI(unsigned int n, long long unsigned int v)
 {
-	paramsAtLeast(n);
-	lengths[n] = asprintf(&values[n], "%llu", v);
-	formats[n] = 0;
+	paramSet(n, "%llu", v);
 }
 void
 PQ::Command::bindParamB(unsigned int n, bool v)
 {
-	paramsAtLeast(n);
-	lengths[n] = asprintf(&values[n], "%s", v ? "true" : "false");
-	formats[n] = 0;
+	paramSet(n, "%s", v ? "true" : "false");
 }
 void
 PQ::Command::bindParamF(unsigned int n, double v)
 {
-	paramsAtLeast(n);
-	lengths[n] = asprintf(&values[n], "%g", v);
-	formats[n] = 0;
+	paramSet(n, "%g", v);
 }
 void
 PQ::Command::bindParamF(unsigned int n, float v)
 {
-	paramsAtLeast(n);
-	lengths[n] = asprintf(&values[n], "%g", v);
-	formats[n] = 0;
+	paramSet(n, "%g", v);
 }
 void
 PQ::Command::bindParamS(unsigned int n, const Glib::ustring & s)
 {
-	paramsAtLeast(n);
-	values[n] = strndup(s.c_str(), s.bytes());
-	formats[n] = 0;
-	lengths[n] = s.bytes();
+	paramSet(n, s);
 }
 void
 PQ::Command::bindParamT(unsigned int n, const boost::posix_time::time_duration & v)
 {
-	paramsAtLeast(n);
-	auto buf = boost::posix_time::to_simple_string(v);
-	values[n] = strdup(buf.c_str());
-	formats[n] = 0;
-	lengths[n] = buf.length();
+	paramSet(n, boost::posix_time::to_simple_string(v));
 }
 void
 PQ::Command::bindParamT(unsigned int n, const boost::posix_time::ptime & v)
 {
-	paramsAtLeast(n);
-	auto buf = boost::posix_time::to_iso_extended_string(v);
-	values[n] = strdup(buf.c_str());
-	formats[n] = 0;
-	lengths[n] = buf.length();
+	paramSet(n, boost::posix_time::to_iso_extended_string(v));
 }
 void
 PQ::Command::bindNull(unsigned int n)

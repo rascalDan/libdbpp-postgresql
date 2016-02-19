@@ -32,7 +32,7 @@ unsigned int
 PQ::ModifyCommand::execute(bool anc)
 {
 	prepare();
-	PGresult * res = PQexecPrepared(c->conn, stmntName.c_str(), values.size(), &values.front(), &lengths.front(), &formats.front(), 0);
+	PGresult * res = PQexecPrepared(c->conn, stmntName.c_str(), values.size(), &values.front(), &lengths.front(), NULL, 0);
 	c->checkResult(res, PGRES_COMMAND_OK, PGRES_TUPLES_OK);
 	unsigned int rows = atoi(PQcmdTuples(res));
 	PQclear(res);
