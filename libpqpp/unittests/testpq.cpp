@@ -262,6 +262,22 @@ BOOST_AUTO_TEST_CASE( reconnectInTx )
 	delete rok;
 }
 
+BOOST_AUTO_TEST_CASE( statementReuse )
+{
+	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
+	auto pqconn = dynamic_cast<PQ::Connection *>(ro);
+	BOOST_REQUIRE_EQUAL(pqconn->preparedStatements.size(), 0);
+	for (int y = 0; y < 4; y += 1) {
+		auto m1 = ro->modify("INSERT INTO test(id) VALUES(?)");
+		for (int x = 0; x < 4; x += 1) {
+			m1->bindParamI(0, x);
+			m1->execute();
+		}
+	}
+	BOOST_REQUIRE_EQUAL(pqconn->preparedStatements.size(), 1);
+	delete ro;
+}
+
 BOOST_AUTO_TEST_SUITE_END();
 
 BOOST_AUTO_TEST_CASE( connfail )

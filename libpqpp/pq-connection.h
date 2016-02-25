@@ -2,6 +2,7 @@
 #define PQ_CONNECTION_H
 
 #include <connection.h>
+#include <set>
 #include <libpq-fe.h>
 #include <visibility.h>
 #include "pq-error.h"
@@ -14,6 +15,9 @@ namespace PQ {
 
 	class DLL_PUBLIC Connection : public DB::Connection {
 		public:
+			typedef std::hash<std::string>::result_type StatementHash;
+			typedef std::map<StatementHash, std::string> PreparedStatements;
+
 			Connection(const std::string & info);
 			~Connection();
 
@@ -38,6 +42,7 @@ namespace PQ {
 			void checkResultFree(PGresult * res, int expected, int alternative = -1) const;
 
 			PGconn * conn;
+			PreparedStatements preparedStatements;
 
 		private:
 			static bool checkResultInt(PGresult * res, int expected, int alternative);
