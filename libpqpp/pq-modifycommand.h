@@ -15,7 +15,7 @@ namespace PQ {
 
 		private:
 			Connection::PreparedStatements::const_iterator prepare() const;
-			const Connection::StatementHash hash;
+			const std::string pstmt;
 	};
 }
 

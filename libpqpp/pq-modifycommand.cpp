@@ -7,7 +7,7 @@ PQ::ModifyCommand::ModifyCommand(Connection * conn, const std::string & sql, uns
 	DB::Command(sql),
 	DB::ModifyCommand(sql),
 	PQ::Command(conn, sql, no),
-	hash(std::hash<std::string>()(sql))
+	pstmt(prepare()->second)
 {
 }
 
@@ -18,6 +18,7 @@ PQ::ModifyCommand::~ModifyCommand()
 PQ::Connection::PreparedStatements::const_iterator
 PQ::ModifyCommand::prepare() const
 {
+	auto hash(std::hash<std::string>()(sql));
 	auto i = c->preparedStatements.find(hash);
 	if (i != c->preparedStatements.end()) {
 		return i;
@@ -33,7 +34,7 @@ PQ::ModifyCommand::prepare() const
 unsigned int
 PQ::ModifyCommand::execute(bool anc)
 {
-	PGresult * res = PQexecPrepared(c->conn, prepare()->second.c_str(), values.size(), &values.front(), &lengths.front(), NULL, 0);
+	PGresult * res = PQexecPrepared(c->conn, pstmt.c_str(), values.size(), &values.front(), &lengths.front(), NULL, 0);
 	c->checkResult(res, PGRES_COMMAND_OK, PGRES_TUPLES_OK);
 	unsigned int rows = atoi(PQcmdTuples(res));
 	PQclear(res);

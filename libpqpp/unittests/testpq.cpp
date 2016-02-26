@@ -267,14 +267,22 @@ BOOST_AUTO_TEST_CASE( statementReuse )
 	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
 	auto pqconn = dynamic_cast<PQ::Connection *>(ro);
 	BOOST_REQUIRE_EQUAL(pqconn->preparedStatements.size(), 0);
+	ro->modify("DELETE FROM test")->execute();
+	BOOST_REQUIRE_EQUAL(pqconn->preparedStatements.size(), 1);
 	for (int y = 0; y < 4; y += 1) {
 		auto m1 = ro->modify("INSERT INTO test(id) VALUES(?)");
+		BOOST_REQUIRE_EQUAL(pqconn->preparedStatements.size(), 2);
 		for (int x = 0; x < 4; x += 1) {
 			m1->bindParamI(0, x);
 			m1->execute();
 		}
 	}
-	BOOST_REQUIRE_EQUAL(pqconn->preparedStatements.size(), 1);
+	BOOST_REQUIRE_EQUAL(pqconn->preparedStatements.size(), 2);
+	auto select = ro->newSelectCommand("SELECT COUNT(id), SUM(id) FROM test");
+	while (select->fetch()) {
+		assertColumnValueHelper(*select, 0, 16);
+		assertColumnValueHelper(*select, 1, 24);
+	}
 	delete ro;
 }
 
