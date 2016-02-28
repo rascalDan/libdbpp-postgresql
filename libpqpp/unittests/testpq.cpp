@@ -271,7 +271,7 @@ BOOST_AUTO_TEST_CASE( statementReuse )
 	BOOST_REQUIRE_EQUAL(pqconn->preparedStatements.size(), 1);
 	for (int y = 0; y < 4; y += 1) {
 		auto m1 = ro->modify("INSERT INTO test(id) VALUES(?)");
-		BOOST_REQUIRE_EQUAL(pqconn->preparedStatements.size(), 2);
+		BOOST_REQUIRE_EQUAL(pqconn->preparedStatements.size(), y == 0 ? 1 : 2);
 		for (int x = 0; x < 4; x += 1) {
 			m1->bindParamI(0, x);
 			m1->execute();
