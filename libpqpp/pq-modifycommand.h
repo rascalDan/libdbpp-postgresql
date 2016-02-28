@@ -14,8 +14,8 @@ namespace PQ {
 			unsigned int execute(bool) override;
 
 		private:
-			Connection::PreparedStatements::const_iterator prepare() const;
-			const std::string pstmt;
+			const char * prepare() const;
+			mutable const char * pstmt;
 	};
 }
 
