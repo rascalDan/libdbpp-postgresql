@@ -24,7 +24,7 @@ PQ::SelectCommand::~SelectCommand()
 	if (execRes) {
 		PQclear(execRes);
 	}
-	if (executed) {
+	if (executed && PQtransactionStatus(c->conn) != PQTRANS_INERROR) {
 		c->checkResultFree((PQexec(c->conn, s_close.c_str())), PGRES_COMMAND_OK);
 	}
 	if (txOpened) {

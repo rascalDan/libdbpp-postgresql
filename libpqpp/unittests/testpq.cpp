@@ -11,6 +11,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <pq-error.h>
 #include <pq-connection.h>
+#include <selectcommandUtil.impl.h>
 
 class StandardMockDatabase : public PQ::Mock {
 	public:
@@ -284,6 +285,37 @@ BOOST_AUTO_TEST_CASE( statementReuse )
 		assertColumnValueHelper(*select, 1, 24);
 	}
 	delete ro;
+}
+
+BOOST_AUTO_TEST_CASE( closeOnError )
+{
+	auto ro = DB::ConnectionPtr(DB::MockDatabase::openConnectionTo("pqmock"));
+	BOOST_REQUIRE_THROW({
+			ro->select("SELECT * FROM test")->forEachRow<>([&ro](){
+					ro->execute("nonsense");
+				});
+			}, DB::Error);
+	BOOST_REQUIRE_THROW({
+			ro->select("SELECT * FROM test")->forEachRow<>([&ro](){
+				ro->select("SELECT * FROM test")->forEachRow<>([&ro](){
+						ro->execute("nonsense");
+					});
+				});
+			}, DB::Error);
+	ro->beginTx();
+	BOOST_REQUIRE_THROW({
+			ro->select("SELECT * FROM test")->forEachRow<>([&ro](){
+					ro->execute("nonsense");
+				});
+			}, DB::Error);
+	BOOST_REQUIRE_THROW({
+			ro->select("SELECT * FROM test")->forEachRow<>([&ro](){
+				ro->select("SELECT * FROM test")->forEachRow<>([&ro](){
+						ro->execute("nonsense");
+					});
+				});
+			}, DB::Error);
+	ro->commitTx();
 }
 
 BOOST_AUTO_TEST_SUITE_END();
