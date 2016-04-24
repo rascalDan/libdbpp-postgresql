@@ -5,16 +5,16 @@
 #include <libpq-fe.h>
 
 namespace PQ {
-	class SelectCommand;
+	class CursorSelectCommand;
 	class Column : public DB::Column {
 		public:
-			Column(const SelectCommand *, unsigned int field);
+			Column(const CursorSelectCommand *, unsigned int field);
 
 			bool isNull() const override;
 			void apply(DB::HandleField &) const override;
 
 		protected:
-			const SelectCommand * sc;
+			const CursorSelectCommand * sc;
 			const Oid oid;
 	};
 }

@@ -1,5 +1,5 @@
-#ifndef PQ_SELECTCOMMAND_H
-#define PQ_SELECTCOMMAND_H
+#ifndef PQ_CURSORSELECTCOMMAND_H
+#define PQ_CURSORSELECTCOMMAND_H
 
 #include <selectcommand.h>
 #include "pq-command.h"
@@ -9,10 +9,10 @@
 namespace PQ {
 	class Connection;
 	class Column;
-	class SelectCommand : public DB::SelectCommand, public Command {
+	class CursorSelectCommand : public DB::SelectCommand, public Command {
 		public:
-			SelectCommand(Connection *, const std::string & sql, unsigned int no);
-			virtual ~SelectCommand();
+			CursorSelectCommand(Connection *, const std::string & sql, unsigned int no);
+			virtual ~CursorSelectCommand();
 
 			bool fetch() override;
 			void execute() override;

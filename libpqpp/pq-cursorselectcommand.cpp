@@ -1,9 +1,9 @@
-#include "pq-selectcommand.h"
+#include "pq-cursorselectcommand.h"
 #include "pq-connection.h"
 #include "pq-column.h"
 #include "pq-error.h"
 
-PQ::SelectCommand::SelectCommand(Connection * conn, const std::string & sql, unsigned int no) :
+PQ::CursorSelectCommand::CursorSelectCommand(Connection * conn, const std::string & sql, unsigned int no) :
 	DB::Command(sql),
 	DB::SelectCommand(sql),
 	PQ::Command(conn, sql, no),
@@ -19,7 +19,7 @@ PQ::SelectCommand::SelectCommand(Connection * conn, const std::string & sql, uns
 {
 }
 
-PQ::SelectCommand::~SelectCommand()
+PQ::CursorSelectCommand::~CursorSelectCommand()
 {
 	if (execRes) {
 		PQclear(execRes);
@@ -33,7 +33,7 @@ PQ::SelectCommand::~SelectCommand()
 }
 
 std::string
-PQ::SelectCommand::mkdeclare() const
+PQ::CursorSelectCommand::mkdeclare() const
 {
 	std::string psql;
 	psql.reserve(sql.length() + 40);
@@ -45,7 +45,7 @@ PQ::SelectCommand::mkdeclare() const
 }
 
 std::string
-PQ::SelectCommand::mkfetch() const
+PQ::CursorSelectCommand::mkfetch() const
 {
 	char buf[BUFSIZ];
 	snprintf(buf, sizeof(buf), "FETCH %d IN %s", fTuples, stmntName.c_str());
@@ -53,7 +53,7 @@ PQ::SelectCommand::mkfetch() const
 }
 
 std::string
-PQ::SelectCommand::mkclose() const
+PQ::CursorSelectCommand::mkclose() const
 {
 	char buf[BUFSIZ];
 	snprintf(buf, sizeof(buf), "CLOSE %s", stmntName.c_str());
@@ -61,7 +61,7 @@ PQ::SelectCommand::mkclose() const
 }
 
 void
-PQ::SelectCommand::execute()
+PQ::CursorSelectCommand::execute()
 {
 	if (!executed) {
 		if (!c->inTx()) {
@@ -81,7 +81,7 @@ PQ::SelectCommand::execute()
 }
 
 void
-PQ::SelectCommand::fetchTuples()
+PQ::CursorSelectCommand::fetchTuples()
 {
 	if (execRes) {
 		PQclear(execRes);
@@ -93,7 +93,7 @@ PQ::SelectCommand::fetchTuples()
 }
 
 bool
-PQ::SelectCommand::fetch()
+PQ::CursorSelectCommand::fetch()
 {
 	execute();
 	if ((tuple >= (nTuples - 1)) && (nTuples == fTuples)) {
