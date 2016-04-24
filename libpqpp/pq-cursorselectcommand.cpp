@@ -9,10 +9,7 @@ PQ::CursorSelectCommand::CursorSelectCommand(Connection * conn, const std::strin
 	PQ::Command(conn, sql, no),
 	executed(false),
 	txOpened(false),
-	nTuples(0),
-	tuple(0),
 	fTuples(35),
-	execRes(NULL),
 	s_declare(mkdeclare()),
 	s_fetch(mkfetch()),
 	s_close(mkclose())
