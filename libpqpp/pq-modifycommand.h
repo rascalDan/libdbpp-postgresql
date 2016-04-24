@@ -2,20 +2,16 @@
 #define PQ_MODIFYCOMMAND_H
 
 #include <modifycommand.h>
-#include "pq-command.h"
+#include "pq-prepared.h"
 #include "pq-connection.h"
 
 namespace PQ {
-	class ModifyCommand : public DB::ModifyCommand, public Command {
+	class ModifyCommand : public DB::ModifyCommand, public PreparedStatement {
 		public:
 			ModifyCommand(Connection *, const std::string & sql, unsigned int no);
 			virtual ~ModifyCommand();
 
 			unsigned int execute(bool) override;
-
-		private:
-			const char * prepare() const;
-			mutable const char * pstmt;
 	};
 }
 

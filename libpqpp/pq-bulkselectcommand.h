@@ -3,14 +3,14 @@
 
 #include <selectcommand.h>
 #include "pq-selectbase.h"
-#include "pq-command.h"
+#include "pq-prepared.h"
 #include <vector>
 #include <map>
 
 namespace PQ {
 	class Connection;
 	class Column;
-	class BulkSelectCommand : public DB::SelectCommand, public SelectBase, public Command {
+	class BulkSelectCommand : public DB::SelectCommand, public SelectBase, public PreparedStatement {
 		public:
 			BulkSelectCommand(Connection *, const std::string & sql, unsigned int no);
 			virtual ~BulkSelectCommand();
@@ -20,7 +20,6 @@ namespace PQ {
 
 		private:
 			mutable bool executed;
-			std::string preparedSql;
 	};
 }
 

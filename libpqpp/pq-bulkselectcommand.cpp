@@ -6,10 +6,9 @@
 PQ::BulkSelectCommand::BulkSelectCommand(Connection * conn, const std::string & sql, unsigned int no) :
 	DB::Command(sql),
 	DB::SelectCommand(sql),
-	PQ::Command(conn, sql, no),
+	PQ::PreparedStatement(conn, sql, no),
 	executed(false)
 {
-	prepareSql(preparedSql, sql);
 }
 
 PQ::BulkSelectCommand::~BulkSelectCommand()
@@ -24,7 +23,7 @@ PQ::BulkSelectCommand::execute()
 {
 	if (!executed) {
 		execRes = c->checkResult(
-				PQexecParams(c->conn, preparedSql.c_str(), values.size(), NULL, &values.front(), &lengths.front(), NULL, 0),
+				PQexecPrepared(c->conn, prepare(), values.size(), &values.front(), &lengths.front(), NULL, 0),
 				PGRES_TUPLES_OK);
 		nTuples = PQntuples(execRes);
 		tuple = -1;
