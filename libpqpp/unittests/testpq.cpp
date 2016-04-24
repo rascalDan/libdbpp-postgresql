@@ -287,6 +287,37 @@ BOOST_AUTO_TEST_CASE( statementReuse )
 	delete ro;
 }
 
+BOOST_AUTO_TEST_CASE( bulkSelect )
+{
+	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
+	auto sel = ro->newSelectCommand("SELECT * FROM test WHERE id > ? --libdbpp:no-cursor");
+	sel->bindParamI(0, 1);
+	int totalInt = 0, count = 0;
+	sel->forEachRow<int64_t>([&totalInt, &count](auto i) {
+			totalInt += i;
+			count += 1;
+		});
+	delete sel;
+	BOOST_REQUIRE_EQUAL(20, totalInt);
+	BOOST_REQUIRE_EQUAL(8, count);
+	delete ro;
+}
+
+BOOST_AUTO_TEST_CASE( insertReturning )
+{
+	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
+	auto sel = ro->newSelectCommand("INSERT INTO test(id, fl) VALUES(1, 3) RETURNING id + fl --libdbpp:no-cursor");
+	int totalInt = 0, count = 0;
+	sel->forEachRow<int64_t>([&totalInt, &count](auto i) {
+			totalInt += i;
+			count += 1;
+		});
+	delete sel;
+	BOOST_REQUIRE_EQUAL(4, totalInt);
+	BOOST_REQUIRE_EQUAL(1, count);
+	delete ro;
+}
+
 BOOST_AUTO_TEST_CASE( closeOnError )
 {
 	auto ro = DB::ConnectionPtr(DB::MockDatabase::openConnectionTo("pqmock"));

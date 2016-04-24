@@ -1,5 +1,6 @@
 #include "pq-connection.h"
 #include "pq-error.h"
+#include "pq-bulkselectcommand.h"
 #include "pq-cursorselectcommand.h"
 #include "pq-modifycommand.h"
 #include <unistd.h>
@@ -97,6 +98,10 @@ PQ::Connection::ping() const
 DB::SelectCommand *
 PQ::Connection::newSelectCommand(const std::string & sql)
 {
+	// Yes, this is a hack
+	if (sql.find("libdbpp:no-cursor") != (std::string::size_type)-1) {
+		return new BulkSelectCommand(this, sql, pstmntNo++);
+	}
 	return new CursorSelectCommand(this, sql, pstmntNo++);
 }
 
