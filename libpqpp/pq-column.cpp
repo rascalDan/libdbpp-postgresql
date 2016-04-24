@@ -1,10 +1,10 @@
 #include "pq-column.h"
-#include "pq-selectcommand.h"
+#include "pq-cursorselectcommand.h"
 #include "pq-error.h"
 #include <string.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-PQ::Column::Column(const SelectCommand * s, unsigned int i) :
+PQ::Column::Column(const CursorSelectCommand * s, unsigned int i) :
 	DB::Column(PQfname(s->execRes, i), i),
 	sc(s),
 	oid(PQftype(sc->execRes, colNo))

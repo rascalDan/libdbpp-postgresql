@@ -1,6 +1,6 @@
 #include "pq-connection.h"
 #include "pq-error.h"
-#include "pq-selectcommand.h"
+#include "pq-cursorselectcommand.h"
 #include "pq-modifycommand.h"
 #include <unistd.h>
 #include <poll.h>
@@ -97,7 +97,7 @@ PQ::Connection::ping() const
 DB::SelectCommand *
 PQ::Connection::newSelectCommand(const std::string & sql)
 {
-	return new SelectCommand(this, sql, pstmntNo++);
+	return new CursorSelectCommand(this, sql, pstmntNo++);
 }
 
 DB::ModifyCommand *
@@ -173,7 +173,7 @@ PQ::Connection::bulkUploadData(const char * data, size_t len) const
 int64_t
 PQ::Connection::insertId()
 {
-	SelectCommand getId(this, "SELECT lastval()", pstmntNo++);
+	CursorSelectCommand getId(this, "SELECT lastval()", pstmntNo++);
 	int64_t id = -1;
 	while (getId.fetch()) {
 		getId[0] >> id;
