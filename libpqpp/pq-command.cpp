@@ -27,13 +27,12 @@ PQ::Command::~Command()
 void
 PQ::Command::prepareSql(std::string & psql, const std::string & sql)
 {
-	char buf[4];
+	char buf[10];
 	int p = 1;
 	bool inquote = false;
 	for(std::string::const_iterator i = sql.begin(); i != sql.end(); ++i) {
 		if (*i == '?' && !inquote) {
-			snprintf(buf, 4, "$%d", p++);
-			psql += buf;
+			psql.append(buf, snprintf(buf, 10, "$%d", p++));
 		}
 		else if (*i == '\'') {
 			inquote = !inquote;
