@@ -15,6 +15,7 @@ namespace PQ {
 
 		protected:
 			void DropDatabase() const override;
+			void SetTablesToUnlogged() const;
 	};
 }
 
