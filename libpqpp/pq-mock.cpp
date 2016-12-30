@@ -24,12 +24,31 @@ void
 Mock::SetTablesToUnlogged() const
 {
 	auto c = DB::ConnectionPtr(openConnection());
-	auto s = c->select("SELECT schemaname, tablename FROM pg_catalog.pg_tables WHERE schemaname NOT IN (?, ?)");
+	auto s = c->select(R"SQL( 
+SELECT n.nspname, c.relname
+FROM pg_class c, pg_namespace n
+WHERE c.relkind = 'r'
+AND n.nspname not in (?, ?)
+AND c.relpersistence = 'p'
+AND NOT EXISTS (
+	SELECT from pg_constraint fk, pg_class ck
+	WHERE fk.contype = 'f'
+	AND fk.confrelid = c.oid
+	AND fk.conrelid = ck.oid
+	AND ck.oid != c.oid
+	AND ck.relpersistence = 'p')
+AND n.oid = c.relnamespace
+ORDER BY 1, 2)SQL");
 	s->bindParamS(0, "pg_catalog");
 	s->bindParamS(1, "information_schema");
-	for (const auto & t : s->as<std::string, std::string>()) {
-		c->execute("ALTER TABLE " + t.value<0>() + "." + t.value<1>() + " SET UNLOGGED");
-	}
+	unsigned int n = 0;
+	do {
+		n = 0;
+		for (const auto & t : s->as<std::string, std::string>()) {
+			c->execute("ALTER TABLE " + t.value<0>() + "." + t.value<1>() + " SET UNLOGGED");
+			n += 1;
+		}
+	} while(n);
 }
 
 Mock::~Mock()
