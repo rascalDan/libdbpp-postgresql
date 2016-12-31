@@ -1,6 +1,7 @@
 #include "pq-mock.h"
 #include "pq-connection.h"
-#include <buffer.h>
+#include <compileTimeFormatter.h>
+#include <modifycommand.h>
 #include <selectcommand.h>
 #include <selectcommandUtil.impl.h>
 
@@ -14,12 +15,14 @@ Mock::Mock(const std::string & masterdb, const std::string & name, const std::ve
 	SetTablesToUnlogged();
 }
 
+AdHocFormatter(MockConnStr, "user=postgres dbname=%?");
 DB::Connection *
 Mock::openConnection() const
 {
-	return new Connection(stringbf("user=postgres dbname=%s", testDbName));
+	return new Connection(MockConnStr::get(testDbName));
 }
 
+AdHocFormatter(MockSetUnlogged, "ALTER TABLE %?.%? SET UNLOGGED");
 void
 Mock::SetTablesToUnlogged() const
 {
@@ -45,7 +48,7 @@ ORDER BY 1, 2)SQL");
 	do {
 		n = 0;
 		for (const auto & t : s->as<std::string, std::string>()) {
-			c->execute("ALTER TABLE " + t.value<0>() + "." + t.value<1>() + " SET UNLOGGED");
+			c->execute(MockSetUnlogged::get(t.value<0>(), t.value<1>()));
 			n += 1;
 		}
 	} while(n);
@@ -59,7 +62,9 @@ Mock::~Mock()
 void
 Mock::DropDatabase() const
 {
-	master->execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '" + testDbName + "'");
+	auto t = master->modify("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = ?");
+	t->bindParamS(0, testDbName);
+	t->execute();
 	MockServerDatabase::DropDatabase();
 }
 

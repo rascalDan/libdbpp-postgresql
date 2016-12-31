@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <poll.h>
 #include <boost/assert.hpp>
+#include <compileTimeFormatter.h>
 
 NAMEDFACTORY("postgresql", PQ::Connection, DB::ConnectionFactory);
 
@@ -137,12 +138,11 @@ PQ::Connection::checkResultFree(PGresult * res, int expected, int alt) const
 	PQclear(res);
 }
 
+AdHocFormatter(PQConnectionCopyFrom, "COPY %? FROM STDIN %?");
 void
 PQ::Connection::beginBulkUpload(const char * table, const char * extra)
 {
-	char buf[BUFSIZ];
-	snprintf(buf, BUFSIZ, "COPY %s FROM STDIN %s", table, extra);
-	checkResultFree(PQexec(conn, buf), PGRES_COPY_IN);
+	checkResultFree(PQexec(conn, PQConnectionCopyFrom::get(table, extra).c_str()), PGRES_COPY_IN);
 }
 
 void
