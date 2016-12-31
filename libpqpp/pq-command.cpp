@@ -2,12 +2,13 @@
 #include "pq-connection.h"
 #include <stdlib.h>
 #include <string.h>
-#include <buffer.h>
+#include <compileTimeFormatter.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+AdHocFormatter(PQCommondStatement, "pStatement_%?_%?");
 PQ::Command::Command(Connection * conn, const std::string & sql, unsigned int no) :
 	DB::Command(sql),
-	stmntName(stringbf("pStatement_%u_%p", no, this)),
+	stmntName(PQCommondStatement::get(no, this)),
 	c(conn)
 {
 }
