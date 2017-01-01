@@ -63,7 +63,7 @@ PQ::Connection::rollbackTxInt()
 }
 
 void
-PQ::Connection::execute(const std::string & sql)
+PQ::Connection::execute(const std::string & sql, const DB::CommandOptions *)
 {
 	checkResultFree(PQexec(conn, sql.c_str()), PGRES_COMMAND_OK, PGRES_TUPLES_OK);
 }
@@ -97,7 +97,7 @@ PQ::Connection::ping() const
 
 
 DB::SelectCommand *
-PQ::Connection::newSelectCommand(const std::string & sql)
+PQ::Connection::newSelectCommand(const std::string & sql, const DB::CommandOptions *)
 {
 	// Yes, this is a hack
 	if (sql.find("libdbpp:no-cursor") != (std::string::size_type)-1) {
@@ -107,7 +107,7 @@ PQ::Connection::newSelectCommand(const std::string & sql)
 }
 
 DB::ModifyCommand *
-PQ::Connection::newModifyCommand(const std::string & sql)
+PQ::Connection::newModifyCommand(const std::string & sql, const DB::CommandOptions *)
 {
 	return new ModifyCommand(this, sql, pstmntNo++);
 }
