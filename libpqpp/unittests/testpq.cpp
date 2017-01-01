@@ -15,7 +15,7 @@
 
 class StandardMockDatabase : public PQ::Mock {
 	public:
-		StandardMockDatabase() : PQ::Mock("user=postgres dbname=postgres", "pqmock", {
+		StandardMockDatabase() : PQ::Mock("user=postgres dbname=postgres", "PQmock", {
 				rootDir / "pqschema.sql" })
 		{
 		}
@@ -27,7 +27,7 @@ BOOST_FIXTURE_TEST_SUITE( Core, DB::TestCore );
 
 BOOST_AUTO_TEST_CASE( transactions )
 {
-	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
+	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 
 	BOOST_REQUIRE_EQUAL(false, ro->inTx());
 	ro->beginTx();
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE( transactions )
 
 BOOST_AUTO_TEST_CASE( bindAndSend )
 {
-	auto rw = DB::MockDatabase::openConnectionTo("pqmock");
+	auto rw = DB::MockDatabase::openConnectionTo("PQmock");
 
 	auto mod = rw->newModifyCommand("INSERT INTO test VALUES(?, ?, ?, ?, ?, ?)");
 	mod->bindParamI(0, testInt);
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE( bindAndSend )
 
 BOOST_AUTO_TEST_CASE( bindAndSelect )
 {
-	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
+	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 
 	auto select = ro->newSelectCommand("SELECT * FROM test WHERE id = ?");
 	select->bindParamI(0, testInt);
@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE( bindAndSelect )
 
 BOOST_AUTO_TEST_CASE( selectInTx )
 {
-	auto db = DB::MockDatabase::openConnectionTo("pqmock");
+	auto db = DB::MockDatabase::openConnectionTo("PQmock");
 
 	auto select = db->newSelectCommand("SELECT * FROM test");
 	while (select->fetch()) { }
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE( selectInTx )
 
 BOOST_AUTO_TEST_CASE( bindAndSelectOther )
 {
-	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
+	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 
 	auto select = ro->newSelectCommand("SELECT * FROM test WHERE id != ? AND id != ?");
 	select->bindParamI(0, testInt);
@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE( bindAndSelectOther )
 
 BOOST_AUTO_TEST_CASE( testP2MockScriptDir )
 {
-	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
+	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 
 	auto select = ro->newSelectCommand("SELECT path FROM test2");
 	select->execute();
@@ -165,7 +165,7 @@ BOOST_AUTO_TEST_CASE( testP2MockScriptDir )
 
 BOOST_AUTO_TEST_CASE( bulkload )
 {
-	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
+	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 
 	auto count = ro->newSelectCommand("SELECT COUNT(*) FROM bulktest");
 	// Test empty
@@ -189,7 +189,7 @@ BOOST_AUTO_TEST_CASE( bulkload )
 
 BOOST_AUTO_TEST_CASE( nofetch )
 {
-	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
+	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 	auto count = ro->newSelectCommand("SELECT * FROM bulktest");
 	count->execute();
 	delete count;
@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE( nofetch )
 
 BOOST_AUTO_TEST_CASE( bigIterate )
 {
-	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
+	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 
 	auto count = ro->newSelectCommand("SELECT * FROM bulktest");
 	unsigned int rows = 0;
@@ -213,7 +213,7 @@ BOOST_AUTO_TEST_CASE( bigIterate )
 
 BOOST_AUTO_TEST_CASE( insertId )
 {
-	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
+	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 	auto ins = ro->newModifyCommand("INSERT INTO idtest(foo) VALUES(1)");
 	for (int x = 1; x < 4; x++) {
 		ins->execute();
@@ -225,8 +225,8 @@ BOOST_AUTO_TEST_CASE( insertId )
 
 BOOST_AUTO_TEST_CASE( reconnect )
 {
-	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
-	auto rok = DB::MockDatabase::openConnectionTo("pqmock");
+	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
+	auto rok = DB::MockDatabase::openConnectionTo("PQmock");
 	auto pqconn = dynamic_cast<PQ::Connection *>(ro);
 	int pid1 = PQbackendPID(pqconn->conn);
 	BOOST_REQUIRE(pid1);
@@ -246,8 +246,8 @@ BOOST_AUTO_TEST_CASE( reconnect )
 
 BOOST_AUTO_TEST_CASE( reconnectInTx )
 {
-	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
-	auto rok = DB::MockDatabase::openConnectionTo("pqmock");
+	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
+	auto rok = DB::MockDatabase::openConnectionTo("PQmock");
 	auto pqconn = dynamic_cast<PQ::Connection *>(ro);
 	int pid1 = PQbackendPID(pqconn->conn);
 	BOOST_REQUIRE(pid1);
@@ -265,7 +265,7 @@ BOOST_AUTO_TEST_CASE( reconnectInTx )
 
 BOOST_AUTO_TEST_CASE( statementReuse )
 {
-	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
+	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 	auto pqconn = dynamic_cast<PQ::Connection *>(ro);
 	BOOST_REQUIRE_EQUAL(pqconn->preparedStatements.size(), 0);
 	ro->modify("DELETE FROM test")->execute();
@@ -289,7 +289,7 @@ BOOST_AUTO_TEST_CASE( statementReuse )
 
 BOOST_AUTO_TEST_CASE( bulkSelect )
 {
-	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
+	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 	auto sel = ro->newSelectCommand("SELECT * FROM test WHERE id > ? --libdbpp:no-cursor");
 	sel->bindParamI(0, 1);
 	int totalInt = 0, count = 0;
@@ -305,7 +305,7 @@ BOOST_AUTO_TEST_CASE( bulkSelect )
 
 BOOST_AUTO_TEST_CASE( insertReturning )
 {
-	auto ro = DB::MockDatabase::openConnectionTo("pqmock");
+	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 	auto sel = ro->newSelectCommand("INSERT INTO test(id, fl) VALUES(1, 3) RETURNING id + fl --libdbpp:no-cursor");
 	int totalInt = 0, count = 0;
 	sel->forEachRow<int64_t>([&totalInt, &count](auto i) {
@@ -320,7 +320,7 @@ BOOST_AUTO_TEST_CASE( insertReturning )
 
 BOOST_AUTO_TEST_CASE( closeOnError )
 {
-	auto ro = DB::ConnectionPtr(DB::MockDatabase::openConnectionTo("pqmock"));
+	auto ro = DB::ConnectionPtr(DB::MockDatabase::openConnectionTo("PQmock"));
 	BOOST_REQUIRE_THROW({
 			ro->select("SELECT * FROM test")->forEachRow<>([&ro](){
 					ro->execute("nonsense");

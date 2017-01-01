@@ -4,6 +4,7 @@
 #include <modifycommand.h>
 #include <selectcommand.h>
 #include <selectcommandUtil.impl.h>
+#include <boost/algorithm/string.hpp>
 
 NAMEDFACTORY("postgresql", PQ::Mock, DB::MockDatabaseFactory);
 
@@ -21,7 +22,7 @@ AdHocFormatter(MockConnStr, "user=postgres dbname=%?");
 DB::Connection *
 Mock::openConnection() const
 {
-	return new Connection(MockConnStr::get(testDbName));
+	return new Connection(MockConnStr::get(boost::algorithm::to_lower_copy(testDbName)));
 }
 
 AdHocFormatter(MockSetUnlogged, "ALTER TABLE %?.%? SET UNLOGGED");
@@ -29,7 +30,7 @@ void
 Mock::SetTablesToUnlogged() const
 {
 	auto c = DB::ConnectionPtr(openConnection());
-	auto s = c->select(R"SQL( 
+	auto s = c->select(R"SQL(
 SELECT n.nspname, c.relname
 FROM pg_class c, pg_namespace n
 WHERE c.relkind = 'r'
@@ -64,7 +65,7 @@ Mock::~Mock()
 void
 Mock::DropDatabase() const
 {
-	auto t = master->modify("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = ?");
+	auto t = master->modify("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE LOWER(datname) = LOWER(?)");
 	t->bindParamS(0, testDbName);
 	t->execute();
 	MockServerDatabase::DropDatabase();
