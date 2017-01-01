@@ -3,10 +3,10 @@
 #include "pq-column.h"
 #include "pq-error.h"
 
-PQ::BulkSelectCommand::BulkSelectCommand(Connection * conn, const std::string & sql, unsigned int no) :
+PQ::BulkSelectCommand::BulkSelectCommand(Connection * conn, const std::string & sql, unsigned int no, const DB::CommandOptions * opts) :
 	DB::Command(sql),
 	DB::SelectCommand(sql),
-	PQ::PreparedStatement(conn, sql, no),
+	PQ::PreparedStatement(conn, sql, no, opts),
 	executed(false)
 {
 }
