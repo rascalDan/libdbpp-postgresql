@@ -49,6 +49,7 @@ namespace PQ {
 
 			mutable unsigned int pstmntNo;
 	};
+	typedef boost::shared_ptr<Connection> ConnectionPtr;
 }
 
 #endif
