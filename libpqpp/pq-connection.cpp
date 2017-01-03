@@ -186,3 +186,9 @@ PQ::Connection::insertId()
 	return id;
 }
 
+int
+PQ::Connection::serverVersion() const
+{
+	return PQserverVersion(conn);
+}
+

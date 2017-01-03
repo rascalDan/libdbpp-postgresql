@@ -33,6 +33,7 @@ namespace PQ {
 			DB::ModifyCommand * newModifyCommand(const std::string & sql, const DB::CommandOptions *) override;
 
 			int64_t insertId() override;
+			int serverVersion() const;
 
 			void	beginBulkUpload(const char *, const char *) override;
 			void	endBulkUpload(const char *) override;
