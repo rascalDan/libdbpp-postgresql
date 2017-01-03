@@ -19,7 +19,7 @@ Mock::Mock(const std::string & masterdb, const std::string & name, const std::ve
 }
 
 AdHocFormatter(MockConnStr, "user=postgres dbname=%?");
-DB::Connection *
+PQ::Connection *
 Mock::openConnection() const
 {
 	return new Connection(MockConnStr::get(boost::algorithm::to_lower_copy(testDbName)));

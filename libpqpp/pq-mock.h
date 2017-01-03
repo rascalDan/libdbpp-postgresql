@@ -4,6 +4,7 @@
 #include <mockDatabase.h>
 #include <boost/filesystem/path.hpp>
 #include <visibility.h>
+#include "pq-connection.h"
 
 namespace PQ {
 	class DLL_PUBLIC Mock : public DB::MockServerDatabase {
@@ -11,7 +12,7 @@ namespace PQ {
 			Mock(const std::string & master, const std::string & name, const std::vector<boost::filesystem::path> & ss);
 			~Mock();
 
-			DB::Connection * openConnection() const override;
+			PQ::Connection * openConnection() const override;
 
 		protected:
 			void DropDatabase() const override;
