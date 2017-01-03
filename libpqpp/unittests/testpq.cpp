@@ -284,6 +284,7 @@ BOOST_AUTO_TEST_CASE( statementReuse )
 		assertColumnValueHelper(*select, 0, 16);
 		assertColumnValueHelper(*select, 1, 24);
 	}
+	delete select;
 	delete ro;
 }
 
