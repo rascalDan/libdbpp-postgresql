@@ -1,7 +1,6 @@
 #ifndef PQ_CURSORSELECTCOMMAND_H
 #define PQ_CURSORSELECTCOMMAND_H
 
-#include <selectcommand.h>
 #include "pq-selectbase.h"
 #include "pq-command.h"
 #include <vector>
@@ -10,7 +9,7 @@
 namespace PQ {
 	class Connection;
 	class Column;
-	class CursorSelectCommand : public DB::SelectCommand, public SelectBase, public Command {
+	class CursorSelectCommand : public SelectBase, public Command {
 		public:
 			CursorSelectCommand(Connection *, const std::string & sql, unsigned int no);
 			virtual ~CursorSelectCommand();

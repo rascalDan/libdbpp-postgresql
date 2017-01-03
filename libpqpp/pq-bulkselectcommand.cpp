@@ -5,17 +5,10 @@
 
 PQ::BulkSelectCommand::BulkSelectCommand(Connection * conn, const std::string & sql, unsigned int no, const DB::CommandOptions * opts) :
 	DB::Command(sql),
-	DB::SelectCommand(sql),
+	PQ::SelectBase(sql),
 	PQ::PreparedStatement(conn, sql, no, opts),
 	executed(false)
 {
-}
-
-PQ::BulkSelectCommand::~BulkSelectCommand()
-{
-	if (execRes) {
-		PQclear(execRes);
-	}
 }
 
 void
@@ -27,10 +20,7 @@ PQ::BulkSelectCommand::execute()
 				PGRES_TUPLES_OK);
 		nTuples = PQntuples(execRes);
 		tuple = -1;
-		unsigned int nFields = PQnfields(execRes);
-		for (unsigned int f = 0; f < nFields; f += 1) {
-			insertColumn(DB::ColumnPtr(new Column(this, f)));
-		}
+		createColumns(execRes);
 		executed = true;
 	}
 }
