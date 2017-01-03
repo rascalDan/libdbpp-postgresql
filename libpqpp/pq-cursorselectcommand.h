@@ -20,8 +20,6 @@ namespace PQ {
 		private:
 			void fetchTuples();
 			std::string mkdeclare() const;
-			std::string mkfetch() const;
-			std::string mkclose() const;
 
 			mutable bool executed;
 			mutable bool txOpened;

@@ -3,6 +3,10 @@
 #include "pq-error.h"
 #include <compileTimeFormatter.h>
 
+AdHocFormatter(PQCursorSelectDeclare, "DECLARE %? CURSOR FOR %?");
+AdHocFormatter(PQCursorSelectFetch, "FETCH %? IN %?");
+AdHocFormatter(PQCursorSelectClose, "CLOSE %?");
+
 PQ::CursorSelectCommand::CursorSelectCommand(Connection * conn, const std::string & sql, unsigned int no) :
 	DB::Command(sql),
 	PQ::SelectBase(sql),
@@ -11,8 +15,8 @@ PQ::CursorSelectCommand::CursorSelectCommand(Connection * conn, const std::strin
 	txOpened(false),
 	fTuples(35),
 	s_declare(mkdeclare()),
-	s_fetch(mkfetch()),
-	s_close(mkclose())
+	s_fetch(PQCursorSelectFetch::get(fTuples, stmntName)),
+	s_close(PQCursorSelectClose::get(stmntName))
 {
 }
 
@@ -26,27 +30,12 @@ PQ::CursorSelectCommand::~CursorSelectCommand()
 	}
 }
 
-AdHocFormatter(PQCursorSelectDeclare, "DECLARE %? CURSOR FOR %?");
 std::string
 PQ::CursorSelectCommand::mkdeclare() const
 {
 	std::string psql;
 	prepareSql(psql, sql);
 	return PQCursorSelectDeclare::get(stmntName, psql);
-}
-
-AdHocFormatter(PQCursorSelectFetch, "FETCH %? IN %?");
-std::string
-PQ::CursorSelectCommand::mkfetch() const
-{
-	return PQCursorSelectFetch::get(fTuples, stmntName);
-}
-
-AdHocFormatter(PQCursorSelectClose, "CLOSE %?");
-std::string
-PQ::CursorSelectCommand::mkclose() const
-{
-	return PQCursorSelectClose::get(stmntName);
 }
 
 void
