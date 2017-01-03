@@ -25,7 +25,7 @@ namespace PQ {
 			void commitTxInt() override;
 			void rollbackTxInt() override;
 			void ping() const override;
-			void execute(const std::string & sql, const DB::CommandOptions *) override;
+			void execute(const std::string & sql, const DB::CommandOptions * = nullptr) override;
 			DB::BulkDeleteStyle bulkDeleteStyle() const override;
 			DB::BulkUpdateStyle bulkUpdateStyle() const override;
 
