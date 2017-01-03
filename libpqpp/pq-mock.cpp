@@ -29,7 +29,8 @@ AdHocFormatter(MockSetUnlogged, "ALTER TABLE %?.%? SET UNLOGGED");
 void
 Mock::SetTablesToUnlogged() const
 {
-	auto c = DB::ConnectionPtr(openConnection());
+	auto c = ConnectionPtr(openConnection());
+	if (c->serverVersion() < 90500) return;
 	auto s = c->select(R"SQL(
 SELECT n.nspname, c.relname
 FROM pg_class c, pg_namespace n
