@@ -11,6 +11,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <pq-error.h>
 #include <pq-connection.h>
+#include <pq-command.h>
 #include <selectcommandUtil.impl.h>
 
 class StandardMockDatabase : public PQ::Mock {
@@ -291,7 +292,8 @@ BOOST_AUTO_TEST_CASE( statementReuse )
 BOOST_AUTO_TEST_CASE( bulkSelect )
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
-	auto sel = ro->newSelectCommand("SELECT * FROM test WHERE id > ? --libdbpp:no-cursor");
+	PQ::CommandOptions co(0, 35, false);
+	auto sel = ro->newSelectCommand("SELECT * FROM test WHERE id > ?", &co);
 	sel->bindParamI(0, 1);
 	int totalInt = 0, count = 0;
 	sel->forEachRow<int64_t>([&totalInt, &count](auto i) {
@@ -307,7 +309,8 @@ BOOST_AUTO_TEST_CASE( bulkSelect )
 BOOST_AUTO_TEST_CASE( insertReturning )
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
-	auto sel = ro->newSelectCommand("INSERT INTO test(id, fl) VALUES(1, 3) RETURNING id + fl --libdbpp:no-cursor");
+	PQ::CommandOptions co(0, 35, false);
+	auto sel = ro->newSelectCommand("INSERT INTO test(id, fl) VALUES(1, 3) RETURNING id + fl", &co);
 	int totalInt = 0, count = 0;
 	sel->forEachRow<int64_t>([&totalInt, &count](auto i) {
 			totalInt += i;

@@ -99,11 +99,11 @@ PQ::Connection::ping() const
 DB::SelectCommand *
 PQ::Connection::newSelectCommand(const std::string & sql, const DB::CommandOptions * opts)
 {
-	// Yes, this is a hack
-	if (sql.find("libdbpp:no-cursor") != (std::string::size_type)-1) {
+	auto pqco = dynamic_cast<const CommandOptions *>(opts);
+	if (pqco && !pqco->useCursor) {
 		return new BulkSelectCommand(this, sql, pstmntNo++, opts);
 	}
-	return new CursorSelectCommand(this, sql, pstmntNo++);
+	return new CursorSelectCommand(this, sql, pstmntNo++, pqco);
 }
 
 DB::ModifyCommand *
