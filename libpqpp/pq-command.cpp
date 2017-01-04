@@ -25,6 +25,15 @@ PQ::Command::~Command()
 	}
 }
 
+PQ::CommandOptions::CommandOptions(std::size_t hash,
+		unsigned int ft,
+		bool uc) :
+	DB::CommandOptions(hash),
+	fetchTuples(ft),
+	useCursor(uc)
+{
+}
+
 AdHocFormatter(PQCommandParamName, "$%?");
 void
 PQ::Command::prepareSql(std::stringstream & psql, const std::string & sql) const

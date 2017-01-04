@@ -4,9 +4,21 @@
 #include <command.h>
 #include <libpq-fe.h>
 #include <vector>
+#include <visibility.h>
 
 namespace PQ {
 	class Connection;
+
+	class DLL_PUBLIC CommandOptions : public DB::CommandOptions {
+		public:
+			CommandOptions(std::size_t hash,
+					unsigned int fetchTuples = 35,
+					bool useCursor = true);
+
+			unsigned int fetchTuples;
+			bool useCursor;
+	};
+
 	class Command : public virtual DB::Command {
 		public:
 			Command(Connection *, const std::string & sql, unsigned int no);

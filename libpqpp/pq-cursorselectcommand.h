@@ -11,7 +11,7 @@ namespace PQ {
 	class Column;
 	class CursorSelectCommand : public SelectBase, public Command {
 		public:
-			CursorSelectCommand(Connection *, const std::string & sql, unsigned int no);
+			CursorSelectCommand(Connection *, const std::string & sql, unsigned int no, const PQ::CommandOptions *);
 			virtual ~CursorSelectCommand();
 
 			bool fetch() override;
