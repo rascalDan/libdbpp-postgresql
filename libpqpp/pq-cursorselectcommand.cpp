@@ -46,7 +46,7 @@ PQ::CursorSelectCommand::execute()
 			c->beginTx();
 			txOpened = true;
 		}
-		execRes = c->checkResult(
+		c->checkResultFree(
 				PQexecParams(c->conn, s_declare.c_str(), values.size(), NULL, &values.front(), &lengths.front(), NULL, 0),
 				PGRES_COMMAND_OK);
 		fetchTuples();
@@ -58,10 +58,6 @@ PQ::CursorSelectCommand::execute()
 void
 PQ::CursorSelectCommand::fetchTuples()
 {
-	if (execRes) {
-		PQclear(execRes);
-	}
-	execRes = NULL;
 	execRes = c->checkResult(PQexec(c->conn, s_fetch.c_str()), PGRES_TUPLES_OK);
 	nTuples = PQntuples(execRes);
 	tuple = -1;
@@ -72,6 +68,9 @@ PQ::CursorSelectCommand::fetch()
 {
 	execute();
 	if ((tuple >= (nTuples - 1)) && (nTuples == fTuples)) {
+		// Delete the previous result set
+		PQclear(execRes);
+		execRes = NULL;
 		fetchTuples();
 	}
 	if (tuple++ < (nTuples - 1)) {
