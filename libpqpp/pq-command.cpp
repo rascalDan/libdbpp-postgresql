@@ -25,22 +25,26 @@ PQ::Command::~Command()
 	}
 }
 
+AdHocFormatter(PQCommandParamName, "$%?");
 void
-PQ::Command::prepareSql(std::string & psql, const std::string & sql)
+PQ::Command::prepareSql(std::stringstream & psql, const std::string & sql) const
 {
-	char buf[10];
+	if (values.empty()) {
+		psql << sql;
+		return;
+	}
 	int p = 1;
 	bool inquote = false;
-	for(std::string::const_iterator i = sql.begin(); i != sql.end(); ++i) {
-		if (*i == '?' && !inquote) {
-			psql.append(buf, snprintf(buf, 10, "$%d", p++));
+	for (const auto & i : sql) {
+		if (i == '?' && !inquote) {
+			PQCommandParamName::write(psql, p++);
 		}
-		else if (*i == '\'') {
+		else if (i == '\'') {
 			inquote = !inquote;
-			psql += *i;
+			psql << i;
 		}
 		else {
-			psql += *i;
+			psql << i;
 		}
 	}
 }

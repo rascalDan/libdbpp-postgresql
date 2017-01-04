@@ -3,7 +3,7 @@
 #include "pq-error.h"
 #include <compileTimeFormatter.h>
 
-AdHocFormatter(PQCursorSelectDeclare, "DECLARE %? CURSOR FOR %?");
+AdHocFormatter(PQCursorSelectDeclare, "DECLARE %? CURSOR FOR ");
 AdHocFormatter(PQCursorSelectFetch, "FETCH %? IN %?");
 AdHocFormatter(PQCursorSelectClose, "CLOSE %?");
 
@@ -14,7 +14,6 @@ PQ::CursorSelectCommand::CursorSelectCommand(Connection * conn, const std::strin
 	executed(false),
 	txOpened(false),
 	fTuples(35),
-	s_declare(mkdeclare()),
 	s_fetch(PQCursorSelectFetch::get(fTuples, stmntName)),
 	s_close(PQCursorSelectClose::get(stmntName))
 {
@@ -33,9 +32,10 @@ PQ::CursorSelectCommand::~CursorSelectCommand()
 std::string
 PQ::CursorSelectCommand::mkdeclare() const
 {
-	std::string psql;
+	std::stringstream psql;
+	PQCursorSelectDeclare::write(psql, stmntName);
 	prepareSql(psql, sql);
-	return PQCursorSelectDeclare::get(stmntName, psql);
+	return psql.str();
 }
 
 void
@@ -45,6 +45,9 @@ PQ::CursorSelectCommand::execute()
 		if (!c->inTx()) {
 			c->beginTx();
 			txOpened = true;
+		}
+		if (s_declare.empty()) {
+			s_declare = mkdeclare();
 		}
 		c->checkResultFree(
 				PQexecParams(c->conn, s_declare.c_str(), values.size(), NULL, &values.front(), &lengths.front(), NULL, 0),
