@@ -178,7 +178,7 @@ PQ::Connection::bulkUploadData(const char * data, size_t len) const
 int64_t
 PQ::Connection::insertId()
 {
-	CursorSelectCommand getId(this, "SELECT lastval()", pstmntNo++);
+	BulkSelectCommand getId(this, "SELECT lastval()", pstmntNo++, NULL);
 	int64_t id = -1;
 	while (getId.fetch()) {
 		getId[0] >> id;
