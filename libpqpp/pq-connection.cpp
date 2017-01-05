@@ -88,6 +88,7 @@ PQ::Connection::ping() const
 		if (inTx()) {
 			throw ConnectionError(conn);
 		}
+		preparedStatements.clear();
 		PQreset(conn);
 		if (PQstatus(conn) != CONNECTION_OK) {
 			throw ConnectionError(conn);
