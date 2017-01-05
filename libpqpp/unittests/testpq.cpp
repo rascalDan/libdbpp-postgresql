@@ -232,6 +232,7 @@ BOOST_AUTO_TEST_CASE( reconnect )
 	int pid1 = PQbackendPID(pqconn->conn);
 	BOOST_REQUIRE(pid1);
 	ro->ping();
+	ro->modify("TRUNCATE TABLE test")->execute();
 	auto kil = rok->newModifyCommand("SELECT pg_terminate_backend(?)");
 	kil->bindParamI(0, pid1);
 	kil->execute();
@@ -241,6 +242,7 @@ BOOST_AUTO_TEST_CASE( reconnect )
 	int pid2 = PQbackendPID(pqconn->conn);
 	BOOST_REQUIRE(pid2);
 	BOOST_REQUIRE(pid1 != pid2);
+	ro->modify("TRUNCATE TABLE test")->execute();
 	delete ro;
 	delete rok;
 }

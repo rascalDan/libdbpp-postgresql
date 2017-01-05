@@ -43,7 +43,7 @@ namespace PQ {
 			void checkResultFree(PGresult * res, int expected, int alternative = -1) const;
 
 			PGconn * conn;
-			PreparedStatements preparedStatements;
+			mutable PreparedStatements preparedStatements;
 
 		private:
 			static bool checkResultInt(PGresult * res, int expected, int alternative);
