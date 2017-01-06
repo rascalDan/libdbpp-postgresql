@@ -5,6 +5,7 @@
 #include <libpq-fe.h>
 #include <vector>
 #include <visibility.h>
+#include "pq-connection.h"
 
 namespace PQ {
 	class Connection;
@@ -21,7 +22,7 @@ namespace PQ {
 
 	class Command : public virtual DB::Command {
 		public:
-			Command(Connection *, const std::string & sql, unsigned int no);
+			Command(Connection *, const std::string & sql, const DB::CommandOptions *);
 			virtual ~Command() = 0;
 
 			void bindParamI(unsigned int, int) override;
@@ -44,6 +45,7 @@ namespace PQ {
 			void bindNull(unsigned int) override;
 		protected:
 			void prepareSql(std::stringstream & psql, const std::string & sql) const;
+			Connection::StatementHash hash;
 			const std::string stmntName;
 			Connection * const c;
 

@@ -5,10 +5,11 @@
 #include <compileTimeFormatter.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-AdHocFormatter(PQCommondStatement, "pStatement_%?_%?");
-PQ::Command::Command(Connection * conn, const std::string & sql, unsigned int no) :
+AdHocFormatter(PQCommondStatement, "pStatement_id%?");
+PQ::Command::Command(Connection * conn, const std::string & sql, const DB::CommandOptions * opts) :
 	DB::Command(sql),
-	stmntName(PQCommondStatement::get(no, this)),
+	hash(opts && opts->hash ? *opts->hash : std::hash<std::string>()(sql)),
+	stmntName(PQCommondStatement::get(hash)),
 	c(conn)
 {
 }

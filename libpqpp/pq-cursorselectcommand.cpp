@@ -7,10 +7,10 @@ AdHocFormatter(PQCursorSelectDeclare, "DECLARE %? CURSOR FOR ");
 AdHocFormatter(PQCursorSelectFetch, "FETCH %? IN %?");
 AdHocFormatter(PQCursorSelectClose, "CLOSE %?");
 
-PQ::CursorSelectCommand::CursorSelectCommand(Connection * conn, const std::string & sql, unsigned int no, const PQ::CommandOptions * pqco) :
+PQ::CursorSelectCommand::CursorSelectCommand(Connection * conn, const std::string & sql, const PQ::CommandOptions * pqco, const DB::CommandOptions * opts) :
 	DB::Command(sql),
 	PQ::SelectBase(sql),
-	PQ::Command(conn, sql, no),
+	PQ::Command(conn, sql, opts),
 	executed(false),
 	txOpened(false),
 	fTuples(pqco ? pqco->fetchTuples : 35),
