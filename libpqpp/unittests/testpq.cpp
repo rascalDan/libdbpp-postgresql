@@ -308,6 +308,34 @@ BOOST_AUTO_TEST_CASE( bulkSelect )
 	delete ro;
 }
 
+BOOST_AUTO_TEST_CASE( selectWithSmallPages )
+{
+	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
+	PQ::CommandOptions co(0, 1, true);
+	auto sel = ro->newSelectCommand("SELECT * FROM test WHERE id > ?", &co);
+	sel->bindParamI(0, 1);
+	int totalInt = 0, count = 0;
+	sel->forEachRow<int64_t>([&totalInt, &count](auto i) {
+			totalInt += i;
+			count += 1;
+		});
+	delete sel;
+	BOOST_REQUIRE_EQUAL(20, totalInt);
+	BOOST_REQUIRE_EQUAL(8, count);
+	delete ro;
+}
+
+BOOST_AUTO_TEST_CASE( dateoid )
+{
+	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
+	PQ::CommandOptions co(0, 1, false);
+	auto sel = ro->newSelectCommand("SELECT '2017-01-08'::date", &co);
+	for (const auto & r : sel->as<boost::posix_time::ptime>()) {
+		BOOST_REQUIRE_EQUAL(boost::posix_time::ptime(boost::gregorian::date(2017, 1, 8)), r.value<0>());
+	}
+	delete ro;
+}
+
 BOOST_AUTO_TEST_CASE( insertReturning )
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
@@ -360,6 +388,12 @@ BOOST_AUTO_TEST_SUITE_END();
 BOOST_AUTO_TEST_CASE( connfail )
 {
 	BOOST_REQUIRE_THROW(DB::ConnectionFactory::createNew("postgresql", "host=localhost user=no"), DB::ConnectionError);
+	try {
+		DB::ConnectionFactory::createNew("postgresql", "host=localhost user=no");
+	}
+	catch (const DB::ConnectionError & e) {
+		BOOST_REQUIRE_EQUAL(e.what(), "FATAL:  role \"no\" does not exist\n");
+	}
 }
 
 BOOST_AUTO_TEST_CASE( ssl )
