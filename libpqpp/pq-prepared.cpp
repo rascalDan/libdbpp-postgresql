@@ -1,10 +1,9 @@
 #include "pq-prepared.h"
 #include "pq-connection.h"
 
-PQ::PreparedStatement::PreparedStatement(Connection * c, const std::string & sql, unsigned int no, const DB::CommandOptions * opts) :
+PQ::PreparedStatement::PreparedStatement(Connection * c, const std::string & sql, const DB::CommandOptions * opts) :
 	DB::Command(sql),
-	Command(c, sql, no),
-	hash(opts && opts->hash ? *opts->hash : std::hash<std::string>()(sql)),
+	Command(c, sql, opts),
 	pstmt(nullptr)
 {
 }

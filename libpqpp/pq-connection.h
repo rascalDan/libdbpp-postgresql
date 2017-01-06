@@ -47,8 +47,6 @@ namespace PQ {
 
 		private:
 			static bool checkResultInt(PGresult * res, int expected, int alternative);
-
-			mutable unsigned int pstmntNo;
 	};
 	typedef boost::shared_ptr<Connection> ConnectionPtr;
 }

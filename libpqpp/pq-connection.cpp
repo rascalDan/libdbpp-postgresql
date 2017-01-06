@@ -28,8 +28,7 @@ PQ::ConnectionError::ConnectionError(const PGconn * conn) :
 }
 
 PQ::Connection::Connection(const std::string & info) :
-	conn(PQconnectdb(info.c_str())),
-	pstmntNo(0)
+	conn(PQconnectdb(info.c_str()))
 {
 	if (PQstatus(conn) != CONNECTION_OK) {
 		ConnectionError ce(conn);
@@ -102,15 +101,15 @@ PQ::Connection::newSelectCommand(const std::string & sql, const DB::CommandOptio
 {
 	auto pqco = dynamic_cast<const CommandOptions *>(opts);
 	if (pqco && !pqco->useCursor) {
-		return new BulkSelectCommand(this, sql, pstmntNo++, opts);
+		return new BulkSelectCommand(this, sql, opts);
 	}
-	return new CursorSelectCommand(this, sql, pstmntNo++, pqco);
+	return new CursorSelectCommand(this, sql, pqco, opts);
 }
 
 DB::ModifyCommand *
 PQ::Connection::newModifyCommand(const std::string & sql, const DB::CommandOptions * opts)
 {
-	return new ModifyCommand(this, sql, pstmntNo++, opts);
+	return new ModifyCommand(this, sql, opts);
 }
 
 bool
@@ -176,10 +175,12 @@ PQ::Connection::bulkUploadData(const char * data, size_t len) const
 	}
 }
 
+static const std::string selectLastVal("SELECT lastval()");
+static const DB::CommandOptions selectLastValOpts(std::hash<std::string>()(selectLastVal));
 int64_t
 PQ::Connection::insertId()
 {
-	BulkSelectCommand getId(this, "SELECT lastval()", pstmntNo++, NULL);
+	BulkSelectCommand getId(this, selectLastVal, &selectLastValOpts);
 	int64_t id = -1;
 	while (getId.fetch()) {
 		getId[0] >> id;
