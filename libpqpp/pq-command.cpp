@@ -29,10 +29,11 @@ PQ::Command::~Command()
 	}
 }
 
-PQ::CommandOptions::CommandOptions(std::size_t hash, const DB::CommandOptionsMap &) :
-	DB::CommandOptions(hash)
+PQ::CommandOptions::CommandOptions(std::size_t hash, const DB::CommandOptionsMap & map) :
+	DB::CommandOptions(hash),
+	fetchTuples(get(map, "page-size", 35)),
+	useCursor(!isSet(map, "no-cursor"))
 {
-
 }
 
 PQ::CommandOptions::CommandOptions(std::size_t hash,
