@@ -12,6 +12,7 @@ namespace PQ {
 
 	class DLL_PUBLIC CommandOptions : public DB::CommandOptions {
 		public:
+			CommandOptions(std::size_t, const DB::CommandOptionsMap &);
 			CommandOptions(std::size_t hash,
 					unsigned int fetchTuples = 35,
 					bool useCursor = true);

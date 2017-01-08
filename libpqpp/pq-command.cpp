@@ -4,6 +4,9 @@
 #include <string.h>
 #include <compileTimeFormatter.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <factory.h>
+
+NAMEDFACTORY("postgresql", PQ::CommandOptions, DB::CommandOptionsFactory);
 
 AdHocFormatter(PQCommondStatement, "pStatement_id%?");
 PQ::Command::Command(Connection * conn, const std::string & sql, const DB::CommandOptions * opts) :
@@ -24,6 +27,12 @@ PQ::Command::~Command()
 			free(values[i]);
 		}
 	}
+}
+
+PQ::CommandOptions::CommandOptions(std::size_t hash, const DB::CommandOptionsMap &) :
+	DB::CommandOptions(hash)
+{
+
 }
 
 PQ::CommandOptions::CommandOptions(std::size_t hash,
