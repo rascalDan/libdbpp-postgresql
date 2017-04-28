@@ -1,9 +1,7 @@
 import os ;
-import slice ;
 
 using gcc : : [ os.environ CXX ] ;
 
-variant component ;
 variant coverage : debug ;
 
 project
@@ -14,54 +12,16 @@ project
       <variant>debug:<linkflags>"-Wl,-z,defs,--warn-once"
       <variant>coverage:<cxxflags>"-W -Wall -Werror -Wwrite-strings -std=c++1y --coverage -fvisibility=hidden"
       <variant>coverage:<linkflags>"-Wl,-z,defs,--warn-once --coverage"
-      <variant>component:<cxxflags>"-W -Wall -Werror -Wwrite-strings -std=c++1y -fPIC -fvisibility=hidden"
-			<variant>component:<linkflags>"-Wl,-z,lazy,--warn-once,-fPIC"
 	;
 
-build-project gentoobrowse-api ;
-build-project gentoobrowse-client ;
-# build-project icetray ;
-build-project libadhocutil ;
-build-project libdbpp ;
-build-project libjsonpp ;
-build-project libmisc ;
-build-project libmysqlpp ;
-build-project libodbcpp ;
 build-project libpqpp ;
-build-project libsqlitepp ;
-build-project libtmdb ;
-build-project mythfs ;
-build-project netfs ;
-# build-project p2pvr ;
-build-project project2 ;
-build-project slicer ;
 
 # Some useful aliases
 
-lib xml++-3.0 ;
-lib xml2 ;
 lib glibmm-2.4 ;
 lib gobject-2.0 ;
 lib glib-2.0 ;
 lib sigc-2.0 ;
-
-alias libxmlpp : : : :
-	<include>/usr/include/libxml++-3.0
-	<include>/usr/lib/libxml++-3.0/include
-	<include>/usr/include/libxml2
-	<include>/usr/include/glibmm-2.4
-	<include>/usr/lib/glibmm-2.4/include
-	<include>/usr/include/glib-2.0
-	<include>/usr/lib/glib-2.0/include
-	<include>/usr/include/sigc++-2.0
-	<include>/usr/lib/sigc++-2.0/include
-	<library>xml++-3.0
-	<library>xml2
-	<library>glibmm-2.4
-	<library>gobject-2.0
-	<library>glib-2.0
-	<library>sigc-2.0
-	;
 
 alias glibmm : : : :
 	<include>/usr/include/glibmm-2.4
