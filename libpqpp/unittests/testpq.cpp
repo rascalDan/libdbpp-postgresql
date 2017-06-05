@@ -329,7 +329,7 @@ BOOST_AUTO_TEST_CASE( dateoid )
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 	PQ::CommandOptions co(0, 1, false);
-	auto sel = ro->newSelectCommand("SELECT '2017-01-08'::date", &co);
+	auto sel = ro->select("SELECT '2017-01-08'::date", &co);
 	for (const auto & r : sel->as<boost::posix_time::ptime>()) {
 		BOOST_REQUIRE_EQUAL(boost::posix_time::ptime(boost::gregorian::date(2017, 1, 8)), r.value<0>());
 	}
