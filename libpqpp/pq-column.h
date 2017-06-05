@@ -15,6 +15,13 @@ namespace PQ {
 			void apply(DB::HandleField &) const override;
 
 		protected:
+			template<typename T>
+			inline T valueAs() const { return *(T*)(value()); }
+			template<typename T>
+			inline T * valueAsPtr() const { return (T*)(value()); }
+			const char * value() const;
+			int length() const;
+
 			const SelectBase * sc;
 			const Oid oid;
 			// Buffer for PQunescapeBytea
