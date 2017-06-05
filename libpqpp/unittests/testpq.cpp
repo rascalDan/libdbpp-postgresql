@@ -13,6 +13,7 @@
 #include <pq-connection.h>
 #include <pq-command.h>
 #include <selectcommandUtil.impl.h>
+#include <fileUtils.h>
 
 class StandardMockDatabase : public PQ::Mock {
 	public:
@@ -448,6 +449,27 @@ BOOST_AUTO_TEST_CASE( fetchAsBinary )
 	for (const auto & r : sel->as<boost::optional<int64_t>, boost::posix_time::ptime>()) {
 		BOOST_REQUIRE(!r.value<0>());
 		BOOST_REQUIRE_THROW(r.value<1>(), DB::ColumnTypeNotSupported);
+	}
+}
+
+BOOST_AUTO_TEST_CASE( largeBlob )
+{
+	auto ro = DB::ConnectionPtr(DB::MockDatabase::openConnectionTo("PQmock"));
+	ro->execute("TRUNCATE TABLE blobtest");
+	AdHoc::FileUtils::MemMap f("/proc/self/exe");
+	DB::Blob blob(f.data, f.getStat().st_size);
+	BOOST_REQUIRE(blob.len > 200000); // Just assert the mapped file is actually "large"
+	auto ins = ro->modify("INSERT INTO blobtest(data) VALUES(?)");
+	ins->bindParamBLOB(0, blob);
+	ins->execute();
+
+	PQ::CommandOptions opts(0);
+	opts.fetchBinary = true;
+	opts.useCursor = false;
+	auto sel = ro->select("SELECT data, length(data) FROM blobtest", &opts);
+	for (const auto & r : sel->as<DB::Blob, int64_t>()) {
+		BOOST_REQUIRE_EQUAL(r.value<1>(), f.getStat().st_size);
+		BOOST_REQUIRE_EQUAL(r.value<0>(), blob);
 	}
 }
 

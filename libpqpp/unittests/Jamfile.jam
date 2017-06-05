@@ -6,6 +6,7 @@ lib boost_utf : : <name>boost_unit_test_framework ;
 lib boost_filesystem ;
 lib boost_system ;
 lib dbpptestcore : : : : <include>/usr/include/dbpp ;
+lib adhocutil : : : : <include>/usr/include/adhocutil ;
 
 run
 	testpq.cpp
@@ -14,6 +15,7 @@ run
 	<define>BOOST_TEST_DYN_LINK
 	<library>..//dbpp-postgresql
 	<library>dbpptestcore
+	<library>adhocutil
 	<library>boost_utf
 	<library>boost_filesystem
 	<library>boost_system
