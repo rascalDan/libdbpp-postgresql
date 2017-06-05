@@ -15,10 +15,12 @@ namespace PQ {
 			CommandOptions(std::size_t, const DB::CommandOptionsMap &);
 			CommandOptions(std::size_t hash,
 					unsigned int fetchTuples = 35,
-					bool useCursor = true);
+					bool useCursor = true,
+					bool fetchBinary = false);
 
 			unsigned int fetchTuples;
 			bool useCursor;
+			bool fetchBinary;
 	};
 
 	class Command : public virtual DB::Command {

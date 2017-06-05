@@ -407,6 +407,49 @@ BOOST_AUTO_TEST_CASE( blobs )
 	}
 }
 
+BOOST_AUTO_TEST_CASE( fetchAsBinary )
+{
+	auto ro = DB::ConnectionPtr(DB::MockDatabase::openConnectionTo("PQmock"));
+	std::vector<char> buf(29);
+	memcpy(&buf[0], "This is some binary text data", 29);
+	PQ::CommandOptions opts(0);
+	opts.fetchBinary = true;
+	opts.useCursor = false;
+	auto sel = ro->select("SELECT data, md5, length(data) FROM blobtest", &opts);
+	for (const auto & r : sel->as<DB::Blob, boost::optional<std::string>, int64_t>()) {
+		// Assert the DB understood the insert
+		BOOST_REQUIRE_EQUAL(r.value<2>(), buf.size());
+		BOOST_REQUIRE(r.value<1>());
+		BOOST_REQUIRE_EQUAL(*r.value<1>(), "37c7c3737f93e8d17e845deff8fa74d2");
+		// Assert the fetch of the data is correct
+		BOOST_REQUIRE_EQUAL(r.value<0>().len, buf.size());
+		BOOST_REQUIRE(memcmp(r.value<0>().data, &buf[0], 29) == 0);
+	}
+	*opts.hash += 1;
+	sel = ro->select("SELECT CAST(length(data) AS BIGINT) big, CAST(length(data) AS SMALLINT) small FROM blobtest", &opts);
+	for (const auto & r : sel->as<int64_t, int64_t>()) {
+		BOOST_REQUIRE_EQUAL(r.value<0>(), buf.size());
+		BOOST_REQUIRE_EQUAL(r.value<1>(), buf.size());
+	}
+	*opts.hash += 1;
+	sel = ro->select("SELECT true a, false b", &opts);
+	for (const auto & r : sel->as<bool, bool>()) {
+		BOOST_REQUIRE_EQUAL(r.value<0>(), true);
+		BOOST_REQUIRE_EQUAL(r.value<1>(), false);
+	}
+	*opts.hash += 1;
+	sel = ro->select("SELECT xmlelement(name xml)", &opts);
+	for (const auto & r : sel->as<std::string>()) {
+		BOOST_REQUIRE_EQUAL(r.value<0>(), "<xml/>");
+	}
+	*opts.hash += 1;
+	sel = ro->select("SELECT NULL, now()", &opts);
+	for (const auto & r : sel->as<boost::optional<int64_t>, boost::posix_time::ptime>()) {
+		BOOST_REQUIRE(!r.value<0>());
+		BOOST_REQUIRE_THROW(r.value<1>(), DB::ColumnTypeNotSupported);
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END();
 
 BOOST_AUTO_TEST_CASE( connfail )

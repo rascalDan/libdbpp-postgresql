@@ -32,16 +32,19 @@ PQ::Command::~Command()
 PQ::CommandOptions::CommandOptions(std::size_t hash, const DB::CommandOptionsMap & map) :
 	DB::CommandOptions(hash),
 	fetchTuples(get(map, "page-size", 35)),
-	useCursor(!isSet(map, "no-cursor"))
+	useCursor(!isSet(map, "no-cursor")),
+	fetchBinary(isSet(map, "fetch-binary"))
 {
 }
 
 PQ::CommandOptions::CommandOptions(std::size_t hash,
 		unsigned int ft,
-		bool uc) :
+		bool uc,
+		bool fb) :
 	DB::CommandOptions(hash),
 	fetchTuples(ft),
-	useCursor(uc)
+	useCursor(uc),
+	fetchBinary(fb)
 {
 }
 

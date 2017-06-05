@@ -9,7 +9,7 @@ AdHocFormatter(PQCursorSelectClose, "CLOSE %?");
 
 PQ::CursorSelectCommand::CursorSelectCommand(Connection * conn, const std::string & sql, const PQ::CommandOptions * pqco, const DB::CommandOptions * opts) :
 	DB::Command(sql),
-	PQ::SelectBase(sql),
+	PQ::SelectBase(sql, pqco),
 	PQ::Command(conn, sql, opts),
 	executed(false),
 	txOpened(false),
@@ -50,7 +50,7 @@ PQ::CursorSelectCommand::execute()
 			s_declare = mkdeclare();
 		}
 		c->checkResultFree(
-				PQexecParams(c->conn, s_declare.c_str(), values.size(), NULL, &values.front(), &lengths.front(), &formats.front(), 0),
+				PQexecParams(c->conn, s_declare.c_str(), values.size(), NULL, &values.front(), &lengths.front(), &formats.front(), binary),
 				PGRES_COMMAND_OK);
 		fetchTuples();
 		createColumns(execRes);
@@ -61,7 +61,7 @@ PQ::CursorSelectCommand::execute()
 void
 PQ::CursorSelectCommand::fetchTuples()
 {
-	execRes = c->checkResult(PQexec(c->conn, s_fetch.c_str()), PGRES_TUPLES_OK);
+	execRes = c->checkResult(PQexecParams(c->conn, s_fetch.c_str(), 0, NULL, NULL, NULL, NULL, binary), PGRES_TUPLES_OK);
 	nTuples = PQntuples(execRes);
 	tuple = -1;
 }

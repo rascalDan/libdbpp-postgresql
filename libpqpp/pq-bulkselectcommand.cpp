@@ -3,9 +3,9 @@
 #include "pq-column.h"
 #include "pq-error.h"
 
-PQ::BulkSelectCommand::BulkSelectCommand(Connection * conn, const std::string & sql, const DB::CommandOptions * opts) :
+PQ::BulkSelectCommand::BulkSelectCommand(Connection * conn, const std::string & sql, const PQ::CommandOptions * pqco, const DB::CommandOptions * opts) :
 	DB::Command(sql),
-	PQ::SelectBase(sql),
+	PQ::SelectBase(sql, pqco),
 	PQ::PreparedStatement(conn, sql, opts),
 	executed(false)
 {
@@ -16,7 +16,7 @@ PQ::BulkSelectCommand::execute()
 {
 	if (!executed) {
 		execRes = c->checkResult(
-				PQexecPrepared(c->conn, prepare(), values.size(), &values.front(), &lengths.front(), &formats.front(), 0),
+				PQexecPrepared(c->conn, prepare(), values.size(), &values.front(), &lengths.front(), &formats.front(), binary),
 				PGRES_TUPLES_OK);
 		nTuples = PQntuples(execRes);
 		tuple = -1;

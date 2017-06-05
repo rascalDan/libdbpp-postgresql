@@ -101,7 +101,7 @@ PQ::Connection::newSelectCommand(const std::string & sql, const DB::CommandOptio
 {
 	auto pqco = dynamic_cast<const CommandOptions *>(opts);
 	if (pqco && !pqco->useCursor) {
-		return new BulkSelectCommand(this, sql, opts);
+		return new BulkSelectCommand(this, sql, pqco, opts);
 	}
 	return new CursorSelectCommand(this, sql, pqco, opts);
 }
@@ -180,7 +180,7 @@ static const DB::CommandOptions selectLastValOpts(std::hash<std::string>()(selec
 int64_t
 PQ::Connection::insertId()
 {
-	BulkSelectCommand getId(this, selectLastVal, &selectLastValOpts);
+	BulkSelectCommand getId(this, selectLastVal, nullptr, &selectLastValOpts);
 	int64_t id = -1;
 	while (getId.fetch()) {
 		getId[0] >> id;
