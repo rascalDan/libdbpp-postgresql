@@ -383,6 +383,30 @@ BOOST_AUTO_TEST_CASE( closeOnError )
 	ro->commitTx();
 }
 
+BOOST_AUTO_TEST_CASE( blobs )
+{
+	auto ro = DB::ConnectionPtr(DB::MockDatabase::openConnectionTo("PQmock"));
+	std::vector<char> buf(29);
+	memcpy(&buf[0], "This is some binary text data", 29);
+	auto ins = ro->modify("INSERT INTO blobtest(data) VALUES(?)");
+	ins->bindParamBLOB(0, buf);
+	ins->execute();
+
+	ro->execute("UPDATE blobtest SET md5 = md5(data)");
+
+	auto sel = ro->select("SELECT data, md5, length(data) FROM blobtest");
+	for (const auto & r : sel->as<DB::Blob, std::string, int64_t>()) {
+		// Assert the DB understood the insert
+		BOOST_REQUIRE_EQUAL(r.value<2>(), buf.size());
+		BOOST_REQUIRE_EQUAL(r.value<1>(), "37c7c3737f93e8d17e845deff8fa74d2");
+		// Assert the fetch of the data is correct
+		BOOST_REQUIRE_EQUAL(r.value<0>().len, buf.size());
+		std::string str((const char *)r.value<0>().data, r.value<0>().len);
+		BOOST_REQUIRE_EQUAL(str, "This is some binary text data");
+		BOOST_REQUIRE(memcmp(r.value<0>().data, &buf[0], 29) == 0);
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END();
 
 BOOST_AUTO_TEST_CASE( connfail )

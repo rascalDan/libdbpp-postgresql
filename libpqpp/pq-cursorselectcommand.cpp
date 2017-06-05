@@ -50,7 +50,7 @@ PQ::CursorSelectCommand::execute()
 			s_declare = mkdeclare();
 		}
 		c->checkResultFree(
-				PQexecParams(c->conn, s_declare.c_str(), values.size(), NULL, &values.front(), &lengths.front(), NULL, 0),
+				PQexecParams(c->conn, s_declare.c_str(), values.size(), NULL, &values.front(), &lengths.front(), &formats.front(), 0),
 				PGRES_COMMAND_OK);
 		fetchTuples();
 		createColumns(execRes);

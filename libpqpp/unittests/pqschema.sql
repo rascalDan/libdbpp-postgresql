@@ -38,4 +38,7 @@ CREATE TABLE bulktest(
 CREATE TABLE idtest(
 		id serial,
 		foo int);
+CREATE TABLE blobtest(
+		data bytea,
+		md5 text);
 

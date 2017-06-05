@@ -43,6 +43,8 @@ namespace PQ {
 			void bindParamT(unsigned int, const boost::posix_time::time_duration &) override;
 			void bindParamT(unsigned int, const boost::posix_time::ptime &) override;
 
+			void bindParamBLOB(unsigned int, const DB::Blob &) override;
+
 			void bindNull(unsigned int) override;
 		protected:
 			void prepareSql(std::stringstream & psql, const std::string & sql) const;
@@ -56,6 +58,7 @@ namespace PQ {
 			void paramSet(unsigned int, const std::string &);
 			std::vector<char *> values;
 			std::vector<int> lengths;
+			std::vector<int> formats;
 			std::vector<std::string *> bufs;
 	};
 }

@@ -16,7 +16,7 @@ PQ::BulkSelectCommand::execute()
 {
 	if (!executed) {
 		execRes = c->checkResult(
-				PQexecPrepared(c->conn, prepare(), values.size(), &values.front(), &lengths.front(), NULL, 0),
+				PQexecPrepared(c->conn, prepare(), values.size(), &values.front(), &lengths.front(), &formats.front(), 0),
 				PGRES_TUPLES_OK);
 		nTuples = PQntuples(execRes);
 		tuple = -1;

@@ -23,7 +23,7 @@ PQ::Command::~Command()
 		if (bufs[i]) {
 			delete bufs[i];
 		}
-		else {
+		else if (formats[i] == 0) {
 			free(values[i]);
 		}
 	}
@@ -75,6 +75,7 @@ PQ::Command::paramsAtLeast(unsigned int n)
 	if (values.size() <= n) {
 		values.resize(n + 1, NULL);
 		lengths.resize(n + 1, 0);
+		formats.resize(n + 1, 0);
 		bufs.resize(n + 1, NULL);
 	}
 	else {
@@ -82,10 +83,11 @@ PQ::Command::paramsAtLeast(unsigned int n)
 			delete bufs[n];
 			bufs[n] = nullptr;
 		}
-		else {
+		else if (formats[n] == 0) {
 			free(values[n]);
 		}
 		values[n] = NULL;
+		formats[n] = 0;
 	}
 }
 
@@ -95,15 +97,12 @@ PQ::Command::paramSet(unsigned int n, const char * fmt, const T & ... v)
 {
 	paramsAtLeast(n);
 	lengths[n] = asprintf(&values[n], fmt, v...);
-	delete bufs[n];
-	bufs[n] = nullptr;
 }
 
 void
 PQ::Command::paramSet(unsigned int n, const std::string & b)
 {
 	paramsAtLeast(n);
-	delete bufs[n];
 	bufs[n] = new std::string(b);
 	lengths[n] = b.length();
 	values[n] = const_cast<char *>(bufs[n]->data());
@@ -168,6 +167,16 @@ void
 PQ::Command::bindParamT(unsigned int n, const boost::posix_time::ptime & v)
 {
 	paramSet(n, boost::posix_time::to_iso_extended_string(v));
+}
+void
+PQ::Command::bindParamBLOB(unsigned int n, const DB::Blob & v)
+{
+	paramsAtLeast(n);
+	lengths[n] = v.len;
+	formats[n] = 1;
+	values[n] = reinterpret_cast<char *>(const_cast<void *>(v.data));
+	delete bufs[n];
+	bufs[n] = nullptr;
 }
 void
 PQ::Command::bindNull(unsigned int n)

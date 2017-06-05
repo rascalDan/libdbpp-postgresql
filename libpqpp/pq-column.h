@@ -9,6 +9,7 @@ namespace PQ {
 	class Column : public DB::Column {
 		public:
 			Column(const SelectBase *, unsigned int field);
+			~Column();
 
 			bool isNull() const override;
 			void apply(DB::HandleField &) const override;
@@ -16,6 +17,8 @@ namespace PQ {
 		protected:
 			const SelectBase * sc;
 			const Oid oid;
+			// Buffer for PQunescapeBytea
+			mutable unsigned char * buf;
 	};
 }
 

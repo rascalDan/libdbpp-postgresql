@@ -7,8 +7,16 @@
 PQ::Column::Column(const SelectBase * s, unsigned int i) :
 	DB::Column(PQfname(s->execRes, i), i),
 	sc(s),
-	oid(PQftype(sc->execRes, colNo))
+	oid(PQftype(sc->execRes, colNo)),
+	buf(nullptr)
 {
+}
+
+PQ::Column::~Column()
+{
+	if (buf) {
+		PQfreemem(buf);
+	}
 }
 
 bool
@@ -67,6 +75,16 @@ PQ::Column::apply(DB::HandleField & h) const
 		case 1184: //TIMESTAMPTZOID:
 			h.timestamp(boost::posix_time::time_from_string(PQgetvalue(sc->execRes, sc->tuple, colNo)));
 			break;
+		case 17: //BYTEAOID
+			{
+				if (buf) {
+					PQfreemem(buf);
+				}
+				size_t len;
+				buf = PQunescapeBytea((unsigned char *)PQgetvalue(sc->execRes, sc->tuple, colNo), &len);
+				h.blob(DB::Blob(buf, len));
+				break;
+			}
 		default:
 			h.string(PQgetvalue(sc->execRes, sc->tuple, colNo), PQgetlength(sc->execRes, sc->tuple, colNo));
 	}
