@@ -389,7 +389,8 @@ BOOST_AUTO_TEST_CASE( blobs )
 	std::vector<char> buf(29);
 	memcpy(&buf[0], "This is some binary text data", 29);
 	auto ins = ro->modify("INSERT INTO blobtest(data) VALUES(?)");
-	ins->bindParamBLOB(0, buf);
+	DB::Blob blob(buf);
+	ins->bindParamBLOB(0, blob);
 	ins->execute();
 
 	ro->execute("UPDATE blobtest SET md5 = md5(data)");
@@ -403,7 +404,7 @@ BOOST_AUTO_TEST_CASE( blobs )
 		BOOST_REQUIRE_EQUAL(r.value<0>().len, buf.size());
 		std::string str((const char *)r.value<0>().data, r.value<0>().len);
 		BOOST_REQUIRE_EQUAL(str, "This is some binary text data");
-		BOOST_REQUIRE(memcmp(r.value<0>().data, &buf[0], 29) == 0);
+		BOOST_REQUIRE_EQUAL(r.value<0>(), blob);
 	}
 }
 
@@ -412,6 +413,7 @@ BOOST_AUTO_TEST_CASE( fetchAsBinary )
 	auto ro = DB::ConnectionPtr(DB::MockDatabase::openConnectionTo("PQmock"));
 	std::vector<char> buf(29);
 	memcpy(&buf[0], "This is some binary text data", 29);
+	DB::Blob blob(buf);
 	PQ::CommandOptions opts(0);
 	opts.fetchBinary = true;
 	opts.useCursor = false;
@@ -422,8 +424,7 @@ BOOST_AUTO_TEST_CASE( fetchAsBinary )
 		BOOST_REQUIRE(r.value<1>());
 		BOOST_REQUIRE_EQUAL(*r.value<1>(), "37c7c3737f93e8d17e845deff8fa74d2");
 		// Assert the fetch of the data is correct
-		BOOST_REQUIRE_EQUAL(r.value<0>().len, buf.size());
-		BOOST_REQUIRE(memcmp(r.value<0>().data, &buf[0], 29) == 0);
+		BOOST_REQUIRE_EQUAL(r.value<0>(), blob);
 	}
 	*opts.hash += 1;
 	sel = ro->select("SELECT CAST(length(data) AS BIGINT) big, CAST(length(data) AS SMALLINT) small FROM blobtest", &opts);
