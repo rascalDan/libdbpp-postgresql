@@ -463,7 +463,7 @@ BOOST_AUTO_TEST_CASE( largeBlob )
 	ro->execute("TRUNCATE TABLE blobtest");
 	AdHoc::FileUtils::MemMap f("/proc/self/exe");
 	DB::Blob blob(f.data, f.getStat().st_size);
-	BOOST_REQUIRE(blob.len > 200000); // Just assert the mapped file is actually "large"
+	BOOST_REQUIRE(blob.len > 140000); // Just assert the mapped file is actually "large"
 	auto ins = ro->modify("INSERT INTO blobtest(data) VALUES(?)");
 	ins->bindParamBLOB(0, blob);
 	ins->execute();

@@ -6,12 +6,13 @@ variant coverage : debug ;
 
 project
   : requirements
-      <variant>release:<cxxflags>"-std=c++1y -fvisibility=hidden"
-      <variant>release:<linkflags>"-Wl,-z,defs,--warn-once,--gc-sections"
-      <variant>debug:<cxxflags>"-W -Wall -Werror -Wwrite-strings -std=c++1y -fvisibility=hidden"
-      <variant>debug:<linkflags>"-Wl,-z,defs,--warn-once"
-      <variant>coverage:<cxxflags>"-W -Wall -Werror -Wwrite-strings -std=c++1y --coverage -fvisibility=hidden"
-      <variant>coverage:<linkflags>"-Wl,-z,defs,--warn-once --coverage"
+      <cxxflags>"-std=c++17 -fvisibility=hidden -fvisibility-inlines-hidden"
+      <linkflags>"-Wl,-z,defs,--warn-once,--gc-sections"
+      <variant>release:<cxxflags>"-flto=2"
+      <variant>release:<linkflags>"-flto=2"
+      <variant>debug:<cxxflags>"-W -Wall -Werror -Wextra"
+      <variant>coverage:<cxxflags>"--coverage"
+      <variant>coverage:<linkflags>"--coverage"
 	;
 
 build-project libpqpp ;
