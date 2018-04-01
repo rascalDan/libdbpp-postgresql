@@ -3,7 +3,7 @@
 #include "pq-error.h"
 #include <compileTimeFormatter.h>
 
-AdHocFormatter(PQCursorSelectDeclare, "DECLARE %? CURSOR FOR ");
+AdHocFormatter(PQCursorSelectDeclare, "DECLARE %? NO SCROLL CURSOR WITH HOLD FOR ");
 AdHocFormatter(PQCursorSelectFetch, "FETCH %? IN %?");
 AdHocFormatter(PQCursorSelectClose, "CLOSE %?");
 
@@ -12,7 +12,6 @@ PQ::CursorSelectCommand::CursorSelectCommand(Connection * conn, const std::strin
 	PQ::SelectBase(sql, pqco),
 	PQ::Command(conn, sql, opts),
 	executed(false),
-	txOpened(false),
 	fTuples(pqco ? pqco->fetchTuples : 35),
 	s_fetch(PQCursorSelectFetch::get(fTuples, stmntName)),
 	s_close(PQCursorSelectClose::get(stmntName))
@@ -23,9 +22,6 @@ PQ::CursorSelectCommand::~CursorSelectCommand()
 {
 	if (executed && PQtransactionStatus(c->conn) != PQTRANS_INERROR) {
 		c->checkResultFree((PQexec(c->conn, s_close.c_str())), PGRES_COMMAND_OK);
-	}
-	if (txOpened) {
-		c->commitTx();
 	}
 }
 
@@ -42,10 +38,6 @@ void
 PQ::CursorSelectCommand::execute()
 {
 	if (!executed) {
-		if (!c->inTx()) {
-			c->beginTx();
-			txOpened = true;
-		}
 		if (s_declare.empty()) {
 			s_declare = mkdeclare();
 		}

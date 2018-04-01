@@ -112,13 +112,18 @@ BOOST_AUTO_TEST_CASE( selectInTx )
 {
 	auto db = DB::MockDatabase::openConnectionTo("PQmock");
 
-	auto select = db->newSelectCommand("SELECT * FROM test");
-	while (select->fetch()) { }
-	delete select;
+	// Loop to ensure we can create the same statement several times
+	for (int x = 0; x < 2; x++) {
+		auto select = db->select("SELECT * FROM test");
+		// Loop to ensure we can use the same command several times
+		for (int y = 0; y < 2; y++) {
+			while (select->fetch()) { }
+		}
+	}
 	db->finish();
 
 	db->beginTx();
-	select = db->newSelectCommand("SELECT * FROM test");
+	auto select = db->newSelectCommand("SELECT * FROM test");
 	while (select->fetch()) { }
 	delete select;
 	db->commitTx();
