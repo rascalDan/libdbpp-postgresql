@@ -29,8 +29,8 @@ namespace PQ {
 			DB::BulkDeleteStyle bulkDeleteStyle() const override;
 			DB::BulkUpdateStyle bulkUpdateStyle() const override;
 
-			DB::SelectCommand * newSelectCommand(const std::string & sql, const DB::CommandOptions *) override;
-			DB::ModifyCommand * newModifyCommand(const std::string & sql, const DB::CommandOptions *) override;
+			DB::SelectCommandPtr select(const std::string & sql, const DB::CommandOptions * = nullptr) override;
+			DB::ModifyCommandPtr modify(const std::string & sql, const DB::CommandOptions * = nullptr) override;
 
 			int64_t insertId() override;
 			int serverVersion() const;

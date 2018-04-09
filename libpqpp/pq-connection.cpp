@@ -96,20 +96,20 @@ PQ::Connection::ping() const
 }
 
 
-DB::SelectCommand *
-PQ::Connection::newSelectCommand(const std::string & sql, const DB::CommandOptions * opts)
+DB::SelectCommandPtr
+PQ::Connection::select(const std::string & sql, const DB::CommandOptions * opts)
 {
 	auto pqco = dynamic_cast<const CommandOptions *>(opts);
 	if (pqco && !pqco->useCursor) {
-		return new BulkSelectCommand(this, sql, pqco, opts);
+		return std::make_shared<BulkSelectCommand>(this, sql, pqco, opts);
 	}
-	return new CursorSelectCommand(this, sql, pqco, opts);
+	return std::make_shared<CursorSelectCommand>(this, sql, pqco, opts);
 }
 
-DB::ModifyCommand *
-PQ::Connection::newModifyCommand(const std::string & sql, const DB::CommandOptions * opts)
+DB::ModifyCommandPtr
+PQ::Connection::modify(const std::string & sql, const DB::CommandOptions * opts)
 {
-	return new ModifyCommand(this, sql, opts);
+	return std::make_shared<ModifyCommand>(this, sql, opts);
 }
 
 bool

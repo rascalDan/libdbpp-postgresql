@@ -19,17 +19,17 @@ Mock::Mock(const std::string & masterdb, const std::string & name, const std::ve
 }
 
 AdHocFormatter(MockConnStr, "user=postgres dbname=%?");
-PQ::Connection *
+DB::ConnectionPtr
 Mock::openConnection() const
 {
-	return new Connection(MockConnStr::get(boost::algorithm::to_lower_copy(testDbName)));
+	return std::make_shared<Connection>(MockConnStr::get(boost::algorithm::to_lower_copy(testDbName)));
 }
 
 AdHocFormatter(MockSetUnlogged, "ALTER TABLE %?.%? SET UNLOGGED");
 void
 Mock::SetTablesToUnlogged() const
 {
-	auto c = ConnectionPtr(openConnection());
+	auto c = std::static_pointer_cast<Connection>(openConnection());
 	if (c->serverVersion() < 90500) return;
 	auto s = c->select(R"SQL(
 SELECT n.nspname, c.relname
