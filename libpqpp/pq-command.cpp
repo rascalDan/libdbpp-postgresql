@@ -9,7 +9,7 @@
 NAMEDFACTORY("postgresql", PQ::CommandOptions, DB::CommandOptionsFactory);
 
 AdHocFormatter(PQCommondStatement, "pStatement_id%?");
-PQ::Command::Command(Connection * conn, const std::string & sql, const DB::CommandOptions * opts) :
+PQ::Command::Command(Connection * conn, const std::string & sql, const DB::CommandOptionsCPtr & opts) :
 	DB::Command(sql),
 	hash(opts && opts->hash ? *opts->hash : std::hash<std::string>()(sql)),
 	stmntName(PQCommondStatement::get(hash)),

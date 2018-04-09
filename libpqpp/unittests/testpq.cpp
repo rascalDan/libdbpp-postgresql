@@ -268,8 +268,8 @@ BOOST_AUTO_TEST_CASE( statementReuse )
 BOOST_AUTO_TEST_CASE( bulkSelect )
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
-	PQ::CommandOptions co(0, 35, false);
-	auto sel = ro->select("SELECT * FROM test WHERE id > ?", &co);
+	auto co = std::make_shared<PQ::CommandOptions>(0, 35, false);
+	auto sel = ro->select("SELECT * FROM test WHERE id > ?", co);
 	sel->bindParamI(0, 1);
 	int totalInt = 0, count = 0;
 	sel->forEachRow<int64_t>([&totalInt, &count](auto i) {
@@ -283,8 +283,8 @@ BOOST_AUTO_TEST_CASE( bulkSelect )
 BOOST_AUTO_TEST_CASE( selectWithSmallPages )
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
-	PQ::CommandOptions co(0, 1, true);
-	auto sel = ro->select("SELECT * FROM test WHERE id > ?", &co);
+	auto co = std::make_shared<PQ::CommandOptions>(0, 1, true);
+	auto sel = ro->select("SELECT * FROM test WHERE id > ?", co);
 	sel->bindParamI(0, 1);
 	int totalInt = 0, count = 0;
 	sel->forEachRow<int64_t>([&totalInt, &count](auto i) {
@@ -298,8 +298,8 @@ BOOST_AUTO_TEST_CASE( selectWithSmallPages )
 BOOST_AUTO_TEST_CASE( dateoid )
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
-	PQ::CommandOptions co(0, 1, false);
-	auto sel = ro->select("SELECT '2017-01-08'::date", &co);
+	auto co = std::make_shared<PQ::CommandOptions>(0, 1, false);
+	auto sel = ro->select("SELECT '2017-01-08'::date", co);
 	for (const auto & r : sel->as<boost::posix_time::ptime>()) {
 		BOOST_REQUIRE_EQUAL(boost::posix_time::ptime(boost::gregorian::date(2017, 1, 8)), r.value<0>());
 	}
@@ -308,8 +308,8 @@ BOOST_AUTO_TEST_CASE( dateoid )
 BOOST_AUTO_TEST_CASE( insertReturning )
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
-	PQ::CommandOptions co(0, 35, false);
-	auto sel = ro->select("INSERT INTO test(id, fl) VALUES(1, 3) RETURNING id + fl", &co);
+	auto co = std::make_shared<PQ::CommandOptions>(0, 35, false);
+	auto sel = ro->select("INSERT INTO test(id, fl) VALUES(1, 3) RETURNING id + fl", co);
 	int totalInt = 0, count = 0;
 	sel->forEachRow<int64_t>([&totalInt, &count](auto i) {
 			totalInt += i;
@@ -381,10 +381,10 @@ BOOST_AUTO_TEST_CASE( fetchAsBinary )
 	std::vector<char> buf(29);
 	memcpy(&buf[0], "This is some binary text data", 29);
 	DB::Blob blob(buf);
-	PQ::CommandOptions opts(0);
-	opts.fetchBinary = true;
-	opts.useCursor = false;
-	auto sel = ro->select("SELECT data, md5, length(data) FROM blobtest", &opts);
+	auto opts = std::make_shared<PQ::CommandOptions>(0);
+	opts->fetchBinary = true;
+	opts->useCursor = false;
+	auto sel = ro->select("SELECT data, md5, length(data) FROM blobtest", opts);
 	for (const auto & r : sel->as<DB::Blob, std::optional<std::string>, int64_t>()) {
 		// Assert the DB understood the insert
 		BOOST_REQUIRE_EQUAL(r.value<2>(), buf.size());
@@ -393,25 +393,25 @@ BOOST_AUTO_TEST_CASE( fetchAsBinary )
 		// Assert the fetch of the data is correct
 		BOOST_REQUIRE_EQUAL(r.value<0>(), blob);
 	}
-	*opts.hash += 1;
-	sel = ro->select("SELECT CAST(length(data) AS BIGINT) big, CAST(length(data) AS SMALLINT) small FROM blobtest", &opts);
+	*opts->hash += 1;
+	sel = ro->select("SELECT CAST(length(data) AS BIGINT) big, CAST(length(data) AS SMALLINT) small FROM blobtest", opts);
 	for (const auto & r : sel->as<int64_t, int64_t>()) {
 		BOOST_REQUIRE_EQUAL(r.value<0>(), buf.size());
 		BOOST_REQUIRE_EQUAL(r.value<1>(), buf.size());
 	}
-	*opts.hash += 1;
-	sel = ro->select("SELECT true a, false b", &opts);
+	*opts->hash += 1;
+	sel = ro->select("SELECT true a, false b", opts);
 	for (const auto & r : sel->as<bool, bool>()) {
 		BOOST_REQUIRE_EQUAL(r.value<0>(), true);
 		BOOST_REQUIRE_EQUAL(r.value<1>(), false);
 	}
-	*opts.hash += 1;
-	sel = ro->select("SELECT xmlelement(name xml)", &opts);
+	*opts->hash += 1;
+	sel = ro->select("SELECT xmlelement(name xml)", opts);
 	for (const auto & r : sel->as<std::string>()) {
 		BOOST_REQUIRE_EQUAL(r.value<0>(), "<xml/>");
 	}
-	*opts.hash += 1;
-	sel = ro->select("SELECT NULL, now()", &opts);
+	*opts->hash += 1;
+	sel = ro->select("SELECT NULL, now()", opts);
 	for (const auto & r : sel->as<std::optional<int64_t>, boost::posix_time::ptime>()) {
 		BOOST_REQUIRE(!r.value<0>());
 		BOOST_REQUIRE_THROW(r.value<1>(), DB::ColumnTypeNotSupported);
@@ -429,10 +429,10 @@ BOOST_AUTO_TEST_CASE( largeBlob )
 	ins->bindParamBLOB(0, blob);
 	ins->execute();
 
-	PQ::CommandOptions opts(0);
-	opts.fetchBinary = true;
-	opts.useCursor = false;
-	auto sel = ro->select("SELECT data, length(data) FROM blobtest", &opts);
+	auto opts = std::make_shared<PQ::CommandOptions>(0);
+	opts->fetchBinary = true;
+	opts->useCursor = false;
+	auto sel = ro->select("SELECT data, length(data) FROM blobtest", opts);
 	for (const auto & r : sel->as<DB::Blob, int64_t>()) {
 		BOOST_REQUIRE_EQUAL(r.value<1>(), f.getStat().st_size);
 		BOOST_REQUIRE_EQUAL(r.value<0>(), blob);

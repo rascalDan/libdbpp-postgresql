@@ -3,7 +3,7 @@
 #include "pq-binarycolumn.h"
 #include "pq-command.h"
 
-PQ::SelectBase::SelectBase(const std::string & sql, const PQ::CommandOptions * pqco) :
+PQ::SelectBase::SelectBase(const std::string & sql, const PQ::CommandOptionsCPtr & pqco) :
 	DB::Command(sql),
 	DB::SelectCommand(sql),
 	nTuples(0),

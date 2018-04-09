@@ -11,7 +11,7 @@ namespace PQ {
 	class Column;
 	class BulkSelectCommand : public SelectBase, public PreparedStatement {
 		public:
-			BulkSelectCommand(Connection *, const std::string & sql, const PQ::CommandOptions * pqco, const DB::CommandOptions *);
+			BulkSelectCommand(Connection *, const std::string & sql, const PQ::CommandOptionsCPtr & pqco, const DB::CommandOptionsCPtr &);
 
 			bool fetch() override;
 			void execute() override;

@@ -22,10 +22,12 @@ namespace PQ {
 			bool useCursor;
 			bool fetchBinary;
 	};
+	typedef std::shared_ptr<CommandOptions> CommandOptionsPtr;
+	typedef std::shared_ptr<const CommandOptions> CommandOptionsCPtr;
 
 	class Command : public virtual DB::Command {
 		public:
-			Command(Connection *, const std::string & sql, const DB::CommandOptions *);
+			Command(Connection *, const std::string & sql, const DB::CommandOptionsCPtr &);
 			virtual ~Command() = 0;
 
 			void bindParamI(unsigned int, int) override;

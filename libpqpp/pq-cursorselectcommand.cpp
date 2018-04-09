@@ -7,7 +7,7 @@ AdHocFormatter(PQCursorSelectDeclare, "DECLARE %? NO SCROLL CURSOR WITH HOLD FOR
 AdHocFormatter(PQCursorSelectFetch, "FETCH %? IN %?");
 AdHocFormatter(PQCursorSelectClose, "CLOSE %?");
 
-PQ::CursorSelectCommand::CursorSelectCommand(Connection * conn, const std::string & sql, const PQ::CommandOptions * pqco, const DB::CommandOptions * opts) :
+PQ::CursorSelectCommand::CursorSelectCommand(Connection * conn, const std::string & sql, const PQ::CommandOptionsCPtr & pqco, const DB::CommandOptionsCPtr & opts) :
 	DB::Command(sql),
 	PQ::SelectBase(sql, pqco),
 	PQ::Command(conn, sql, opts),

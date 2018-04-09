@@ -3,14 +3,14 @@
 
 #include <libpq-fe.h>
 #include <selectcommand.h>
+#include "pq-command.h"
 
 namespace PQ {
-	class CommandOptions;
 	class SelectBase : public DB::SelectCommand {
 		friend class Column;
 
 		protected:
-			SelectBase(const std::string & sql, const PQ::CommandOptions * pqco);
+			SelectBase(const std::string & sql, const PQ::CommandOptionsCPtr & pqco);
 			~SelectBase();
 
 			void createColumns(PGresult *);

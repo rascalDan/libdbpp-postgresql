@@ -3,7 +3,7 @@
 #include "pq-column.h"
 #include "pq-error.h"
 
-PQ::BulkSelectCommand::BulkSelectCommand(Connection * conn, const std::string & sql, const PQ::CommandOptions * pqco, const DB::CommandOptions * opts) :
+PQ::BulkSelectCommand::BulkSelectCommand(Connection * conn, const std::string & sql, const PQ::CommandOptionsCPtr & pqco, const DB::CommandOptionsCPtr & opts) :
 	DB::Command(sql),
 	PQ::SelectBase(sql, pqco),
 	PQ::PreparedStatement(conn, sql, opts),

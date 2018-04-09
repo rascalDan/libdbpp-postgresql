@@ -62,7 +62,7 @@ PQ::Connection::rollbackTxInt()
 }
 
 void
-PQ::Connection::execute(const std::string & sql, const DB::CommandOptions *)
+PQ::Connection::execute(const std::string & sql, const DB::CommandOptionsCPtr &)
 {
 	checkResultFree(PQexec(conn, sql.c_str()), PGRES_COMMAND_OK, PGRES_TUPLES_OK);
 }
@@ -97,9 +97,9 @@ PQ::Connection::ping() const
 
 
 DB::SelectCommandPtr
-PQ::Connection::select(const std::string & sql, const DB::CommandOptions * opts)
+PQ::Connection::select(const std::string & sql, const DB::CommandOptionsCPtr & opts)
 {
-	auto pqco = dynamic_cast<const CommandOptions *>(opts);
+	auto pqco = std::dynamic_pointer_cast<const CommandOptions>(opts);
 	if (pqco && !pqco->useCursor) {
 		return std::make_shared<BulkSelectCommand>(this, sql, pqco, opts);
 	}
@@ -107,7 +107,7 @@ PQ::Connection::select(const std::string & sql, const DB::CommandOptions * opts)
 }
 
 DB::ModifyCommandPtr
-PQ::Connection::modify(const std::string & sql, const DB::CommandOptions * opts)
+PQ::Connection::modify(const std::string & sql, const DB::CommandOptionsCPtr & opts)
 {
 	return std::make_shared<ModifyCommand>(this, sql, opts);
 }
@@ -176,11 +176,11 @@ PQ::Connection::bulkUploadData(const char * data, size_t len) const
 }
 
 static const std::string selectLastVal("SELECT lastval()");
-static const DB::CommandOptions selectLastValOpts(std::hash<std::string>()(selectLastVal));
+static const DB::CommandOptionsCPtr selectLastValOpts = std::make_shared<DB::CommandOptions>(std::hash<std::string>()(selectLastVal));
 int64_t
 PQ::Connection::insertId()
 {
-	BulkSelectCommand getId(this, selectLastVal, nullptr, &selectLastValOpts);
+	BulkSelectCommand getId(this, selectLastVal, nullptr, selectLastValOpts);
 	int64_t id = -1;
 	while (getId.fetch()) {
 		getId[0] >> id;
