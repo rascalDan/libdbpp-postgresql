@@ -17,8 +17,8 @@
 
 class StandardMockDatabase : public DB::PluginMock<PQ::Mock> {
 	public:
-		StandardMockDatabase() : DB::PluginMock<PQ::Mock>("user=postgres dbname=postgres", "PQmock", {
-				rootDir / "pqschema.sql" })
+		StandardMockDatabase() : DB::PluginMock<PQ::Mock>("PQmock", {
+				rootDir / "pqschema.sql" }, "user=postgres dbname=postgres")
 		{
 		}
 };
