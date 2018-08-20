@@ -15,7 +15,7 @@ namespace PQ {
 
 	class DLL_PUBLIC Connection : public DB::Connection {
 		public:
-			typedef std::hash<std::string>::result_type StatementHash;
+			typedef std::size_t StatementHash;
 			typedef std::map<StatementHash, std::string> PreparedStatements;
 
 			Connection(const std::string & info);
