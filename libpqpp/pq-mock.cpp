@@ -51,8 +51,8 @@ ORDER BY 1, 2)SQL");
 	unsigned int n = 0;
 	do {
 		n = 0;
-		for (const auto & t : s->as<std::string, std::string>()) {
-			c->execute(MockSetUnlogged::get(t.value<0>(), t.value<1>()));
+		for (const auto [ nspname, relname ] : s->as<std::string, std::string>()) {
+			c->execute(MockSetUnlogged::get(nspname, relname));
 			n += 1;
 		}
 	} while(n);
