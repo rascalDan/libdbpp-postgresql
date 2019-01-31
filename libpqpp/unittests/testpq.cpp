@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE( testP2MockScriptDir )
 	while (select->fetch()) {
 		std::string path;
 		(*select)[0] >> path;
-		BOOST_REQUIRE(boost::filesystem::exists(path));
+		BOOST_REQUIRE(std::filesystem::exists(path));
 	}
 }
 

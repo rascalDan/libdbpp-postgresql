@@ -4,7 +4,7 @@ lib pq ;
 lib adhocutil : : : : <include>/usr/include/adhocutil ;
 lib dbppcore : : : : <include>/usr/include/dbpp ;
 lib boost_date_time ;
-lib boost_system ;
+lib stdc++fs ;
 
 alias libpq : : : :
 	<cflags>"-I`pg_config --includedir`"
@@ -19,7 +19,7 @@ lib dbpp-postgresql :
 	<library>adhocutil
 	<library>dbppcore
 	<library>boost_date_time
-	<library>boost_system
+	<library>stdc++fs
 	: :
 	<include>.
 	<cflags>"-I`pg_config --includedir`"

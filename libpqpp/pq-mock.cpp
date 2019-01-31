@@ -10,7 +10,7 @@ NAMEDFACTORY("postgresql", PQ::Mock, DB::MockDatabaseFactory);
 
 namespace PQ {
 
-Mock::Mock(const std::string & masterdb, const std::string & name, const std::vector<boost::filesystem::path> & ss) :
+Mock::Mock(const std::string & masterdb, const std::string & name, const std::vector<std::filesystem::path> & ss) :
 	MockServerDatabase(masterdb, name, "postgresql")
 {
 	CreateNewDatabase();
