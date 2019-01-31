@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE( bulkload )
 	assertScalarValueHelper(*count, 0);
 	// Test sample file
 	ro->beginBulkUpload("bulktest", "");
-	std::ifstream in((rootDir / "bulk.sample").string());
+	std::ifstream in(rootDir / "bulk.sample");
 	if (!in.good()) throw std::runtime_error("Couldn't open bulk.sample");
 	char buf[BUFSIZ];
 	for (std::streamsize r; (r = in.readsome(buf, sizeof(buf))) > 0; ) {
