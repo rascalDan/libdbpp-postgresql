@@ -9,7 +9,6 @@ namespace PQ {
 	class ModifyCommand : public DB::ModifyCommand, public PreparedStatement {
 		public:
 			ModifyCommand(Connection *, const std::string & sql, const DB::CommandOptionsCPtr &);
-			virtual ~ModifyCommand();
 
 			unsigned int execute(bool) override;
 	};

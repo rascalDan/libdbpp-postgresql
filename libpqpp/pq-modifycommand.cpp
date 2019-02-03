@@ -10,10 +10,6 @@ PQ::ModifyCommand::ModifyCommand(Connection * conn, const std::string & sql, con
 {
 }
 
-PQ::ModifyCommand::~ModifyCommand()
-{
-}
-
 unsigned int
 PQ::ModifyCommand::execute(bool anc)
 {
