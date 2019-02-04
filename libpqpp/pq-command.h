@@ -4,6 +4,7 @@
 #include <command.h>
 #include <libpq-fe.h>
 #include <vector>
+#include <memory>
 #include <visibility.h>
 #include "pq-connection.h"
 
@@ -28,7 +29,6 @@ namespace PQ {
 	class Command : public virtual DB::Command {
 		public:
 			Command(Connection *, const std::string & sql, const DB::CommandOptionsCPtr &);
-			virtual ~Command() = 0;
 
 			void bindParamI(unsigned int, int) override;
 			void bindParamI(unsigned int, long int) override;
@@ -59,12 +59,12 @@ namespace PQ {
 
 			void paramsAtLeast(unsigned int);
 			template<typename ... T>
-			void paramSet(unsigned int, const char * fmt, const T & ... t);
+			void paramSet(unsigned int, const T & ... t);
 			void paramSet(unsigned int, const std::string_view &);
-			std::vector<char *> values;
+			std::vector<const char *> values;
 			std::vector<int> lengths;
 			std::vector<int> formats;
-			std::vector<std::string *> bufs;
+			std::vector<std::unique_ptr<std::string>> bufs;
 	};
 }
 

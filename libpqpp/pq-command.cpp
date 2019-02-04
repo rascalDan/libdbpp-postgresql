@@ -17,18 +17,6 @@ PQ::Command::Command(Connection * conn, const std::string & sql, const DB::Comma
 {
 }
 
-PQ::Command::~Command()
-{
-	for (auto i = values.size(); i-- > 0;) {
-		if (bufs[i]) {
-			delete bufs[i];
-		}
-		else if (formats[i] == 0) {
-			free(values[i]);
-		}
-	}
-}
-
 PQ::CommandOptions::CommandOptions(std::size_t hash, const DB::CommandOptionsMap & map) :
 	DB::CommandOptions(hash),
 	fetchTuples(get(map, "page-size", 35)),
@@ -76,90 +64,84 @@ void
 PQ::Command::paramsAtLeast(unsigned int n)
 {
 	if (values.size() <= n) {
-		values.resize(n + 1, NULL);
+		values.resize(n + 1, nullptr);
 		lengths.resize(n + 1, 0);
 		formats.resize(n + 1, 0);
-		bufs.resize(n + 1, NULL);
-	}
-	else {
-		if (bufs[n]) {
-			delete bufs[n];
-			bufs[n] = nullptr;
-		}
-		else if (formats[n] == 0) {
-			free(values[n]);
-		}
-		values[n] = NULL;
-		formats[n] = 0;
+		bufs.resize(n + 1);
 	}
 }
 
+AdHocFormatter(PQCommandParamFmt, "%?");
 template<typename ... T>
 void
-PQ::Command::paramSet(unsigned int n, const char * fmt, const T & ... v)
+PQ::Command::paramSet(unsigned int n, const T & ... v)
 {
 	paramsAtLeast(n);
-	lengths[n] = asprintf(&values[n], fmt, v...);
+	bufs[n] = std::make_unique<std::string>(PQCommandParamFmt::get(v...));
+	lengths[n] = bufs[n]->length();
+	formats[n] = 0;
+	values[n] = bufs[n]->data();
 }
 
 void
 PQ::Command::paramSet(unsigned int n, const std::string_view & b)
 {
 	paramsAtLeast(n);
-	bufs[n] = new std::string(b);
+	bufs[n] = std::make_unique<std::string>(b);
 	lengths[n] = b.length();
-	values[n] = const_cast<char *>(bufs[n]->data());
+	formats[n] = 0;
+	values[n] = bufs[n]->data();
 }
 
 void
 PQ::Command::bindParamI(unsigned int n, int v)
 {
-	paramSet(n, "%d", v);
+	paramSet(n, v);
 }
 void
 PQ::Command::bindParamI(unsigned int n, long int v)
 {
-	paramSet(n, "%ld", v);
+	paramSet(n, v);
 }
 void
 PQ::Command::bindParamI(unsigned int n, long long int v)
 {
-	paramSet(n, "%lld", v);
+	paramSet(n, v);
 }
 void
 PQ::Command::bindParamI(unsigned int n, unsigned int v)
 {
-	paramSet(n, "%u", v);
+	paramSet(n, v);
 }
 void
 PQ::Command::bindParamI(unsigned int n, long unsigned int v)
 {
-	paramSet(n, "%lu", v);
+	paramSet(n, v);
 }
 void
 PQ::Command::bindParamI(unsigned int n, long long unsigned int v)
 {
-	paramSet(n, "%llu", v);
+	paramSet(n, v);
 }
 void
 PQ::Command::bindParamB(unsigned int n, bool v)
 {
-	paramSet(n, "%s", v ? "true" : "false");
+	paramSet(n, v);
 }
 void
 PQ::Command::bindParamF(unsigned int n, double v)
 {
-	paramSet(n, "%g", v);
+	paramSet(n, v);
 }
 void
 PQ::Command::bindParamF(unsigned int n, float v)
 {
-	paramSet(n, "%g", v);
+	paramSet(n, v);
 }
 void
 PQ::Command::bindParamS(unsigned int n, const Glib::ustring & s)
 {
-	paramSet(n, s.raw());
+	paramSet(n, std::string_view(s.data(), s.length()));
 }
 void
 PQ::Command::bindParamS(unsigned int n, const std::string_view & s)
@@ -182,13 +164,16 @@ PQ::Command::bindParamBLOB(unsigned int n, const DB::Blob & v)
 	paramsAtLeast(n);
 	lengths[n] = v.len;
 	formats[n] = 1;
-	values[n] = reinterpret_cast<char *>(const_cast<void *>(v.data));
-	delete bufs[n];
-	bufs[n] = nullptr;
+	values[n] = static_cast<const char *>(v.data);
+	bufs[n].reset();
 }
 void
 PQ::Command::bindNull(unsigned int n)
 {
 	paramsAtLeast(n);
+	lengths[n] = 0;
+	formats[n] = 0;
+	values[n] = nullptr;
+	bufs[n].reset();
 }
 
