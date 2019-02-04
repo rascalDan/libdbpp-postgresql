@@ -25,7 +25,10 @@ PQ::SelectBase::createColumns(PGresult * execRes)
 {
 	unsigned int nFields = PQnfields(execRes);
 	for (unsigned int f = 0; f < nFields; f += 1) {
-		insertColumn(DB::ColumnPtr(binary ? new BinaryColumn(this, f) : new Column(this, f)));
+		if (binary)
+			insertColumn(std::make_unique<BinaryColumn>(this, f));
+		else
+			insertColumn(std::make_unique<Column>(this, f));
 	}
 }
 
