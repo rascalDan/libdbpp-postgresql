@@ -43,6 +43,7 @@ namespace PQ {
 			void bindParamF(unsigned int, float) override;
 
 			void bindParamS(unsigned int, const Glib::ustring&) override;
+			void bindParamS(unsigned int, const std::string_view&) override;
 
 			void bindParamT(unsigned int, const boost::posix_time::time_duration &) override;
 			void bindParamT(unsigned int, const boost::posix_time::ptime &) override;
@@ -59,7 +60,7 @@ namespace PQ {
 			void paramsAtLeast(unsigned int);
 			template<typename ... T>
 			void paramSet(unsigned int, const char * fmt, const T & ... t);
-			void paramSet(unsigned int, const std::string &);
+			void paramSet(unsigned int, const std::string_view &);
 			std::vector<char *> values;
 			std::vector<int> lengths;
 			std::vector<int> formats;

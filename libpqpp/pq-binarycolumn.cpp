@@ -19,7 +19,7 @@ PQ::BinaryColumn::apply(DB::HandleField & h) const
 		case 1043: //VARCHAROID:
 		case 25: //TEXTOID:
 		case 142: //XMLOID:
-			h.string(value(), length());
+			h.string({ value(), length() });
 			break;
 		case 16: //BOOLOID:
 			h.boolean(valueAs<bool>());

@@ -20,7 +20,7 @@ namespace PQ {
 			template<typename T>
 			inline T * valueAsPtr() const { return (T*)(value()); }
 			const char * value() const;
-			int length() const;
+			std::size_t length() const;
 
 			const SelectBase * sc;
 			const Oid oid;

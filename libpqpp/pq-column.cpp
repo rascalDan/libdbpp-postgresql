@@ -25,7 +25,7 @@ PQ::Column::isNull() const
 	return PQgetisnull(sc->execRes, sc->tuple, colNo);
 }
 
-int
+std::size_t
 PQ::Column::length() const
 {
 	return PQgetlength(sc->execRes, sc->tuple, colNo);
@@ -49,7 +49,8 @@ PQ::Column::apply(DB::HandleField & h) const
 		case 1043: //VARCHAROID:
 		case 25: //TEXTOID:
 		case 142: //XMLOID:
-			h.string(value(), length());
+		default:
+			h.string({ value(), length() });
 			break;
 		case 16: //BOOLOID:
 			h.boolean(value()[0] == 't');
@@ -97,8 +98,6 @@ PQ::Column::apply(DB::HandleField & h) const
 				h.blob(DB::Blob(buf, len));
 				break;
 			}
-		default:
-			h.string(value(), length());
 	}
 }
 

@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE( bindAndSend )
 	mod->execute();
 	mod->bindParamI(0, (unsigned int)(testInt + 10));
 	mod->bindParamF(1, (float)(testDouble + 10));
-	mod->bindParamS(2, testString + " something");
+	mod->bindParamS(2, std::string(testString) + " something");
 	mod->bindParamB(3, true);
 	mod->bindParamT(4, testDateTime);
 	mod->bindParamT(5, testInterval);
@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE( bindAndSelectOther )
 	while (select->fetch()) {
 		assertColumnValueHelper(*select, 0, 4);
 		assertColumnValueHelper(*select, 1, 123.45);
-		assertColumnValueHelper(*select, 2, std::string("some text with a ; in it and a ' too"));
+		assertColumnValueHelper(*select, 2, std::string_view("some text with a ; in it and a ' too"));
 		assertColumnValueHelper(*select, 3, true);
 		assertColumnValueHelper(*select, 4, boost::posix_time::ptime_from_tm({ 3, 6, 23, 27, 3, 115, 0, 0, 0, 0, 0}));
 		assertColumnValueHelper(*select, 5, boost::posix_time::time_duration(38, 13, 12));

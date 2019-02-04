@@ -103,7 +103,7 @@ PQ::Command::paramSet(unsigned int n, const char * fmt, const T & ... v)
 }
 
 void
-PQ::Command::paramSet(unsigned int n, const std::string & b)
+PQ::Command::paramSet(unsigned int n, const std::string_view & b)
 {
 	paramsAtLeast(n);
 	bufs[n] = new std::string(b);
@@ -158,6 +158,11 @@ PQ::Command::bindParamF(unsigned int n, float v)
 }
 void
 PQ::Command::bindParamS(unsigned int n, const Glib::ustring & s)
+{
+	paramSet(n, s.raw());
+}
+void
+PQ::Command::bindParamS(unsigned int n, const std::string_view & s)
 {
 	paramSet(n, s);
 }
