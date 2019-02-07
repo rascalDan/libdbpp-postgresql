@@ -141,7 +141,7 @@ PQ::Command::bindParamF(unsigned int n, float v)
 void
 PQ::Command::bindParamS(unsigned int n, const Glib::ustring & s)
 {
-	paramSet(n, std::string_view(s.data(), s.length()));
+	paramSet(n, std::string_view(s.data(), s.bytes()));
 }
 void
 PQ::Command::bindParamS(unsigned int n, const std::string_view & s)
