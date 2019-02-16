@@ -31,9 +31,8 @@ PQ::Connection::Connection(const std::string & info) :
 	conn(PQconnectdb(info.c_str()))
 {
 	if (PQstatus(conn) != CONNECTION_OK) {
-		ConnectionError ce(conn);
-		PQfinish(conn);
-		throw ce;
+		auto dc = std::unique_ptr<PGconn, decltype(&PQfinish)>(conn, &PQfinish);
+		throw ConnectionError(dc.get());
 	}
 	PQsetNoticeProcessor(conn, noNoticeProcessor, NULL);
 }
