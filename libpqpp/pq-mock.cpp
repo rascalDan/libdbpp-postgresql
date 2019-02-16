@@ -29,7 +29,7 @@ AdHocFormatter(MockSetUnlogged, "ALTER TABLE %?.%? SET UNLOGGED");
 void
 Mock::SetTablesToUnlogged() const
 {
-	auto c = std::static_pointer_cast<Connection>(openConnection());
+	auto c = std::static_pointer_cast<Connection>(Mock::openConnection());
 	if (c->serverVersion() < 90500) return;
 	auto s = c->select(R"SQL(
 SELECT n.nspname, c.relname
@@ -60,7 +60,7 @@ ORDER BY 1, 2)SQL");
 
 Mock::~Mock()
 {
-	DropDatabase();
+	Mock::DropDatabase();
 }
 
 void
