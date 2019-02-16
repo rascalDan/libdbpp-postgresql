@@ -10,7 +10,7 @@ namespace PQ {
 		public:
 			Error(const PGconn *);
 
-			std::string message() const throw() override;
+			std::string message() const noexcept override;
 
 		private:
 			std::string msg;

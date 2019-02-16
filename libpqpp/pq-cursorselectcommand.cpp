@@ -42,7 +42,7 @@ PQ::CursorSelectCommand::execute()
 			s_declare = mkdeclare();
 		}
 		c->checkResultFree(
-				PQexecParams(c->conn, s_declare.c_str(), values.size(), NULL, &values.front(), &lengths.front(), &formats.front(), binary),
+				PQexecParams(c->conn, s_declare.c_str(), values.size(), nullptr, &values.front(), &lengths.front(), &formats.front(), binary),
 				PGRES_COMMAND_OK);
 		fetchTuples();
 		createColumns(execRes);
@@ -53,7 +53,7 @@ PQ::CursorSelectCommand::execute()
 void
 PQ::CursorSelectCommand::fetchTuples()
 {
-	execRes = c->checkResult(PQexecParams(c->conn, s_fetch.c_str(), 0, NULL, NULL, NULL, NULL, binary), PGRES_TUPLES_OK);
+	execRes = c->checkResult(PQexecParams(c->conn, s_fetch.c_str(), 0, nullptr, nullptr, nullptr, nullptr, binary), PGRES_TUPLES_OK);
 	nTuples = PQntuples(execRes);
 	tuple = -1;
 }
@@ -65,7 +65,7 @@ PQ::CursorSelectCommand::fetch()
 	if ((tuple >= (nTuples - 1)) && (nTuples == fTuples)) {
 		// Delete the previous result set
 		PQclear(execRes);
-		execRes = NULL;
+		execRes = nullptr;
 		fetchTuples();
 	}
 	if (tuple++ < (nTuples - 1)) {
@@ -74,7 +74,7 @@ PQ::CursorSelectCommand::fetch()
 	else {
 		PQclear(PQexec(c->conn, s_close.c_str()));
 		PQclear(execRes);
-		execRes = NULL;
+		execRes = nullptr;
 		executed = false;
 		return false;
 	}

@@ -34,7 +34,7 @@ PQ::BulkSelectCommand::fetch()
 	}
 	else {
 		PQclear(execRes);
-		execRes = NULL;
+		execRes = nullptr;
 		executed = false;
 		return false;
 	}

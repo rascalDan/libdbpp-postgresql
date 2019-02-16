@@ -34,7 +34,7 @@ PQ::Connection::Connection(const std::string & info) :
 		auto dc = std::unique_ptr<PGconn, decltype(&PQfinish)>(conn, &PQfinish);
 		throw ConnectionError(dc.get());
 	}
-	PQsetNoticeProcessor(conn, noNoticeProcessor, NULL);
+	PQsetNoticeProcessor(conn, noNoticeProcessor, nullptr);
 }
 
 PQ::Connection::~Connection()

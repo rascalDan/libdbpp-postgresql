@@ -8,7 +8,7 @@ PQ::SelectBase::SelectBase(const std::string & sql, const PQ::CommandOptionsCPtr
 	DB::SelectCommand(sql),
 	nTuples(0),
 	tuple(0),
-	execRes(NULL),
+	execRes(nullptr),
 	binary(pqco ? pqco->fetchBinary : false)
 {
 }

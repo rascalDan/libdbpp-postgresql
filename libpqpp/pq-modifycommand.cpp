@@ -1,6 +1,6 @@
 #include "pq-modifycommand.h"
 #include "pq-error.h"
-#include <stdlib.h>
+#include <cstdlib>
 #include "pq-connection.h"
 
 PQ::ModifyCommand::ModifyCommand(Connection * conn, const std::string & sql, const DB::CommandOptionsCPtr & opts) :

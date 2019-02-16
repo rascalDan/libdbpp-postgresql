@@ -1,7 +1,7 @@
 #include "pq-column.h"
 #include "pq-selectbase.h"
 #include "pq-error.h"
-#include <string.h>
+#include <cstring>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 PQ::Column::Column(const SelectBase * s, unsigned int i) :

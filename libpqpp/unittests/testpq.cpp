@@ -136,7 +136,7 @@ BOOST_AUTO_TEST_CASE( bindAndSelectOther )
 		assertColumnValueHelper(*select, 1, 123.45);
 		assertColumnValueHelper(*select, 2, std::string_view("some text with a ; in it and a ' too"));
 		assertColumnValueHelper(*select, 3, true);
-		assertColumnValueHelper(*select, 4, boost::posix_time::ptime_from_tm({ 3, 6, 23, 27, 3, 115, 0, 0, 0, 0, 0}));
+		assertColumnValueHelper(*select, 4, boost::posix_time::ptime_from_tm({ 3, 6, 23, 27, 3, 115, 0, 0, 0, 0, nullptr}));
 		assertColumnValueHelper(*select, 5, boost::posix_time::time_duration(38, 13, 12));
 		rows += 1;
 	}
@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_CASE( bulkload )
 	auto count = ro->select("SELECT COUNT(*) FROM bulktest");
 	// Test empty
 	ro->beginBulkUpload("bulktest", "");
-	ro->endBulkUpload(NULL);
+	ro->endBulkUpload(nullptr);
 	assertScalarValueHelper(*count, 0);
 	// Test sample file
 	ro->beginBulkUpload("bulktest", "");
@@ -173,7 +173,7 @@ BOOST_AUTO_TEST_CASE( bulkload )
 	for (std::streamsize r; (r = in.readsome(buf, sizeof(buf))) > 0; ) {
 		ro->bulkUploadData(buf, r);
 	}
-	ro->endBulkUpload(NULL);
+	ro->endBulkUpload(nullptr);
 	assertScalarValueHelper(*count, 800);
 }
 

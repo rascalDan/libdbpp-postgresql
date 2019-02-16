@@ -1,7 +1,7 @@
 #include "pq-command.h"
 #include "pq-connection.h"
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 #include <compileTimeFormatter.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <factory.h>

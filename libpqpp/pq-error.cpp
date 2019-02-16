@@ -1,5 +1,4 @@
 #include "pq-error.h"
-#include <string.h>
 
 PQ::Error::Error(const PGconn * conn) :
 	msg(PQerrorMessage(conn))
@@ -7,7 +6,7 @@ PQ::Error::Error(const PGconn * conn) :
 }
 
 std::string
-PQ::Error::message() const throw()
+PQ::Error::message() const noexcept
 {
 	return msg;
 }
