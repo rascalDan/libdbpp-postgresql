@@ -13,6 +13,7 @@ NAMEDFACTORY("postgresql", PQ::Connection, DB::ConnectionFactory);
 static void setup()  __attribute__((constructor(101)));
 static void setup()
 {
+	// NOLINTNEXTLINE(hicpp-no-array-decay)
 	BOOST_ASSERT(PQisthreadsafe() == 1);
 	PQinitOpenSSL(1, 0);
 }
@@ -81,6 +82,7 @@ PQ::Connection::bulkUpdateStyle() const
 void
 PQ::Connection::ping() const
 {
+	// NOLINTNEXTLINE(hicpp-signed-bitwise)
 	struct pollfd fd { PQsocket(conn), POLLRDHUP | POLLERR | POLLHUP | POLLNVAL, 0 };
 	if (PQstatus(conn) != CONNECTION_OK || poll(&fd, 1, 0)) {
 		if (inTx()) {

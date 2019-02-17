@@ -71,6 +71,7 @@ PQ::Column::apply(DB::HandleField & h) const
 			{
 				int days = 0, hours = 0, minutes = 0, seconds = 0, fractions = 0, flen1 = 0, flen2 = 0;
 				const char * val = value();
+				// NOLINTNEXTLINE(hicpp-vararg)
 				if (sscanf(val, "%d %*[days] %d:%d:%d.%n%d%n", &days, &hours, &minutes, &seconds, &flen1, &fractions, &flen2) >= 4) {
 					h.interval(boost::posix_time::time_duration((24 * days) + hours, minutes, seconds,
 								fractions * (long)pow(10, boost::posix_time::time_res_traits::num_fractional_digits() + flen1 - flen2)));

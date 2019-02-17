@@ -30,7 +30,9 @@ void
 Mock::SetTablesToUnlogged() const
 {
 	auto c = std::static_pointer_cast<Connection>(Mock::openConnection());
-	if (c->serverVersion() < 90500) return;
+	if (c->serverVersion() < 90500) {
+		return;
+	}
 	auto s = c->select(R"SQL(
 SELECT n.nspname, c.relname
 FROM pg_class c, pg_namespace n
