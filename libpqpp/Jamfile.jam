@@ -1,21 +1,18 @@
 import package ;
 
-lib pq ;
+lib pq : : : :
+	<cflags>"-I`pg_config --includedir`"
+	<linkflags>"-L`pg_config --libdir`"
+	;
 lib adhocutil : : : : <include>/usr/include/adhocutil ;
 lib dbppcore : : : : <include>/usr/include/dbpp ;
 lib boost_date_time ;
 lib stdc++fs ;
 
-alias libpq : : : :
-	<cflags>"-I`pg_config --includedir`"
-	<linkflags>"-L`pg_config --libdir`"
-	<library>pq
-	;
-
 lib dbpp-postgresql :
 	[ glob *.cpp ] :
 	<library>..//glibmm
-	<library>libpq
+	<library>pq
 	<library>adhocutil
 	<library>dbppcore
 	<library>boost_date_time
