@@ -62,13 +62,13 @@ bool
 PQ::CursorSelectCommand::fetch()
 {
 	execute();
-	if ((tuple >= (nTuples - 1)) && (nTuples == fTuples)) {
+	if ((tuple + 1 >= nTuples) && (nTuples == fTuples)) {
 		// Delete the previous result set
 		PQclear(execRes);
 		execRes = nullptr;
 		fetchTuples();
 	}
-	if (tuple++ < (nTuples - 1)) {
+	if (++tuple < nTuples) {
 		return true;
 	}
 	else {

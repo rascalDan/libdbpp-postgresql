@@ -5,9 +5,9 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 PQ::Column::Column(const SelectBase * s, unsigned int i) :
-	DB::Column(PQfname(s->execRes, i), i),
+	DB::Column(PQfname(s->execRes, (int)i), i),
 	sc(s),
-	oid(PQftype(sc->execRes, colNo)),
+	oid(PQftype(sc->execRes, (int)colNo)),
 	buf(nullptr)
 {
 }
@@ -22,19 +22,19 @@ PQ::Column::~Column()
 bool
 PQ::Column::isNull() const
 {
-	return PQgetisnull(sc->execRes, sc->tuple, colNo);
+	return PQgetisnull(sc->execRes, (int)sc->tuple, (int)colNo);
 }
 
 std::size_t
 PQ::Column::length() const
 {
-	return PQgetlength(sc->execRes, sc->tuple, colNo);
+	return PQgetlength(sc->execRes, (int)sc->tuple, (int)colNo);
 }
 
 const char *
 PQ::Column::value() const
 {
-	return PQgetvalue(sc->execRes, sc->tuple, colNo);
+	return PQgetvalue(sc->execRes, (int)sc->tuple, (int)colNo);
 }
 
 void

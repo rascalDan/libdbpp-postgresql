@@ -22,7 +22,7 @@ namespace PQ {
 			std::string mkdeclare() const;
 
 			mutable bool executed;
-			int fTuples;
+			unsigned int fTuples;
 			std::string s_declare;
 			std::string s_fetch;
 			std::string s_close;

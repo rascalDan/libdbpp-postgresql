@@ -15,7 +15,7 @@ namespace PQ {
 
 			void createColumns(PGresult *);
 
-			int nTuples, tuple;
+			unsigned int nTuples, tuple;
 			PGresult * execRes;
 			bool binary;
 	};

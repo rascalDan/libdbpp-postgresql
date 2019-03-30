@@ -11,7 +11,7 @@ namespace PQ {
 			Column(const SelectBase *, unsigned int field);
 			~Column();
 
-			bool isNull() const override;
+			[[nodiscard]] bool isNull() const override;
 			void apply(DB::HandleField &) const override;
 
 		protected:
