@@ -11,7 +11,8 @@ NAMEDFACTORY("postgresql", PQ::Mock, DB::MockDatabaseFactory);
 namespace PQ {
 
 Mock::Mock(const std::string & masterdb, const std::string & name, const std::vector<std::filesystem::path> & ss) :
-	MockServerDatabase(masterdb, name, "postgresql")
+	MockServerDatabase(masterdb, name, "postgresql"),
+	serverVersion(std::static_pointer_cast<Connection>(master)->serverVersion())
 {
 	CreateNewDatabase();
 	PlaySchemaScripts(ss);
@@ -29,11 +30,11 @@ AdHocFormatter(MockSetUnlogged, "ALTER TABLE %?.%? SET UNLOGGED");
 void
 Mock::SetTablesToUnlogged() const
 {
-	auto c = std::static_pointer_cast<Connection>(Mock::openConnection());
-	if (c->serverVersion() < 90500) {
+	// v9.5 server required for unlogged tables
+	if (serverVersion < 90500) {
 		return;
 	}
-	auto s = c->select(R"SQL(
+	auto s = master->select(R"SQL(
 SELECT n.nspname, c.relname
 FROM pg_class c, pg_namespace n
 WHERE c.relkind = 'r'
@@ -54,7 +55,7 @@ ORDER BY 1, 2)SQL");
 	do {
 		n = 0;
 		for (const auto [ nspname, relname ] : s->as<std::string, std::string>()) {
-			c->execute(MockSetUnlogged::get(nspname, relname));
+			master->execute(MockSetUnlogged::get(nspname, relname));
 			n += 1;
 		}
 	} while(n);
