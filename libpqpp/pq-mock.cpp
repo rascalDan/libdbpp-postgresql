@@ -12,11 +12,18 @@ namespace PQ {
 
 Mock::Mock(const std::string & masterdb, const std::string & name, const std::vector<std::filesystem::path> & ss) :
 	MockServerDatabase(masterdb, name, "postgresql"),
+	tablespacePath(std::filesystem::temp_directory_path() / testDbName),
 	serverVersion(std::static_pointer_cast<Connection>(master)->serverVersion())
 {
-	CreateNewDatabase();
-	PlaySchemaScripts(ss);
-	SetTablesToUnlogged();
+	try {
+		CreateNewDatabase();
+		PlaySchemaScripts(ss);
+		SetTablesToUnlogged();
+	}
+	catch (...) {
+		DropDatabase();
+		throw;
+	}
 }
 
 AdHocFormatter(MockConnStr, "user=postgres dbname=%?");
@@ -66,6 +73,33 @@ Mock::~Mock()
 	Mock::DropDatabase();
 }
 
+bool
+Mock::hasCopyToProgram() const
+{
+	// v9.3 server required to use COPY ... TO PROGRAM ...
+	return (serverVersion >= 90300);
+}
+
+AdHocFormatter(MockCreateTablespaceDir, "COPY (SELECT 1) TO PROGRAM 'mkdir -p %?'");
+AdHocFormatter(MockCreateTablespace, "CREATE TABLESPACE %? LOCATION '%?'");
+AdHocFormatter(MockCreateDatabase, "CREATE DATABASE %? TABLESPACE %?");
+AdHocFormatter(MockDropTablespace, "DROP TABLESPACE IF EXISTS %?");
+AdHocFormatter(MockDropTablespaceDir, "COPY (SELECT 1) TO PROGRAM 'rm -rf %?'");
+
+void
+Mock::CreateNewDatabase() const
+{
+	if (hasCopyToProgram()) {
+		DropDatabase();
+		master->execute(MockCreateTablespaceDir::get(tablespacePath));
+		master->execute(MockCreateTablespace::get(testDbName, tablespacePath.string()));
+		master->execute(MockCreateDatabase::get(testDbName, testDbName));
+	}
+	else {
+		MockServerDatabase::CreateNewDatabase();
+	}
+}
+
 void
 Mock::DropDatabase() const
 {
@@ -73,6 +107,10 @@ Mock::DropDatabase() const
 	t->bindParamS(0, testDbName);
 	t->execute();
 	MockServerDatabase::DropDatabase();
+	if (hasCopyToProgram()) {
+		master->execute(MockDropTablespace::get(testDbName));
+		master->execute(MockDropTablespaceDir::get(tablespacePath));
+	}
 }
 
 }

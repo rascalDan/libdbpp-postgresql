@@ -15,8 +15,11 @@ namespace PQ {
 			DB::ConnectionPtr openConnection() const override;
 
 		protected:
+			void CreateNewDatabase() const override;
 			void DropDatabase() const override;
 			void SetTablesToUnlogged() const;
+			bool hasCopyToProgram() const;
+			const std::filesystem::path tablespacePath;
 			const int serverVersion;
 	};
 }
