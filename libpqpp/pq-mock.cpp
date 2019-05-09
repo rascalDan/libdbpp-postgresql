@@ -37,8 +37,7 @@ AdHocFormatter(MockSetUnlogged, "ALTER TABLE %?.%? SET UNLOGGED");
 void
 Mock::SetTablesToUnlogged() const
 {
-	// v9.5 server required for unlogged tables
-	if (serverVersion < 90500) {
+	if (!hasUnloggedTables()) {
 		return;
 	}
 	auto s = master->select(R"SQL(
@@ -71,6 +70,13 @@ ORDER BY 1, 2)SQL");
 Mock::~Mock()
 {
 	Mock::DropDatabase();
+}
+
+bool
+Mock::hasUnloggedTables() const
+{
+	// v9.5 server required for unlogged tables
+	return (serverVersion >= 90500);
 }
 
 bool

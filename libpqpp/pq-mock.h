@@ -18,6 +18,7 @@ namespace PQ {
 			void CreateNewDatabase() const override;
 			void DropDatabase() const override;
 			void SetTablesToUnlogged() const;
+			bool hasUnloggedTables() const;
 			bool hasCopyToProgram() const;
 			const std::filesystem::path tablespacePath;
 			const int serverVersion;
