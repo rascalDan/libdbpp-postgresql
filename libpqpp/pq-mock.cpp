@@ -86,11 +86,11 @@ Mock::hasCopyToProgram() const
 	return (serverVersion >= 90300);
 }
 
-AdHocFormatter(MockCreateTablespaceDir, "COPY (SELECT 1) TO PROGRAM 'mkdir -p %?'");
+AdHocFormatter(MockCreateTablespaceDir, "COPY (SELECT '%?') TO PROGRAM 'xargs mkdir -p'");
 AdHocFormatter(MockCreateTablespace, "CREATE TABLESPACE %? LOCATION '%?'");
 AdHocFormatter(MockCreateDatabase, "CREATE DATABASE %? TABLESPACE %?");
 AdHocFormatter(MockDropTablespace, "DROP TABLESPACE IF EXISTS %?");
-AdHocFormatter(MockDropTablespaceDir, "COPY (SELECT 1) TO PROGRAM 'rm -rf %?'");
+AdHocFormatter(MockDropTablespaceDir, "COPY (SELECT '%?') TO PROGRAM 'xargs rm -rf'");
 
 void
 Mock::CreateNewDatabase() const
