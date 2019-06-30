@@ -17,7 +17,7 @@ run
 	<library>..//dbpp-postgresql
 	<library>dbpptestcore
 	<library>adhocutil
-	<library>..//pq
+	<library>../..//pq
 	<library>boost_utf
 	<library>stdc++fs
 	;
