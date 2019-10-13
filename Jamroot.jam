@@ -8,13 +8,14 @@ variant coverage : debug ;
 
 project
   : requirements
-      <cxxflags>"-std=c++17 -fvisibility=hidden -fvisibility-inlines-hidden"
+			<cxxstd>17
+			<visibility>hidden
       <linkflags>"-Wl,-z,defs,--warn-once,--gc-sections"
       <variant>release:<cxxflags>"-flto=2"
       <variant>release:<linkflags>"-flto=2"
-      <variant>debug:<cxxflags>"-W -Wall -Werror -Wextra"
-      <variant>coverage:<cxxflags>"--coverage"
-      <variant>coverage:<linkflags>"--coverage"
+			<variant>debug:<warnings>extra
+			<variant>debug:<warnings-as-errors>on
+			<variant>coverage:<coverage>on
 	;
 
 build-project libpqpp ;
