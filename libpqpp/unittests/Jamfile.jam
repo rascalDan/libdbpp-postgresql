@@ -21,5 +21,6 @@ run
 	<library>..//pq
 	<library>boost_utf
 	<library>stdc++fs
+	<toolset>tidy:<xcheckxx>hicpp-vararg
 	;
 
