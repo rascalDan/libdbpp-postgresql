@@ -15,9 +15,10 @@ run
 	<define>ROOT=\"$(me)\"
 	<define>BOOST_TEST_DYN_LINK
 	<library>..//dbpp-postgresql
-	<library>dbpptestcore
+	<local-dbppcore>yes:<library>../../..//dbpptestcore
+	<local-dbppcore>no:<library>dbpptestcore
 	<library>adhocutil
-	<library>../..//pq
+	<library>..//pq
 	<library>boost_utf
 	<library>stdc++fs
 	;

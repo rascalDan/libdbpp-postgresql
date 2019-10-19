@@ -441,6 +441,22 @@ BOOST_AUTO_TEST_CASE( largeBlob )
 	}
 }
 
+BOOST_AUTO_TEST_CASE( bulkPerfTest )
+{
+	auto ro = DB::ConnectionPtr(DB::MockDatabase::openConnectionTo("PQmock"));
+	auto sel = ro->select(R"SQL(select s a, cast(s as numeric(7,1)) b, cast(s as text) c,
+			make_interval(secs => s) d, make_timestamp(2019,1,1,1,1,1) + make_interval(mins=>s) e,
+			s % 2 = 0 f
+			from generate_series(1, 1000) s)SQL");
+
+	int64_t tot = 0;
+	for (const auto & [a,b,c,d,e,f] : sel->as<int64_t, double, std::string_view,
+			boost::posix_time::time_duration, boost::posix_time::ptime, bool>()) {
+		tot += a + b + c.length() + d.hours() + e.time_of_day().hours() + f;
+	}
+	BOOST_REQUIRE_EQUAL(tot, 1013265);
+}
+
 BOOST_AUTO_TEST_SUITE_END();
 
 BOOST_AUTO_TEST_CASE( connfail )

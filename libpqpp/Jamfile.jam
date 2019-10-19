@@ -1,23 +1,41 @@
 import package ;
+import pkg-config ;
 
 lib adhocutil : : : : <include>/usr/include/adhocutil ;
 lib dbppcore : : : : <include>/usr/include/dbpp ;
 lib boost_date_time ;
 lib stdc++fs ;
 
+pkg-config.import pq : : <name>libpq ;
+pkg-config.import glibmm : : <name>glibmm-2.4 ;
+
+project
+  : requirements
+			<cxxstd>17
+			<visibility>hidden
+      <linkflags>"-Wl,-z,defs,--warn-once,--gc-sections"
+      <variant>release:<cxxflags>"-flto=2"
+      <variant>release:<linkflags>"-flto=2"
+			<variant>debug:<warnings>extra
+			<variant>debug:<warnings-as-errors>on
+			<variant>coverage:<coverage>on
+	;
+
 lib dbpp-postgresql :
 	[ glob *.cpp ] :
-	<library>..//glibmm
-	<library>..//pq
+	<library>glibmm
+	<library>pq
 	<library>adhocutil
-	<library>dbppcore
+	<local-dbppcore>yes:<library>../..//dbppcore
+	<local-dbppcore>no:<library>dbppcore
 	<library>boost_date_time
 	<library>stdc++fs
 	: :
 	<include>.
-	<cflags>"-I`pg_config --includedir`"
-	<library>..//glibmm
-	<library>dbppcore
+	<use>pq
+	<library>glibmm
+	<local-dbppcore>yes:<library>../..//dbppcore
+	<local-dbppcore>no:<library>dbppcore
 	;
 
 build-project unittests ;

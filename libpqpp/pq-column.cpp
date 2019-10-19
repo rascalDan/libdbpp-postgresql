@@ -77,7 +77,7 @@ PQ::Column::apply(DB::HandleField & h) const
 								fractions * (long)pow(10, boost::posix_time::time_res_traits::num_fractional_digits() + flen1 - flen2)));
 				}
 				else {
-					h.interval(boost::posix_time::duration_from_string(value()));
+					h.interval(boost::posix_time::duration_from_string(val));
 				}
 				break;
 			}

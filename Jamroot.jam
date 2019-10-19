@@ -1,25 +1,12 @@
 import os ;
+import feature : feature ;
 
 using gcc : : [ os.environ CXX ] ;
 using pkg-config ;
-import pkg-config ;
 
 variant coverage : debug ;
 
-project
-  : requirements
-			<cxxstd>17
-			<visibility>hidden
-      <linkflags>"-Wl,-z,defs,--warn-once,--gc-sections"
-      <variant>release:<cxxflags>"-flto=2"
-      <variant>release:<linkflags>"-flto=2"
-			<variant>debug:<warnings>extra
-			<variant>debug:<warnings-as-errors>on
-			<variant>coverage:<coverage>on
-	;
+feature local-dbppcore : no ;
 
 build-project libpqpp ;
-
-pkg-config.import glibmm : : <name>glibmm-2.4 ;
-pkg-config.import pq : : <name>libpq ;
 
