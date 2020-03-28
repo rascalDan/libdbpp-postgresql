@@ -14,7 +14,7 @@ namespace PQ {
 	class DLL_PUBLIC CommandOptions : public DB::CommandOptions {
 		public:
 			CommandOptions(std::size_t, const DB::CommandOptionsMap &);
-			CommandOptions(std::size_t hash,
+			explicit CommandOptions(std::size_t hash,
 					unsigned int fetchTuples = 35,
 					bool useCursor = true,
 					bool fetchBinary = false);
@@ -23,8 +23,8 @@ namespace PQ {
 			bool useCursor;
 			bool fetchBinary;
 	};
-	typedef std::shared_ptr<CommandOptions> CommandOptionsPtr;
-	typedef std::shared_ptr<const CommandOptions> CommandOptionsCPtr;
+	using CommandOptionsPtr = std::shared_ptr<CommandOptions>;
+	using CommandOptionsCPtr = std::shared_ptr<const CommandOptions>;
 
 	class Command : public virtual DB::Command {
 		public:

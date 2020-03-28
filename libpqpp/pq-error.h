@@ -8,7 +8,7 @@
 namespace PQ {
 	class Error : public AdHoc::Exception<DB::Error> {
 		public:
-			Error(const PGconn *);
+			explicit Error(const PGconn *);
 
 			std::string message() const noexcept override;
 

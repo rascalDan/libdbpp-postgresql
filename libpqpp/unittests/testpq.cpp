@@ -416,7 +416,7 @@ BOOST_AUTO_TEST_CASE( fetchAsBinary )
 	sel = ro->select("SELECT NULL, now()", opts);
 	for (const auto & r : sel->as<std::optional<int64_t>, boost::posix_time::ptime>()) {
 		BOOST_REQUIRE(!r.value<0>());
-		BOOST_REQUIRE_THROW(r.value<1>(), DB::ColumnTypeNotSupported);
+		BOOST_REQUIRE_THROW((void)r.value<1>(), DB::ColumnTypeNotSupported);
 	}
 }
 
@@ -461,9 +461,11 @@ BOOST_AUTO_TEST_SUITE_END();
 
 BOOST_AUTO_TEST_CASE( connfail )
 {
-	BOOST_REQUIRE_THROW(DB::ConnectionFactory::createNew("postgresql", "host=localhost user=no"), DB::ConnectionError);
+	BOOST_REQUIRE_THROW(
+			(void)DB::ConnectionFactory::createNew("postgresql", "host=localhost user=no"),
+			DB::ConnectionError);
 	try {
-		DB::ConnectionFactory::createNew("postgresql", "host=localhost user=no");
+		(void)DB::ConnectionFactory::createNew("postgresql", "host=localhost user=no");
 	}
 	catch (const DB::ConnectionError & e) {
 		BOOST_REQUIRE(std::string(e.what()).find("\"no\""));

@@ -5,21 +5,24 @@
 #include <set>
 #include <libpq-fe.h>
 #include <visibility.h>
+#include <c++11Helpers.h>
 #include "pq-error.h"
 
 namespace PQ {
 	class ConnectionError : public virtual Error, public virtual DB::ConnectionError {
 		public:
-			ConnectionError(const PGconn *);
+			explicit ConnectionError(const PGconn *);
 	};
 
 	class DLL_PUBLIC Connection : public DB::Connection {
 		public:
-			typedef std::size_t StatementHash;
-			typedef std::map<StatementHash, std::string> PreparedStatements;
+			using StatementHash = std::size_t;
+			using PreparedStatements = std::map<StatementHash, std::string>;
 
-			Connection(const std::string & info);
-			~Connection();
+			explicit Connection(const std::string & info);
+			~Connection() override;
+
+			SPECIAL_MEMBERS_MOVE_RO(Connection);
 
 			void beginTxInt() override;
 			void commitTxInt() override;
