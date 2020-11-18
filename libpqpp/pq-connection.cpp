@@ -1,17 +1,18 @@
 #include "pq-connection.h"
-#include "pq-error.h"
 #include "pq-bulkselectcommand.h"
 #include "pq-cursorselectcommand.h"
+#include "pq-error.h"
 #include "pq-modifycommand.h"
-#include <unistd.h>
-#include <poll.h>
 #include <boost/assert.hpp>
 #include <compileTimeFormatter.h>
+#include <poll.h>
+#include <unistd.h>
 
 NAMEDFACTORY("postgresql", PQ::Connection, DB::ConnectionFactory);
 
-static void setup()  __attribute__((constructor(101)));
-static void setup()
+static void setup() __attribute__((constructor(101)));
+static void
+setup()
 {
 	// NOLINTNEXTLINE(hicpp-no-array-decay)
 	BOOST_ASSERT(PQisthreadsafe() == 1);
@@ -23,13 +24,9 @@ noNoticeProcessor(void *, const char *)
 {
 }
 
-PQ::ConnectionError::ConnectionError(const PGconn * conn) :
-	PQ::Error(conn)
-{
-}
+PQ::ConnectionError::ConnectionError(const PGconn * conn) : PQ::Error(conn) { }
 
-PQ::Connection::Connection(const std::string & info) :
-	conn(PQconnectdb(info.c_str()))
+PQ::Connection::Connection(const std::string & info) : conn(PQconnectdb(info.c_str()))
 {
 	if (PQstatus(conn) != CONNECTION_OK) {
 		auto dc = std::unique_ptr<PGconn, decltype(&PQfinish)>(conn, &PQfinish);
@@ -83,7 +80,9 @@ void
 PQ::Connection::ping() const
 {
 	// NOLINTNEXTLINE(hicpp-signed-bitwise)
-	struct pollfd fd { PQsocket(conn), POLLRDHUP | POLLERR | POLLHUP | POLLNVAL, 0 };
+	struct pollfd fd {
+		PQsocket(conn), POLLRDHUP | POLLERR | POLLHUP | POLLNVAL, 0
+	};
 	if (PQstatus(conn) != CONNECTION_OK || poll(&fd, 1, 0)) {
 		if (inTx()) {
 			throw ConnectionError(conn);
@@ -95,7 +94,6 @@ PQ::Connection::ping() const
 		}
 	}
 }
-
 
 DB::SelectCommandPtr
 PQ::Connection::select(const std::string & sql, const DB::CommandOptionsCPtr & opts)
@@ -150,14 +148,14 @@ void
 PQ::Connection::endBulkUpload(const char * msg)
 {
 	switch (PQputCopyEnd(conn, msg)) {
-		case 0:// block
+		case 0: // block
 			sleep(1);
 			endBulkUpload(msg);
 			return;
-		case 1:// success
+		case 1: // success
 			checkResultFree(PQgetResult(conn), PGRES_COMMAND_OK);
 			return;
-		default:// -1 is error
+		default: // -1 is error
 			throw Error(conn);
 	}
 }
@@ -166,18 +164,19 @@ size_t
 PQ::Connection::bulkUploadData(const char * data, size_t len) const
 {
 	switch (PQputCopyData(conn, data, len)) {
-		case 0:// block
+		case 0: // block
 			sleep(1);
 			return bulkUploadData(data, len);
-		case 1:// success
+		case 1: // success
 			return len;
-		default:// -1 is error
+		default: // -1 is error
 			throw Error(conn);
 	}
 }
 
 static const std::string selectLastVal("SELECT lastval()");
-static const DB::CommandOptionsCPtr selectLastValOpts = std::make_shared<DB::CommandOptions>(std::hash<std::string>()(selectLastVal));
+static const DB::CommandOptionsCPtr selectLastValOpts
+		= std::make_shared<DB::CommandOptions>(std::hash<std::string>()(selectLastVal));
 int64_t
 PQ::Connection::insertId()
 {
@@ -194,4 +193,3 @@ PQ::Connection::serverVersion() const
 {
 	return PQserverVersion(conn);
 }
-

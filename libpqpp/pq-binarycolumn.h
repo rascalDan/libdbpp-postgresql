@@ -5,13 +5,11 @@
 
 namespace PQ {
 	class BinaryColumn : public Column {
-		public:
-			BinaryColumn(const SelectBase *, unsigned int field);
+	public:
+		BinaryColumn(const SelectBase *, unsigned int field);
 
-			void apply(DB::HandleField &) const override;
+		void apply(DB::HandleField &) const override;
 	};
 }
 
 #endif
-
-

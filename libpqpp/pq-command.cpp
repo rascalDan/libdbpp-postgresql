@@ -1,38 +1,28 @@
 #include "pq-command.h"
 #include "pq-connection.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <compileTimeFormatter.h>
 #include <cstdlib>
 #include <cstring>
-#include <compileTimeFormatter.h>
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <factory.h>
 
 NAMEDFACTORY("postgresql", PQ::CommandOptions, DB::CommandOptionsFactory);
 
 AdHocFormatter(PQCommondStatement, "pStatement_id%?");
 PQ::Command::Command(Connection * conn, const std::string & sql, const DB::CommandOptionsCPtr & opts) :
-	DB::Command(sql),
-	hash(opts && opts->hash ? *opts->hash : std::hash<std::string>()(sql)),
-	stmntName(PQCommondStatement::get(hash)),
-	c(conn)
+	DB::Command(sql), hash(opts && opts->hash ? *opts->hash : std::hash<std::string>()(sql)),
+	stmntName(PQCommondStatement::get(hash)), c(conn)
 {
 }
 
 PQ::CommandOptions::CommandOptions(std::size_t hash, const DB::CommandOptionsMap & map) :
-	DB::CommandOptions(hash),
-	fetchTuples(get(map, "page-size", 35)),
-	useCursor(!isSet(map, "no-cursor")),
+	DB::CommandOptions(hash), fetchTuples(get(map, "page-size", 35)), useCursor(!isSet(map, "no-cursor")),
 	fetchBinary(isSet(map, "fetch-binary"))
 {
 }
 
-PQ::CommandOptions::CommandOptions(std::size_t hash,
-		unsigned int ft,
-		bool uc,
-		bool fb) :
-	DB::CommandOptions(hash),
-	fetchTuples(ft),
-	useCursor(uc),
-	fetchBinary(fb)
+PQ::CommandOptions::CommandOptions(std::size_t hash, unsigned int ft, bool uc, bool fb) :
+	DB::CommandOptions(hash), fetchTuples(ft), useCursor(uc), fetchBinary(fb)
 {
 }
 
@@ -72,9 +62,9 @@ PQ::Command::paramsAtLeast(unsigned int n)
 }
 
 AdHocFormatter(PQCommandParamFmt, "%?");
-template<typename ... T>
+template<typename... T>
 void
-PQ::Command::paramSet(unsigned int n, const T & ... v)
+PQ::Command::paramSet(unsigned int n, const T &... v)
 {
 	paramsAtLeast(n);
 	bufs[n] = std::make_unique<std::string>(PQCommandParamFmt::get(v...));
@@ -176,4 +166,3 @@ PQ::Command::bindNull(unsigned int n)
 	values[n] = nullptr;
 	bufs[n].reset();
 }
-

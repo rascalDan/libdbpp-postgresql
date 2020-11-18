@@ -1,14 +1,10 @@
 #include "pq-selectbase.h"
-#include "pq-column.h"
 #include "pq-binarycolumn.h"
+#include "pq-column.h"
 #include "pq-command.h"
 
 PQ::SelectBase::SelectBase(const std::string & sql, const PQ::CommandOptionsCPtr & pqco) :
-	DB::Command(sql),
-	DB::SelectCommand(sql),
-	nTuples(0),
-	tuple(0),
-	execRes(nullptr),
+	DB::Command(sql), DB::SelectCommand(sql), nTuples(0), tuple(0), execRes(nullptr),
 	binary(pqco ? pqco->fetchBinary : false)
 {
 }
@@ -33,4 +29,3 @@ PQ::SelectBase::createColumns(PGresult * execRes)
 		}
 	}
 }
-

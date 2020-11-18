@@ -2,9 +2,7 @@
 #include "pq-connection.h"
 
 PQ::PreparedStatement::PreparedStatement(Connection * c, const std::string & sql, const DB::CommandOptionsCPtr & opts) :
-	DB::Command(sql),
-	Command(c, sql, opts),
-	pstmt(nullptr)
+	DB::Command(sql), Command(c, sql, opts), pstmt(nullptr)
 {
 }
 
@@ -20,8 +18,7 @@ PQ::PreparedStatement::prepare() const
 	}
 	std::stringstream psql;
 	prepareSql(psql, sql);
-	c->checkResultFree(PQprepare(
-				c->conn, stmntName.c_str(), psql.str().c_str(), values.size(), nullptr), PGRES_COMMAND_OK);
+	c->checkResultFree(
+			PQprepare(c->conn, stmntName.c_str(), psql.str().c_str(), values.size(), nullptr), PGRES_COMMAND_OK);
 	return (pstmt = c->preparedStatements.insert({hash, stmntName}).first->second.c_str());
 }
-

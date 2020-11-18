@@ -1,33 +1,33 @@
 #define BOOST_TEST_MODULE TestPQ
 #include <boost/test/unit_test.hpp>
 
-#include <definedDirs.h>
-#include <modifycommand.h>
-#include <selectcommand.h>
-#include <column.h>
-#include <pq-mock.h>
-#include <testCore.h>
-#include <fstream>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <pq-error.h>
-#include <pq-connection.h>
-#include <pq-command.h>
-#include <selectcommandUtil.impl.h>
+#include <column.h>
+#include <definedDirs.h>
 #include <fileUtils.h>
+#include <fstream>
+#include <modifycommand.h>
+#include <pq-command.h>
+#include <pq-connection.h>
+#include <pq-error.h>
+#include <pq-mock.h>
+#include <selectcommand.h>
+#include <selectcommandUtil.impl.h>
+#include <testCore.h>
 
 class StandardMockDatabase : public DB::PluginMock<PQ::Mock> {
-	public:
-		StandardMockDatabase() : DB::PluginMock<PQ::Mock>("PQmock", {
-				rootDir / "pqschema.sql" }, "user=postgres dbname=postgres")
-		{
-		}
+public:
+	StandardMockDatabase() :
+		DB::PluginMock<PQ::Mock>("PQmock", {rootDir / "pqschema.sql"}, "user=postgres dbname=postgres")
+	{
+	}
 };
 
-BOOST_GLOBAL_FIXTURE( StandardMockDatabase );
+BOOST_GLOBAL_FIXTURE(StandardMockDatabase);
 
-BOOST_FIXTURE_TEST_SUITE( Core, DB::TestCore );
+BOOST_FIXTURE_TEST_SUITE(Core, DB::TestCore);
 
-BOOST_AUTO_TEST_CASE( transactions )
+BOOST_AUTO_TEST_CASE(transactions)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 
@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE( transactions )
 	BOOST_REQUIRE_EQUAL(false, ro->inTx());
 }
 
-BOOST_AUTO_TEST_CASE( bindAndSend )
+BOOST_AUTO_TEST_CASE(bindAndSend)
 {
 	auto rw = DB::MockDatabase::openConnectionTo("PQmock");
 
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE( bindAndSend )
 	BOOST_REQUIRE_EQUAL(0, mod->execute(true));
 }
 
-BOOST_AUTO_TEST_CASE( bindAndSelect )
+BOOST_AUTO_TEST_CASE(bindAndSelect)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE( bindAndSelect )
 	BOOST_REQUIRE_EQUAL(1, rows);
 }
 
-BOOST_AUTO_TEST_CASE( selectInTx )
+BOOST_AUTO_TEST_CASE(selectInTx)
 {
 	auto db = DB::MockDatabase::openConnectionTo("PQmock");
 
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE( selectInTx )
 	db->finish();
 }
 
-BOOST_AUTO_TEST_CASE( bindAndSelectOther )
+BOOST_AUTO_TEST_CASE(bindAndSelectOther)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 
@@ -136,14 +136,15 @@ BOOST_AUTO_TEST_CASE( bindAndSelectOther )
 		assertColumnValueHelper(*select, 1, 123.45);
 		assertColumnValueHelper(*select, 2, std::string_view("some text with a ; in it and a ' too"));
 		assertColumnValueHelper(*select, 3, true);
-		assertColumnValueHelper(*select, 4, boost::posix_time::ptime_from_tm({ 3, 6, 23, 27, 3, 115, 0, 0, 0, 0, nullptr}));
+		assertColumnValueHelper(
+				*select, 4, boost::posix_time::ptime_from_tm({3, 6, 23, 27, 3, 115, 0, 0, 0, 0, nullptr}));
 		assertColumnValueHelper(*select, 5, boost::posix_time::time_duration(38, 13, 12));
 		rows += 1;
 	}
 	BOOST_REQUIRE_EQUAL(1, rows);
 }
 
-BOOST_AUTO_TEST_CASE( testP2MockScriptDir )
+BOOST_AUTO_TEST_CASE(testP2MockScriptDir)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 
@@ -156,7 +157,7 @@ BOOST_AUTO_TEST_CASE( testP2MockScriptDir )
 	}
 }
 
-BOOST_AUTO_TEST_CASE( bulkload )
+BOOST_AUTO_TEST_CASE(bulkload)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 
@@ -172,21 +173,21 @@ BOOST_AUTO_TEST_CASE( bulkload )
 		throw std::runtime_error("Couldn't open bulk.sample");
 	}
 	std::array<char, BUFSIZ> buf {};
-	for (std::streamsize r; (r = in.readsome(buf.data(), buf.size())) > 0; ) {
+	for (std::streamsize r; (r = in.readsome(buf.data(), buf.size())) > 0;) {
 		ro->bulkUploadData(buf.data(), r);
 	}
 	ro->endBulkUpload(nullptr);
 	assertScalarValueHelper(*count, 800);
 }
 
-BOOST_AUTO_TEST_CASE( nofetch )
+BOOST_AUTO_TEST_CASE(nofetch)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 	auto count = ro->select("SELECT * FROM bulktest");
 	count->execute();
 }
 
-BOOST_AUTO_TEST_CASE( bigIterate )
+BOOST_AUTO_TEST_CASE(bigIterate)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 
@@ -198,7 +199,7 @@ BOOST_AUTO_TEST_CASE( bigIterate )
 	BOOST_REQUIRE_EQUAL(800, rows);
 }
 
-BOOST_AUTO_TEST_CASE( insertId )
+BOOST_AUTO_TEST_CASE(insertId)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 	auto ins = ro->modify("INSERT INTO idtest(foo) VALUES(1)");
@@ -208,7 +209,7 @@ BOOST_AUTO_TEST_CASE( insertId )
 	}
 }
 
-BOOST_AUTO_TEST_CASE( reconnect )
+BOOST_AUTO_TEST_CASE(reconnect)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 	auto rok = DB::MockDatabase::openConnectionTo("PQmock");
@@ -228,7 +229,7 @@ BOOST_AUTO_TEST_CASE( reconnect )
 	ro->modify("TRUNCATE TABLE test")->execute();
 }
 
-BOOST_AUTO_TEST_CASE( reconnectInTx )
+BOOST_AUTO_TEST_CASE(reconnectInTx)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 	auto rok = DB::MockDatabase::openConnectionTo("PQmock");
@@ -244,7 +245,7 @@ BOOST_AUTO_TEST_CASE( reconnectInTx )
 	BOOST_REQUIRE_THROW(ro->ping(), DB::ConnectionError);
 }
 
-BOOST_AUTO_TEST_CASE( statementReuse )
+BOOST_AUTO_TEST_CASE(statementReuse)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 	auto pqconn = std::dynamic_pointer_cast<PQ::Connection>(ro);
@@ -267,7 +268,7 @@ BOOST_AUTO_TEST_CASE( statementReuse )
 	}
 }
 
-BOOST_AUTO_TEST_CASE( bulkSelect )
+BOOST_AUTO_TEST_CASE(bulkSelect)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 	auto co = std::make_shared<PQ::CommandOptions>(0, 35, false);
@@ -275,14 +276,14 @@ BOOST_AUTO_TEST_CASE( bulkSelect )
 	sel->bindParamI(0, 1);
 	int totalInt = 0, count = 0;
 	sel->forEachRow<int64_t>([&totalInt, &count](auto i) {
-			totalInt += i;
-			count += 1;
-		});
+		totalInt += i;
+		count += 1;
+	});
 	BOOST_REQUIRE_EQUAL(20, totalInt);
 	BOOST_REQUIRE_EQUAL(8, count);
 }
 
-BOOST_AUTO_TEST_CASE( selectWithSmallPages )
+BOOST_AUTO_TEST_CASE(selectWithSmallPages)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 	auto co = std::make_shared<PQ::CommandOptions>(0, 1, true);
@@ -290,14 +291,14 @@ BOOST_AUTO_TEST_CASE( selectWithSmallPages )
 	sel->bindParamI(0, 1);
 	int totalInt = 0, count = 0;
 	sel->forEachRow<int64_t>([&totalInt, &count](auto i) {
-			totalInt += i;
-			count += 1;
-		});
+		totalInt += i;
+		count += 1;
+	});
 	BOOST_REQUIRE_EQUAL(20, totalInt);
 	BOOST_REQUIRE_EQUAL(8, count);
 }
 
-BOOST_AUTO_TEST_CASE( dateoid )
+BOOST_AUTO_TEST_CASE(dateoid)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 	auto co = std::make_shared<PQ::CommandOptions>(0, 1, false);
@@ -307,52 +308,60 @@ BOOST_AUTO_TEST_CASE( dateoid )
 	}
 }
 
-BOOST_AUTO_TEST_CASE( insertReturning )
+BOOST_AUTO_TEST_CASE(insertReturning)
 {
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 	auto co = std::make_shared<PQ::CommandOptions>(0, 35, false);
 	auto sel = ro->select("INSERT INTO test(id, fl) VALUES(1, 3) RETURNING id + fl", co);
 	int totalInt = 0, count = 0;
 	sel->forEachRow<int64_t>([&totalInt, &count](auto i) {
-			totalInt += i;
-			count += 1;
-		});
+		totalInt += i;
+		count += 1;
+	});
 	BOOST_REQUIRE_EQUAL(4, totalInt);
 	BOOST_REQUIRE_EQUAL(1, count);
 }
 
-BOOST_AUTO_TEST_CASE( closeOnError )
+BOOST_AUTO_TEST_CASE(closeOnError)
 {
 	auto ro = DB::ConnectionPtr(DB::MockDatabase::openConnectionTo("PQmock"));
-	BOOST_REQUIRE_THROW({
-			ro->select("SELECT * FROM test")->forEachRow<>([&ro](){
+	BOOST_REQUIRE_THROW(
+			{
+				ro->select("SELECT * FROM test")->forEachRow<>([&ro]() {
 					ro->execute("nonsense");
 				});
-			}, DB::Error);
-	BOOST_REQUIRE_THROW({
-			ro->select("SELECT * FROM test")->forEachRow<>([&ro](){
-				ro->select("SELECT * FROM test")->forEachRow<>([&ro](){
+			},
+			DB::Error);
+	BOOST_REQUIRE_THROW(
+			{
+				ro->select("SELECT * FROM test")->forEachRow<>([&ro]() {
+					ro->select("SELECT * FROM test")->forEachRow<>([&ro]() {
 						ro->execute("nonsense");
 					});
 				});
-			}, DB::Error);
+			},
+			DB::Error);
 	ro->beginTx();
-	BOOST_REQUIRE_THROW({
-			ro->select("SELECT * FROM test")->forEachRow<>([&ro](){
+	BOOST_REQUIRE_THROW(
+			{
+				ro->select("SELECT * FROM test")->forEachRow<>([&ro]() {
 					ro->execute("nonsense");
 				});
-			}, DB::Error);
-	BOOST_REQUIRE_THROW({
-			ro->select("SELECT * FROM test")->forEachRow<>([&ro](){
-				ro->select("SELECT * FROM test")->forEachRow<>([&ro](){
+			},
+			DB::Error);
+	BOOST_REQUIRE_THROW(
+			{
+				ro->select("SELECT * FROM test")->forEachRow<>([&ro]() {
+					ro->select("SELECT * FROM test")->forEachRow<>([&ro]() {
 						ro->execute("nonsense");
 					});
 				});
-			}, DB::Error);
+			},
+			DB::Error);
 	ro->commitTx();
 }
 
-BOOST_AUTO_TEST_CASE( blobs )
+BOOST_AUTO_TEST_CASE(blobs)
 {
 	auto ro = DB::ConnectionPtr(DB::MockDatabase::openConnectionTo("PQmock"));
 	std::vector<char> buf(29);
@@ -377,7 +386,7 @@ BOOST_AUTO_TEST_CASE( blobs )
 	}
 }
 
-BOOST_AUTO_TEST_CASE( fetchAsBinary )
+BOOST_AUTO_TEST_CASE(fetchAsBinary)
 {
 	auto ro = DB::ConnectionPtr(DB::MockDatabase::openConnectionTo("PQmock"));
 	std::vector<char> buf(29);
@@ -396,7 +405,8 @@ BOOST_AUTO_TEST_CASE( fetchAsBinary )
 		BOOST_REQUIRE_EQUAL(r.value<0>(), blob);
 	}
 	*opts->hash += 1;
-	sel = ro->select("SELECT CAST(length(data) AS BIGINT) big, CAST(length(data) AS SMALLINT) small FROM blobtest", opts);
+	sel = ro->select(
+			"SELECT CAST(length(data) AS BIGINT) big, CAST(length(data) AS SMALLINT) small FROM blobtest", opts);
 	for (const auto & r : sel->as<int64_t, int64_t>()) {
 		BOOST_REQUIRE_EQUAL(r.value<0>(), buf.size());
 		BOOST_REQUIRE_EQUAL(r.value<1>(), buf.size());
@@ -420,7 +430,7 @@ BOOST_AUTO_TEST_CASE( fetchAsBinary )
 	}
 }
 
-BOOST_AUTO_TEST_CASE( largeBlob )
+BOOST_AUTO_TEST_CASE(largeBlob)
 {
 	auto ro = DB::ConnectionPtr(DB::MockDatabase::openConnectionTo("PQmock"));
 	ro->execute("TRUNCATE TABLE blobtest");
@@ -441,7 +451,7 @@ BOOST_AUTO_TEST_CASE( largeBlob )
 	}
 }
 
-BOOST_AUTO_TEST_CASE( bulkPerfTest )
+BOOST_AUTO_TEST_CASE(bulkPerfTest)
 {
 	auto ro = DB::ConnectionPtr(DB::MockDatabase::openConnectionTo("PQmock"));
 	auto sel = ro->select(R"SQL(select s a, cast(s as numeric(7,1)) b, cast(s as text) c,
@@ -450,8 +460,8 @@ BOOST_AUTO_TEST_CASE( bulkPerfTest )
 			from generate_series(1, 1000) s)SQL");
 
 	int64_t tot = 0;
-	for (const auto & [a,b,c,d,e,f] : sel->as<int64_t, double, std::string_view,
-			boost::posix_time::time_duration, boost::posix_time::ptime, bool>()) {
+	for (const auto & [a, b, c, d, e, f] : sel->as<int64_t, double, std::string_view, boost::posix_time::time_duration,
+										   boost::posix_time::ptime, bool>()) {
 		tot += a + b + c.length() + d.hours() + e.time_of_day().hours() + f;
 	}
 	BOOST_REQUIRE_EQUAL(tot, 1013265);
@@ -459,11 +469,10 @@ BOOST_AUTO_TEST_CASE( bulkPerfTest )
 
 BOOST_AUTO_TEST_SUITE_END();
 
-BOOST_AUTO_TEST_CASE( connfail )
+BOOST_AUTO_TEST_CASE(connfail)
 {
 	BOOST_REQUIRE_THROW(
-			(void)DB::ConnectionFactory::createNew("postgresql", "host=localhost user=no"),
-			DB::ConnectionError);
+			(void)DB::ConnectionFactory::createNew("postgresql", "host=localhost user=no"), DB::ConnectionError);
 	try {
 		(void)DB::ConnectionFactory::createNew("postgresql", "host=localhost user=no");
 	}
@@ -472,12 +481,12 @@ BOOST_AUTO_TEST_CASE( connfail )
 	}
 }
 
-BOOST_AUTO_TEST_CASE( ssl )
+BOOST_AUTO_TEST_CASE(ssl)
 {
-	auto conn = DB::ConnectionFactory::createNew("postgresql", "host=randomdan.homeip.net user=gentoo dbname=postgres sslmode=require");
+	auto conn = DB::ConnectionFactory::createNew(
+			"postgresql", "host=randomdan.homeip.net user=gentoo dbname=postgres sslmode=require");
 	BOOST_REQUIRE(conn);
 	auto pqconn = std::dynamic_pointer_cast<PQ::Connection>(conn);
 	BOOST_REQUIRE(pqconn);
 	BOOST_REQUIRE(PQgetssl(pqconn->conn));
 }
-
