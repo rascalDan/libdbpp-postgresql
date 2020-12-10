@@ -147,31 +147,27 @@ PQ::Connection::beginBulkUpload(const char * table, const char * extra)
 void
 PQ::Connection::endBulkUpload(const char * msg)
 {
-	switch (PQputCopyEnd(conn, msg)) {
-		case 0: // block
-			sleep(1);
-			endBulkUpload(msg);
-			return;
-		case 1: // success
-			checkResultFree(PQgetResult(conn), PGRES_COMMAND_OK);
-			return;
-		default: // -1 is error
-			throw Error(conn);
+	int rc;
+	while (!(rc = PQputCopyEnd(conn, msg))) {
+		sleep(1);
 	}
+	if (rc != 1) {
+		throw Error(conn);
+	}
+	checkResultFree(PQgetResult(conn), PGRES_COMMAND_OK);
 }
 
 size_t
 PQ::Connection::bulkUploadData(const char * data, size_t len) const
 {
-	switch (PQputCopyData(conn, data, len)) {
-		case 0: // block
-			sleep(1);
-			return bulkUploadData(data, len);
-		case 1: // success
-			return len;
-		default: // -1 is error
-			throw Error(conn);
+	int rc;
+	while (!(rc = PQputCopyData(conn, data, len))) {
+		sleep(1);
 	}
+	if (rc != 1) {
+		throw Error(conn);
+	}
+	return len;
 }
 
 static const std::string selectLastVal("SELECT lastval()");
