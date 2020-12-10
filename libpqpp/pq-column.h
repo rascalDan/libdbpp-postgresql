@@ -9,7 +9,7 @@ namespace PQ {
 	class Column : public DB::Column {
 	public:
 		Column(const SelectBase *, unsigned int field);
-		~Column();
+		~Column() override;
 
 		[[nodiscard]] bool isNull() const override;
 		void apply(DB::HandleField &) const override;
