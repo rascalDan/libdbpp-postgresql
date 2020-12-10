@@ -79,8 +79,8 @@ PQ::Connection::bulkUpdateStyle() const
 void
 PQ::Connection::ping() const
 {
-	// NOLINTNEXTLINE(hicpp-signed-bitwise)
 	struct pollfd fd {
+		// NOLINTNEXTLINE(hicpp-signed-bitwise)
 		PQsocket(conn), POLLRDHUP | POLLERR | POLLHUP | POLLNVAL, 0
 	};
 	if (PQstatus(conn) != CONNECTION_OK || poll(&fd, 1, 0)) {
