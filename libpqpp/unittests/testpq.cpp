@@ -78,6 +78,7 @@ BOOST_AUTO_TEST_CASE(bindAndSend)
 	mod->execute();
 	mod = rw->modify("DELETE FROM test WHERE string = '?'");
 	BOOST_REQUIRE_THROW(mod->execute(false), DB::NoRowsAffected);
+	// cppcheck-suppress assertWithSideEffect
 	BOOST_REQUIRE_EQUAL(0, mod->execute(true));
 }
 
@@ -205,6 +206,7 @@ BOOST_AUTO_TEST_CASE(insertId)
 	auto ins = ro->modify("INSERT INTO idtest(foo) VALUES(1)");
 	for (int x = 1; x < 4; x++) {
 		ins->execute();
+		// cppcheck-suppress assertWithSideEffect
 		BOOST_REQUIRE_EQUAL(x, ro->insertId());
 	}
 }
