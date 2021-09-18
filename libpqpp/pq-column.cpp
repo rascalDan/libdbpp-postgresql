@@ -5,7 +5,8 @@
 #include <cstring>
 
 PQ::Column::Column(const SelectBase * s, unsigned int i) :
-	DB::Column(PQfname(s->execRes, (int)i), i), sc(s), oid(PQftype(sc->execRes, (int)colNo)), buf(nullptr)
+	DB::Column(PQfname(s->execRes, static_cast<int>(i)), i), sc(s), oid(PQftype(sc->execRes, static_cast<int>(colNo))),
+	buf(nullptr)
 {
 }
 
@@ -19,19 +20,19 @@ PQ::Column::~Column()
 bool
 PQ::Column::isNull() const
 {
-	return PQgetisnull(sc->execRes, (int)sc->tuple, (int)colNo);
+	return PQgetisnull(sc->execRes, static_cast<int>(sc->tuple), static_cast<int>(colNo));
 }
 
 std::size_t
 PQ::Column::length() const
 {
-	return PQgetlength(sc->execRes, (int)sc->tuple, (int)colNo);
+	return static_cast<std::size_t>(PQgetlength(sc->execRes, static_cast<int>(sc->tuple), static_cast<int>(colNo)));
 }
 
 const char *
 PQ::Column::value() const
 {
-	return PQgetvalue(sc->execRes, (int)sc->tuple, (int)colNo);
+	return PQgetvalue(sc->execRes, static_cast<int>(sc->tuple), static_cast<int>(colNo));
 }
 
 void
@@ -74,8 +75,8 @@ PQ::Column::apply(DB::HandleField & h) const
 					>= 4) {
 				h.interval(boost::posix_time::time_duration((24 * days) + hours, minutes, seconds,
 						fractions
-								* (long)pow(10,
-										boost::posix_time::time_res_traits::num_fractional_digits() + flen1 - flen2)));
+								* static_cast<long>(pow(10,
+										boost::posix_time::time_res_traits::num_fractional_digits() + flen1 - flen2))));
 			}
 			else {
 				h.interval(boost::posix_time::duration_from_string(val));
@@ -96,7 +97,7 @@ PQ::Column::apply(DB::HandleField & h) const
 				PQfreemem(buf);
 			}
 			size_t len;
-			buf = PQunescapeBytea(valueAsPtr<unsigned char>(), &len);
+			buf = PQunescapeBytea(reinterpret_cast<const unsigned char *>(value()), &len);
 			h.blob(DB::Blob(buf, len));
 			break;
 		}

@@ -25,7 +25,7 @@ public:
 
 BOOST_GLOBAL_FIXTURE(StandardMockDatabase);
 
-BOOST_FIXTURE_TEST_SUITE(Core, DB::TestCore);
+BOOST_FIXTURE_TEST_SUITE(Core, DB::TestCore)
 
 BOOST_AUTO_TEST_CASE(transactions)
 {
@@ -55,23 +55,23 @@ BOOST_AUTO_TEST_CASE(bindAndSend)
 	mod->bindParamT(4, testDateTime);
 	mod->bindParamT(5, testInterval);
 	mod->execute();
-	mod->bindParamI(0, (unsigned int)(testInt + 10));
-	mod->bindParamF(1, (float)(testDouble + 10));
+	mod->bindParamI(0, static_cast<unsigned int>(testInt + 10));
+	mod->bindParamF(1, static_cast<float>(testDouble + 10));
 	mod->bindParamS(2, std::string(testString) + " something");
 	mod->bindParamB(3, true);
 	mod->bindParamT(4, testDateTime);
 	mod->bindParamT(5, testInterval);
 	mod->execute();
 	mod->bindNull(0);
-	mod->bindParamI(1, (long long unsigned int)(testDouble + 10));
-	mod->bindParamI(2, (long long int)testInt);
+	mod->bindParamI(1, static_cast<long long unsigned int>(testDouble + 10));
+	mod->bindParamI(2, static_cast<long long int>(testInt));
 	mod->bindParamB(3, true);
 	mod->bindNull(4);
 	mod->bindNull(5);
 	mod->execute();
 	mod->bindNull(0);
-	mod->bindParamI(1, (long unsigned int)(testDouble + 10));
-	mod->bindParamI(2, (long int)testInt);
+	mod->bindParamI(1, static_cast<long unsigned int>(testDouble + 10));
+	mod->bindParamI(2, testInt);
 	mod->bindParamB(3, true);
 	mod->bindParamS(4, "2016-01-01T12:34:56");
 	mod->bindNull(5);
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE(bulkload)
 	}
 	std::array<char, BUFSIZ> buf {};
 	for (std::streamsize r; (r = in.readsome(buf.data(), buf.size())) > 0;) {
-		ro->bulkUploadData(buf.data(), r);
+		ro->bulkUploadData(buf.data(), static_cast<size_t>(r));
 	}
 	ro->endBulkUpload(nullptr);
 	assertScalarValueHelper(*count, 800);
@@ -274,7 +274,7 @@ BOOST_AUTO_TEST_CASE(bulkSelect)
 	auto co = std::make_shared<PQ::CommandOptions>(0, 35, false);
 	auto sel = ro->select("SELECT * FROM test WHERE id > ?", co);
 	sel->bindParamI(0, 1);
-	int totalInt = 0, count = 0;
+	int64_t totalInt = 0, count = 0;
 	sel->forEachRow<int64_t>([&totalInt, &count](auto i) {
 		totalInt += i;
 		count += 1;
@@ -289,7 +289,7 @@ BOOST_AUTO_TEST_CASE(selectWithSmallPages)
 	auto co = std::make_shared<PQ::CommandOptions>(0, 1, true);
 	auto sel = ro->select("SELECT * FROM test WHERE id > ?", co);
 	sel->bindParamI(0, 1);
-	int totalInt = 0, count = 0;
+	int64_t totalInt = 0, count = 0;
 	sel->forEachRow<int64_t>([&totalInt, &count](auto i) {
 		totalInt += i;
 		count += 1;
@@ -313,7 +313,7 @@ BOOST_AUTO_TEST_CASE(insertReturning)
 	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 	auto co = std::make_shared<PQ::CommandOptions>(0, 35, false);
 	auto sel = ro->select("INSERT INTO test(id, fl) VALUES(1, 3) RETURNING id + fl", co);
-	int totalInt = 0, count = 0;
+	int64_t totalInt = 0, count = 0;
 	sel->forEachRow<int64_t>([&totalInt, &count](auto i) {
 		totalInt += i;
 		count += 1;
@@ -324,7 +324,7 @@ BOOST_AUTO_TEST_CASE(insertReturning)
 
 BOOST_AUTO_TEST_CASE(closeOnError)
 {
-	auto ro = DB::ConnectionPtr(DB::MockDatabase::openConnectionTo("PQmock"));
+	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 	BOOST_REQUIRE_THROW(
 			{
 				ro->select("SELECT * FROM test")->forEachRow<>([&ro]() {
@@ -363,7 +363,7 @@ BOOST_AUTO_TEST_CASE(closeOnError)
 
 BOOST_AUTO_TEST_CASE(blobs)
 {
-	auto ro = DB::ConnectionPtr(DB::MockDatabase::openConnectionTo("PQmock"));
+	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 	std::vector<char> buf(29);
 	memcpy(&buf[0], "This is some binary text data", 29);
 	auto ins = ro->modify("INSERT INTO blobtest(data) VALUES(?)");
@@ -380,7 +380,7 @@ BOOST_AUTO_TEST_CASE(blobs)
 		BOOST_REQUIRE_EQUAL(r.value<1>(), "37c7c3737f93e8d17e845deff8fa74d2");
 		// Assert the fetch of the data is correct
 		BOOST_REQUIRE_EQUAL(r.value<0>().len, buf.size());
-		std::string str((const char *)r.value<0>().data, r.value<0>().len);
+		std::string_view str(reinterpret_cast<const char *>(r.value<0>().data), r.value<0>().len);
 		BOOST_REQUIRE_EQUAL(str, "This is some binary text data");
 		BOOST_REQUIRE_EQUAL(r.value<0>(), blob);
 	}
@@ -388,7 +388,7 @@ BOOST_AUTO_TEST_CASE(blobs)
 
 BOOST_AUTO_TEST_CASE(fetchAsBinary)
 {
-	auto ro = DB::ConnectionPtr(DB::MockDatabase::openConnectionTo("PQmock"));
+	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 	std::vector<char> buf(29);
 	memcpy(&buf[0], "This is some binary text data", 29);
 	DB::Blob blob(buf);
@@ -432,10 +432,10 @@ BOOST_AUTO_TEST_CASE(fetchAsBinary)
 
 BOOST_AUTO_TEST_CASE(largeBlob)
 {
-	auto ro = DB::ConnectionPtr(DB::MockDatabase::openConnectionTo("PQmock"));
+	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 	ro->execute("TRUNCATE TABLE blobtest");
 	AdHoc::FileUtils::MemMap f("/proc/self/exe");
-	DB::Blob blob(f.data, f.getStat().st_size);
+	DB::Blob blob(f.data, static_cast<size_t>(f.getStat().st_size));
 	BOOST_REQUIRE(blob.len > 140000); // Just assert the mapped file is actually "large"
 	auto ins = ro->modify("INSERT INTO blobtest(data) VALUES(?)");
 	ins->bindParamBLOB(0, blob);
@@ -453,7 +453,7 @@ BOOST_AUTO_TEST_CASE(largeBlob)
 
 BOOST_AUTO_TEST_CASE(bulkPerfTest)
 {
-	auto ro = DB::ConnectionPtr(DB::MockDatabase::openConnectionTo("PQmock"));
+	auto ro = DB::MockDatabase::openConnectionTo("PQmock");
 	auto sel = ro->select(R"SQL(select s a, cast(s as numeric(7,1)) b, cast(s as text) c,
 			make_interval(secs => s) d, make_timestamp(2019,1,1,1,1,1) + make_interval(mins=>s) e,
 			s % 2 = 0 f
@@ -462,12 +462,12 @@ BOOST_AUTO_TEST_CASE(bulkPerfTest)
 	int64_t tot = 0;
 	for (const auto & [a, b, c, d, e, f] : sel->as<int64_t, double, std::string_view, boost::posix_time::time_duration,
 										   boost::posix_time::ptime, bool>()) {
-		tot += a + b + c.length() + d.hours() + e.time_of_day().hours() + f;
+		tot += a + static_cast<int64_t>(b) + static_cast<int64_t>(c.length()) + d.hours() + e.time_of_day().hours() + f;
 	}
 	BOOST_REQUIRE_EQUAL(tot, 1013265);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_CASE(connfail)
 {

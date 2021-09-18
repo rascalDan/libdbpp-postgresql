@@ -6,7 +6,7 @@
 #include <cstring>
 #include <factory.h>
 
-NAMEDFACTORY("postgresql", PQ::CommandOptions, DB::CommandOptionsFactory);
+NAMEDFACTORY("postgresql", PQ::CommandOptions, DB::CommandOptionsFactory)
 
 AdHocFormatter(PQCommondStatement, "pStatement_id%?");
 PQ::Command::Command(Connection * conn, const std::string & sql, const DB::CommandOptionsCPtr & opts) :
@@ -16,7 +16,7 @@ PQ::Command::Command(Connection * conn, const std::string & sql, const DB::Comma
 }
 
 PQ::CommandOptions::CommandOptions(std::size_t hash, const DB::CommandOptionsMap & map) :
-	DB::CommandOptions(hash), fetchTuples(get(map, "page-size", 35)), useCursor(!isSet(map, "no-cursor")),
+	DB::CommandOptions(hash), fetchTuples(get(map, "page-size", 35U)), useCursor(!isSet(map, "no-cursor")),
 	fetchBinary(isSet(map, "fetch-binary"))
 {
 }
@@ -68,7 +68,7 @@ PQ::Command::paramSet(unsigned int n, const T &... v)
 {
 	paramsAtLeast(n);
 	bufs[n] = std::make_unique<std::string>(PQCommandParamFmt::get(v...));
-	lengths[n] = bufs[n]->length();
+	lengths[n] = static_cast<int>(bufs[n]->length());
 	formats[n] = 0;
 	values[n] = bufs[n]->data();
 }
@@ -78,7 +78,7 @@ PQ::Command::paramSet(unsigned int n, const std::string_view & b)
 {
 	paramsAtLeast(n);
 	bufs[n] = std::make_unique<std::string>(b);
-	lengths[n] = b.length();
+	lengths[n] = static_cast<int>(b.length());
 	formats[n] = 0;
 	values[n] = bufs[n]->data();
 }
@@ -152,7 +152,7 @@ void
 PQ::Command::bindParamBLOB(unsigned int n, const DB::Blob & v)
 {
 	paramsAtLeast(n);
-	lengths[n] = v.len;
+	lengths[n] = static_cast<int>(v.len);
 	formats[n] = 1;
 	values[n] = static_cast<const char *>(v.data);
 	bufs[n].reset();

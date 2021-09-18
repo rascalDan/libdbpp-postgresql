@@ -19,8 +19,8 @@ PQ::SelectBase::~SelectBase()
 void
 PQ::SelectBase::createColumns(PGresult * execRes)
 {
-	unsigned int nFields = PQnfields(execRes);
-	for (unsigned int f = 0; f < nFields; f += 1) {
+	auto nFields = PQnfields(execRes);
+	for (decltype(nFields) f = 0; f < nFields; f += 1) {
 		if (binary) {
 			insertColumn(std::make_unique<BinaryColumn>(this, f));
 		}

@@ -38,8 +38,8 @@ PQ::CursorSelectCommand::execute()
 		if (s_declare.empty()) {
 			s_declare = mkdeclare();
 		}
-		c->checkResultFree(PQexecParams(c->conn, s_declare.c_str(), values.size(), nullptr, &values.front(),
-								   &lengths.front(), &formats.front(), binary),
+		c->checkResultFree(PQexecParams(c->conn, s_declare.c_str(), static_cast<int>(values.size()), nullptr,
+								   &values.front(), &lengths.front(), &formats.front(), binary),
 				PGRES_COMMAND_OK);
 		fetchTuples();
 		createColumns(execRes);
@@ -52,8 +52,8 @@ PQ::CursorSelectCommand::fetchTuples()
 {
 	execRes = c->checkResult(
 			PQexecParams(c->conn, s_fetch.c_str(), 0, nullptr, nullptr, nullptr, nullptr, binary), PGRES_TUPLES_OK);
-	nTuples = PQntuples(execRes);
-	tuple = -1;
+	nTuples = static_cast<decltype(nTuples)>(PQntuples(execRes));
+	tuple = static_cast<decltype(tuple)>(-1);
 }
 
 bool

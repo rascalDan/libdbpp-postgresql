@@ -2,6 +2,7 @@
 #define PG_COLUMN_H
 
 #include <column.h>
+#include <cstring>
 #include <libpq-fe.h>
 
 namespace PQ {
@@ -19,13 +20,9 @@ namespace PQ {
 		inline T
 		valueAs() const
 		{
-			return *(T *)(value());
-		}
-		template<typename T>
-		inline T *
-		valueAsPtr() const
-		{
-			return (T *)(value());
+			T v {};
+			std::memcpy(&v, value(), sizeof(T));
+			return v;
 		}
 		const char * value() const;
 		std::size_t length() const;

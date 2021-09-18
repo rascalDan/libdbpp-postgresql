@@ -22,13 +22,13 @@ PQ::BinaryColumn::apply(DB::HandleField & h) const
 			h.boolean(valueAs<bool>());
 			break;
 		case 21: // INT2OID:
-			h.integer(be16toh(valueAs<uint16_t>()));
+			h.integer(static_cast<int64_t>(be16toh(valueAs<uint16_t>())));
 			break;
 		case 23: // INT4OID:
-			h.integer(be32toh(valueAs<uint32_t>()));
+			h.integer(static_cast<int64_t>(be32toh(valueAs<uint32_t>())));
 			break;
 		case 20: // INT8OID:
-			h.integer(be64toh(valueAs<uint64_t>()));
+			h.integer(static_cast<int64_t>(be64toh(valueAs<uint64_t>())));
 			break;
 		case 17: // BYTEAOID
 			h.blob(DB::Blob(value(), length()));

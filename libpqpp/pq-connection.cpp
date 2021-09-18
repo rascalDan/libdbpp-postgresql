@@ -8,7 +8,7 @@
 #include <poll.h>
 #include <unistd.h>
 
-NAMEDFACTORY("postgresql", PQ::Connection, DB::ConnectionFactory);
+NAMEDFACTORY("postgresql", PQ::Connection, DB::ConnectionFactory)
 
 static void setup() __attribute__((constructor(101)));
 static void
@@ -161,7 +161,7 @@ size_t
 PQ::Connection::bulkUploadData(const char * data, size_t len) const
 {
 	int rc;
-	while (!(rc = PQputCopyData(conn, data, len))) {
+	while (!(rc = PQputCopyData(conn, data, static_cast<int>(len)))) {
 		sleep(1);
 	}
 	if (rc != 1) {

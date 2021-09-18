@@ -14,11 +14,11 @@ void
 PQ::BulkSelectCommand::execute()
 {
 	if (!executed) {
-		execRes = c->checkResult(PQexecPrepared(c->conn, prepare(), values.size(), &values.front(), &lengths.front(),
-										 &formats.front(), binary),
+		execRes = c->checkResult(PQexecPrepared(c->conn, prepare(), static_cast<int>(values.size()), &values.front(),
+										 &lengths.front(), &formats.front(), binary),
 				PGRES_TUPLES_OK);
-		nTuples = PQntuples(execRes);
-		tuple = -1;
+		nTuples = static_cast<decltype(nTuples)>(PQntuples(execRes));
+		tuple = static_cast<decltype(tuple)>(-1);
 		createColumns(execRes);
 		executed = true;
 	}

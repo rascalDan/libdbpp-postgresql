@@ -6,7 +6,7 @@
 #include <selectcommand.h>
 #include <selectcommandUtil.impl.h>
 
-NAMEDFACTORY("postgresql", PQ::Mock, DB::MockDatabaseFactory);
+NAMEDFACTORY("postgresql", PQ::Mock, DB::MockDatabaseFactory)
 
 namespace PQ {
 
