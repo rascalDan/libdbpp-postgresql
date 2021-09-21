@@ -1,7 +1,12 @@
 #include "pq-selectbase.h"
+#include "command.h"
 #include "pq-binarycolumn.h"
 #include "pq-column.h"
 #include "pq-command.h"
+#include <libpq-fe.h>
+#include <memory>
+#include <selectcommand.h>
+#include <string>
 
 PQ::SelectBase::SelectBase(const std::string & sql, const PQ::CommandOptionsCPtr & pqco) :
 	DB::Command(sql), DB::SelectCommand(sql), nTuples(0), tuple(0), execRes(nullptr),

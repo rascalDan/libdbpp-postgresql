@@ -4,6 +4,7 @@
 #include "pq-command.h"
 #include <libpq-fe.h>
 #include <selectcommand.h>
+#include <string>
 
 namespace PQ {
 	class SelectBase : public DB::SelectCommand {

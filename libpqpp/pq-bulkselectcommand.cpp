@@ -1,7 +1,11 @@
 #include "pq-bulkselectcommand.h"
-#include "pq-column.h"
+#include "command.h"
+#include "libpq-fe.h"
+#include "pq-command.h"
 #include "pq-connection.h"
-#include "pq-error.h"
+#include "pq-prepared.h"
+#include "pq-selectbase.h"
+#include <vector>
 
 PQ::BulkSelectCommand::BulkSelectCommand(Connection * conn, const std::string & sql,
 		const PQ::CommandOptionsCPtr & pqco, const DB::CommandOptionsCPtr & opts) :

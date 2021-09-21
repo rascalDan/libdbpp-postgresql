@@ -1,4 +1,5 @@
 #include "pq-error.h"
+#include <libpq-fe.h>
 
 PQ::Error::Error(const PGconn * conn) : msg(PQerrorMessage(conn)) { }
 

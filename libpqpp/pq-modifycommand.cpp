@@ -1,7 +1,11 @@
 #include "pq-modifycommand.h"
+#include "command.h"
+#include "modifycommand.h"
 #include "pq-connection.h"
-#include "pq-error.h"
+#include "pq-prepared.h"
 #include <cstdlib>
+#include <libpq-fe.h>
+#include <vector>
 
 PQ::ModifyCommand::ModifyCommand(Connection * conn, const std::string & sql, const DB::CommandOptionsCPtr & opts) :
 	DB::Command(sql), DB::ModifyCommand(sql), PQ::PreparedStatement(conn, sql, opts)

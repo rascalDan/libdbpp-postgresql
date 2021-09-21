@@ -1,10 +1,18 @@
 #include "pq-command.h"
-#include "pq-connection.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <algorithm>
+#include <boost/date_time/posix_time/time_formatters.hpp>
 #include <compileTimeFormatter.h>
-#include <cstdlib>
-#include <cstring>
+#include <dbTypes.h>
 #include <factory.h>
+#include <map>
+#include <optional>
+
+namespace Glib {
+	class ustring;
+}
+namespace PQ {
+	class Connection;
+}
 
 NAMEDFACTORY("postgresql", PQ::CommandOptions, DB::CommandOptionsFactory)
 

@@ -1,7 +1,12 @@
 #include "pq-cursorselectcommand.h"
+#include "command.h"
+#include "pq-command.h"
 #include "pq-connection.h"
-#include "pq-error.h"
+#include "pq-selectbase.h"
 #include <compileTimeFormatter.h>
+#include <libpq-fe.h>
+#include <memory>
+#include <vector>
 
 AdHocFormatter(PQCursorSelectDeclare, "DECLARE %? NO SCROLL CURSOR WITH HOLD FOR ");
 AdHocFormatter(PQCursorSelectFetch, "FETCH %? IN %?");

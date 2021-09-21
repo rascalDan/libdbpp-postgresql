@@ -1,10 +1,15 @@
 #include "pq-mock.h"
+#include "connection.h"
+#include "mockDatabase.h"
 #include "pq-connection.h"
-#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
 #include <compileTimeFormatter.h>
+#include <factory.h>
+#include <memory>
 #include <modifycommand.h>
 #include <selectcommand.h>
 #include <selectcommandUtil.impl.h>
+// IWYU pragma: no_include <boost/iterator/iterator_facade.hpp>
 
 NAMEDFACTORY("postgresql", PQ::Mock, DB::MockDatabaseFactory)
 

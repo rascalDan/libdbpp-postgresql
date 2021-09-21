@@ -1,9 +1,12 @@
 #ifndef MOCKPQDATASOURCE_H
 #define MOCKPQDATASOURCE_H
 
-#include "pq-connection.h"
+#include "connection_fwd.h"
+#include <c++11Helpers.h>
 #include <filesystem>
 #include <mockDatabase.h>
+#include <string>
+#include <vector>
 #include <visibility.h>
 
 namespace PQ {

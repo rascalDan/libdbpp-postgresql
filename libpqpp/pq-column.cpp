@@ -1,8 +1,18 @@
 #include "pq-column.h"
-#include "pq-error.h"
+#include "column.h"
+#include "dbTypes.h"
 #include "pq-selectbase.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/gregorian/parsers.hpp>
+#include <boost/date_time/posix_time/posix_time_config.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/date_time/posix_time/ptime.hpp>
+#include <boost/date_time/posix_time/time_parsers.hpp>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
+#include <libpq-fe.h>
+#include <memory>
 
 PQ::Column::Column(const SelectBase * s, unsigned int i) :
 	DB::Column(PQfname(s->execRes, static_cast<int>(i)), i), sc(s), oid(PQftype(sc->execRes, static_cast<int>(colNo))),

@@ -1,19 +1,53 @@
 #define BOOST_TEST_MODULE TestPQ
 #include <boost/test/unit_test.hpp>
 
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include "command_fwd.h"
+#include "connection.h"
+#include "dbTypes.h"
+#include "mockDatabase.h"
+#include <array>
+#include <boost/date_time/gregorian/greg_date.hpp>
+#include <boost/date_time/posix_time/conversion.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp> // IWYU pragma: keep
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/date_time/posix_time/ptime.hpp>
+#include <boost/date_time/time.hpp>
+#include <boost/date_time/time_system_counted.hpp>
 #include <column.h>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
 #include <definedDirs.h>
+#include <factory.impl.h>
 #include <fileUtils.h>
 #include <fstream>
+#include <libpq-fe.h>
+#include <memory>
 #include <modifycommand.h>
+#include <optional>
 #include <pq-command.h>
 #include <pq-connection.h>
-#include <pq-error.h>
 #include <pq-mock.h>
 #include <selectcommand.h>
 #include <selectcommandUtil.impl.h>
+#include <stdexcept>
+#include <string>
+#include <string_view>
 #include <testCore.h>
+#include <type_traits>
+#include <unistd.h>
+#include <utility>
+#include <vector>
+
+namespace DB {
+	class ColumnTypeNotSupported;
+}
+namespace DB {
+	class Error;
+}
+namespace boost::posix_time {
+	class time_duration;
+}
 
 class StandardMockDatabase : public DB::PluginMock<PQ::Mock> {
 public:

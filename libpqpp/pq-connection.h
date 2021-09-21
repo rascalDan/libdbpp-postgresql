@@ -1,11 +1,15 @@
 #ifndef PQ_CONNECTION_H
 #define PQ_CONNECTION_H
 
+#include "command_fwd.h"
 #include "pq-error.h"
 #include <c++11Helpers.h>
 #include <connection.h>
+#include <cstddef>
+#include <cstdint>
 #include <libpq-fe.h>
-#include <set>
+#include <map>
+#include <string>
 #include <visibility.h>
 
 namespace PQ {

@@ -1,5 +1,12 @@
 #include "pq-prepared.h"
+#include "command.h"
+#include "pq-command.h"
 #include "pq-connection.h"
+#include <iosfwd>
+#include <libpq-fe.h>
+#include <map>
+#include <utility>
+#include <vector>
 
 PQ::PreparedStatement::PreparedStatement(Connection * c, const std::string & sql, const DB::CommandOptionsCPtr & opts) :
 	DB::Command(sql), Command(c, sql, opts), pstmt(nullptr)

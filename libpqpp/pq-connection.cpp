@@ -1,10 +1,18 @@
 #include "pq-connection.h"
+#include "column.h"
+#include "command.h"
+#include "connection.h"
 #include "pq-bulkselectcommand.h"
+#include "pq-command.h"
 #include "pq-cursorselectcommand.h"
 #include "pq-error.h"
 #include "pq-modifycommand.h"
+#include "selectcommand.h"
 #include <boost/assert.hpp>
 #include <compileTimeFormatter.h>
+#include <factory.h>
+#include <libpq-fe.h>
+#include <memory>
 #include <poll.h>
 #include <unistd.h>
 

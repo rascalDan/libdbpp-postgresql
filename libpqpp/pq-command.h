@@ -1,16 +1,35 @@
 #ifndef PQ_COMMAND_H
 #define PQ_COMMAND_H
 
+#include "command.h"
 #include "pq-connection.h"
-#include <command.h>
-#include <libpq-fe.h>
 #include <memory>
 #include <vector>
 #include <visibility.h>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#ifndef __clang__
+#	pragma GCC diagnostic ignored "-Wuseless-cast"
+#endif
+#include <glibmm/ustring.h>
+#pragma GCC diagnostic pop
+#include "command_fwd.h"
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/date_time/posix_time/ptime.hpp>
+#include <cstddef>
+#include <iosfwd>
+#include <string>
+#include <string_view>
+
+namespace DB {
+	class Blob;
+}
+namespace boost::posix_time {
+	class time_duration;
+}
 
 namespace PQ {
-	class Connection;
-
 	class DLL_PUBLIC CommandOptions : public DB::CommandOptions {
 	public:
 		CommandOptions(std::size_t, const DB::CommandOptionsMap &);

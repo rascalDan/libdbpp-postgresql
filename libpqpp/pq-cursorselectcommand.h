@@ -1,14 +1,13 @@
 #ifndef PQ_CURSORSELECTCOMMAND_H
 #define PQ_CURSORSELECTCOMMAND_H
 
+#include "command_fwd.h" // for CommandOptionsCPtr
 #include "pq-command.h"
 #include "pq-selectbase.h"
-#include <map>
-#include <vector>
+#include <string> // for string
 
 namespace PQ {
 	class Connection;
-	class Column;
 	class CursorSelectCommand : public SelectBase, public Command {
 	public:
 		CursorSelectCommand(

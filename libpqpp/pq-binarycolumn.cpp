@@ -1,5 +1,9 @@
 #include "pq-binarycolumn.h"
-#include "pq-selectbase.h"
+#include "column.h"
+#include "dbTypes.h"
+#include "pq-column.h"
+#include <cstdint>
+#include <endian.h>
 #include <error.h>
 
 PQ::BinaryColumn::BinaryColumn(const PQ::SelectBase * s, unsigned int f) : PQ::Column(s, f) { }
