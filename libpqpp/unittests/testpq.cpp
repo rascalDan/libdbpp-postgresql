@@ -6,13 +6,9 @@
 #include "dbTypes.h"
 #include "mockDatabase.h"
 #include <array>
-#include <boost/date_time/gregorian/greg_date.hpp>
-#include <boost/date_time/posix_time/conversion.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp> // IWYU pragma: keep
-#include <boost/date_time/posix_time/posix_time_types.hpp>
-#include <boost/date_time/posix_time/ptime.hpp>
+#include <boost/date_time/gregorian_calendar.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/time.hpp>
-#include <boost/date_time/time_system_counted.hpp>
 #include <column.h>
 #include <cstdint>
 #include <cstdio>
@@ -41,12 +37,7 @@
 
 namespace DB {
 	class ColumnTypeNotSupported;
-}
-namespace DB {
 	class Error;
-}
-namespace boost::posix_time {
-	class time_duration;
 }
 
 class StandardMockDatabase : public DB::PluginMock<PQ::Mock> {

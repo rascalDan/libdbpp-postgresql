@@ -15,8 +15,7 @@
 #include <glibmm/ustring.h>
 #pragma GCC diagnostic pop
 #include "command_fwd.h"
-#include <boost/date_time/posix_time/posix_time_types.hpp>
-#include <boost/date_time/posix_time/ptime.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <cstddef>
 #include <iosfwd>
 #include <string>
@@ -24,9 +23,6 @@
 
 namespace DB {
 	class Blob;
-}
-namespace boost::posix_time {
-	class time_duration;
 }
 
 namespace PQ {

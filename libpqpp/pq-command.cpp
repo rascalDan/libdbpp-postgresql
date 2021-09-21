@@ -1,10 +1,8 @@
 #include "pq-command.h"
 #include <algorithm>
-#include <boost/date_time/posix_time/time_formatters.hpp>
 #include <compileTimeFormatter.h>
 #include <dbTypes.h>
 #include <factory.h>
-#include <map>
 #include <optional>
 
 namespace Glib {

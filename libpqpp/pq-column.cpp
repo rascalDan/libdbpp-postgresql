@@ -2,11 +2,8 @@
 #include "column.h"
 #include "dbTypes.h"
 #include "pq-selectbase.h"
-#include <boost/date_time/gregorian/parsers.hpp>
-#include <boost/date_time/posix_time/posix_time_config.hpp>
-#include <boost/date_time/posix_time/posix_time_types.hpp>
-#include <boost/date_time/posix_time/ptime.hpp>
-#include <boost/date_time/posix_time/time_parsers.hpp>
+#include <boost/date_time/gregorian_calendar.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
