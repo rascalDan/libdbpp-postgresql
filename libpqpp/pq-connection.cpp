@@ -32,6 +32,7 @@ noNoticeProcessor(void *, const char *)
 {
 }
 
+// NOLINTNEXTLINE(bugprone-throw-keyword-missing)
 PQ::ConnectionError::ConnectionError(const PGconn * conn) : PQ::Error(conn) { }
 
 PQ::Connection::Connection(const std::string & info) : conn(PQconnectdb(info.c_str()))
