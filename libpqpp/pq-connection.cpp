@@ -76,13 +76,13 @@ PQ::Connection::execute(const std::string & sql, const DB::CommandOptionsCPtr &)
 DB::BulkDeleteStyle
 PQ::Connection::bulkDeleteStyle() const
 {
-	return DB::BulkDeleteUsingSubSelect;
+	return DB::BulkDeleteStyle::UsingSubSelect;
 }
 
 DB::BulkUpdateStyle
 PQ::Connection::bulkUpdateStyle() const
 {
-	return DB::BulkUpdateUsingFromSrc;
+	return DB::BulkUpdateStyle::UsingFromSrc;
 }
 
 void

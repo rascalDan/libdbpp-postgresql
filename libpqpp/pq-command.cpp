@@ -1,5 +1,4 @@
 #include "pq-command.h"
-#include <algorithm>
 #include <compileTimeFormatter.h>
 #include <dbTypes.h>
 #include <factory.h>
