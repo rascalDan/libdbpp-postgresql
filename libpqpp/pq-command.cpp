@@ -3,6 +3,7 @@
 #include <dbTypes.h>
 #include <factory.h>
 #include <optional>
+#include <utility>
 
 namespace Glib {
 	class ustring;
@@ -69,17 +70,17 @@ PQ::Command::paramsAtLeast(unsigned int n)
 AdHocFormatter(PQCommandParamFmt, "%?");
 template<typename... T>
 void
-PQ::Command::paramSet(unsigned int n, const T &... v)
+PQ::Command::paramSet(unsigned int n, T &&... v)
 {
 	paramsAtLeast(n);
-	bufs[n] = std::make_unique<std::string>(PQCommandParamFmt::get(v...));
+	bufs[n] = std::make_unique<std::string>(PQCommandParamFmt::get(std::forward<T>(v)...));
 	lengths[n] = static_cast<int>(bufs[n]->length());
 	formats[n] = 0;
 	values[n] = bufs[n]->data();
 }
 
 void
-PQ::Command::paramSet(unsigned int n, const std::string_view & b)
+PQ::Command::paramSet(unsigned int n, const std::string_view b)
 {
 	paramsAtLeast(n);
 	bufs[n] = std::make_unique<std::string>(b);
@@ -139,17 +140,17 @@ PQ::Command::bindParamS(unsigned int n, const Glib::ustring & s)
 	paramSet(n, std::string_view(s.data(), s.bytes()));
 }
 void
-PQ::Command::bindParamS(unsigned int n, const std::string_view & s)
+PQ::Command::bindParamS(unsigned int n, const std::string_view s)
 {
 	paramSet(n, s);
 }
 void
-PQ::Command::bindParamT(unsigned int n, const boost::posix_time::time_duration & v)
+PQ::Command::bindParamT(unsigned int n, const boost::posix_time::time_duration v)
 {
 	paramSet(n, boost::posix_time::to_simple_string(v));
 }
 void
-PQ::Command::bindParamT(unsigned int n, const boost::posix_time::ptime & v)
+PQ::Command::bindParamT(unsigned int n, const boost::posix_time::ptime v)
 {
 	paramSet(n, boost::posix_time::to_iso_extended_string(v));
 }

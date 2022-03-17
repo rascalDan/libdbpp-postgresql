@@ -56,10 +56,10 @@ namespace PQ {
 		void bindParamF(unsigned int, float) override;
 
 		void bindParamS(unsigned int, const Glib::ustring &) override;
-		void bindParamS(unsigned int, const std::string_view &) override;
+		void bindParamS(unsigned int, const std::string_view) override;
 
-		void bindParamT(unsigned int, const boost::posix_time::time_duration &) override;
-		void bindParamT(unsigned int, const boost::posix_time::ptime &) override;
+		void bindParamT(unsigned int, const boost::posix_time::time_duration) override;
+		void bindParamT(unsigned int, const boost::posix_time::ptime) override;
 
 		void bindParamBLOB(unsigned int, const DB::Blob &) override;
 
@@ -72,8 +72,8 @@ namespace PQ {
 		Connection * const c;
 
 		void paramsAtLeast(unsigned int);
-		template<typename... T> void paramSet(unsigned int, const T &... t);
-		void paramSet(unsigned int, const std::string_view &);
+		template<typename... T> void paramSet(unsigned int, T &&... t);
+		void paramSet(unsigned int, const std::string_view);
 		std::vector<const char *> values;
 		std::vector<int> lengths;
 		std::vector<int> formats;
