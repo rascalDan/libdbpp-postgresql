@@ -30,6 +30,7 @@
 #include <string>
 #include <string_view>
 #include <testCore.h>
+#include <tuple>
 #include <type_traits>
 #include <unistd.h>
 #include <utility>

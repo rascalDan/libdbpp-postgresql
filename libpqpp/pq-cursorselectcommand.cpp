@@ -6,6 +6,8 @@
 #include <compileTimeFormatter.h>
 #include <libpq-fe.h>
 #include <memory>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 AdHocFormatter(PQCursorSelectDeclare, "DECLARE %? NO SCROLL CURSOR WITH HOLD FOR ");
