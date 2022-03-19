@@ -33,7 +33,7 @@ PQ::CursorSelectCommand::mkdeclare() const
 	std::stringstream psql;
 	PQCursorSelectDeclare::write(psql, stmntName);
 	prepareSql(psql, sql);
-	return psql.str();
+	return std::move(psql).str();
 }
 
 void
