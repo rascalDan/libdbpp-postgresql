@@ -73,6 +73,7 @@ void
 PQ::Command::paramSet(unsigned int n, T &&... v)
 {
 	paramsAtLeast(n);
+	// cppcheck-suppress constStatement
 	bufs[n] = std::make_unique<std::string>(PQCommandParamFmt::get(std::forward<T>(v)...));
 	lengths[n] = static_cast<int>(bufs[n]->length());
 	formats[n] = 0;
