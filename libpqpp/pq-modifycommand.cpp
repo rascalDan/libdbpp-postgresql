@@ -15,8 +15,8 @@ PQ::ModifyCommand::ModifyCommand(Connection * conn, const std::string & sql, con
 unsigned int
 PQ::ModifyCommand::execute(bool anc)
 {
-	PGresult * res = PQexecPrepared(c->conn, prepare(), static_cast<int>(values.size()), &values.front(),
-			&lengths.front(), &formats.front(), 0);
+	PGresult * res = PQexecPrepared(
+			c->conn, prepare(), static_cast<int>(values.size()), values.data(), lengths.data(), formats.data(), 0);
 	c->checkResult(res, PGRES_COMMAND_OK, PGRES_TUPLES_OK);
 	auto rows = atoi(PQcmdTuples(res));
 	PQclear(res);

@@ -46,7 +46,7 @@ PQ::CursorSelectCommand::execute()
 			s_declare = mkdeclare();
 		}
 		c->checkResultFree(PQexecParams(c->conn, s_declare.c_str(), static_cast<int>(values.size()), nullptr,
-								   &values.front(), &lengths.front(), &formats.front(), binary),
+								   values.data(), lengths.data(), formats.data(), binary),
 				PGRES_COMMAND_OK);
 		fetchTuples();
 		createColumns(execRes);
