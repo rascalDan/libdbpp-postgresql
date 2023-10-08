@@ -17,15 +17,6 @@ namespace PQ {
 		void apply(DB::HandleField &) const override;
 
 	protected:
-		template<typename T>
-		inline T
-		valueAs() const
-		{
-			T v {};
-			std::memcpy(&v, value(), sizeof(T));
-			return v;
-		}
-
 		const char * value() const;
 		std::size_t length() const;
 

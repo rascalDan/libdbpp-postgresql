@@ -15,6 +15,9 @@ namespace PQ {
 		BinaryColumn(const SelectBase *, unsigned int field);
 
 		void apply(DB::HandleField &) const override;
+
+	private:
+		template<std::integral T> [[nodiscard]] inline T valueAs() const;
 	};
 }
 
