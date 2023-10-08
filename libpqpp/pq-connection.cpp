@@ -18,19 +18,21 @@
 
 NAMEDFACTORY("postgresql", PQ::Connection, DB::ConnectionFactory)
 
-static void setup() __attribute__((constructor(101)));
+namespace {
+	void setup() __attribute__((constructor(101)));
 
-static void
-setup()
-{
-	// NOLINTNEXTLINE(hicpp-no-array-decay)
-	BOOST_ASSERT(PQisthreadsafe() == 1);
-	PQinitOpenSSL(1, 0);
-}
+	void
+	setup()
+	{
+		// NOLINTNEXTLINE(hicpp-no-array-decay)
+		BOOST_ASSERT(PQisthreadsafe() == 1);
+		PQinitOpenSSL(1, 0);
+	}
 
-static void
-noNoticeProcessor(void *, const char *)
-{
+	void
+	noNoticeProcessor(void *, const char *)
+	{
+	}
 }
 
 // NOLINTNEXTLINE(bugprone-throw-keyword-missing)
