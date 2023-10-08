@@ -13,7 +13,7 @@ namespace PQ {
 	public:
 		CursorSelectCommand(
 				Connection *, const std::string & sql, const PQ::CommandOptionsCPtr &, const DB::CommandOptionsCPtr &);
-		virtual ~CursorSelectCommand();
+		~CursorSelectCommand() override;
 
 		bool fetch() override;
 		void execute() override;

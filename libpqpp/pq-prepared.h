@@ -11,7 +11,7 @@ namespace PQ {
 	class PreparedStatement : public Command {
 	protected:
 		PreparedStatement(Connection *, const std::string &, const DB::CommandOptionsCPtr &);
-		virtual ~PreparedStatement() = default;
+		~PreparedStatement() override = default;
 
 		const char * prepare() const;
 		mutable const char * pstmt;
