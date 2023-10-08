@@ -135,6 +135,9 @@ PQ::Connection::checkResult(PGresult * res, Expected... expected) const
 	return ResultPtr {res};
 }
 
+template PQ::ResultPtr PQ::Connection::checkResult(PGresult *, ExecStatusType) const;
+template PQ::ResultPtr PQ::Connection::checkResult(PGresult *, ExecStatusType, ExecStatusType) const;
+
 AdHocFormatter(PQConnectionCopyFrom, "COPY %? FROM STDIN %?");
 
 void
