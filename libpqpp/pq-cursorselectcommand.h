@@ -1,10 +1,11 @@
 #ifndef PQ_CURSORSELECTCOMMAND_H
 #define PQ_CURSORSELECTCOMMAND_H
 
-#include "command_fwd.h" // for CommandOptionsCPtr
+#include "command_fwd.h"
 #include "pq-command.h"
 #include "pq-selectbase.h"
-#include <string> // for string
+#include <c++11Helpers.h>
+#include <string>
 
 namespace PQ {
 	class Connection;
@@ -14,6 +15,7 @@ namespace PQ {
 		CursorSelectCommand(
 				Connection *, const std::string & sql, const PQ::CommandOptionsCPtr &, const DB::CommandOptionsCPtr &);
 		~CursorSelectCommand() override;
+		SPECIAL_MEMBERS_DELETE(CursorSelectCommand);
 
 		bool fetch() override;
 		void execute() override;

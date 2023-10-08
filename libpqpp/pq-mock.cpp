@@ -1,5 +1,4 @@
 #include "pq-mock.h"
-#include "connection.h"
 #include "mockDatabase.h"
 #include "pq-connection.h"
 #include <boost/algorithm/string/case_conv.hpp>
@@ -126,5 +125,4 @@ ORDER BY 1, 2)SQL");
 			master->execute(MockDropTablespaceDir::get(tablespacePath));
 		}
 	}
-
 }

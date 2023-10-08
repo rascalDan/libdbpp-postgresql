@@ -52,7 +52,7 @@ PQ::Column::apply(DB::HandleField & h) const
 			h.string({value(), length()});
 			break;
 		case BOOLOID:
-			h.boolean(value()[0] == 't');
+			h.boolean(*value() == 't');
 			break;
 		case INT2OID:
 		case INT4OID:
