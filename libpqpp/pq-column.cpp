@@ -12,26 +12,28 @@
 #include <server/catalog/pg_type_d.h>
 
 PQ::Column::Column(const SelectBase * s, unsigned int i) :
-	DB::Column(PQfname(s->execRes, static_cast<int>(i)), i), sc(s), oid(PQftype(sc->execRes, static_cast<int>(colNo)))
+	DB::Column(PQfname(s->execRes.get(), static_cast<int>(i)), i), sc(s),
+	oid(PQftype(sc->execRes.get(), static_cast<int>(colNo)))
 {
 }
 
 bool
 PQ::Column::isNull() const
 {
-	return PQgetisnull(sc->execRes, static_cast<int>(sc->tuple), static_cast<int>(colNo));
+	return PQgetisnull(sc->execRes.get(), static_cast<int>(sc->tuple), static_cast<int>(colNo));
 }
 
 std::size_t
 PQ::Column::length() const
 {
-	return static_cast<std::size_t>(PQgetlength(sc->execRes, static_cast<int>(sc->tuple), static_cast<int>(colNo)));
+	return static_cast<std::size_t>(
+			PQgetlength(sc->execRes.get(), static_cast<int>(sc->tuple), static_cast<int>(colNo)));
 }
 
 const char *
 PQ::Column::value() const
 {
-	return PQgetvalue(sc->execRes, static_cast<int>(sc->tuple), static_cast<int>(colNo));
+	return PQgetvalue(sc->execRes.get(), static_cast<int>(sc->tuple), static_cast<int>(colNo));
 }
 
 void

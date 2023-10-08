@@ -5,7 +5,6 @@
 #include "pq-selectbase.h"
 #include <compileTimeFormatter.h>
 #include <libpq-fe.h>
-#include <memory>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -25,7 +24,7 @@ PQ::CursorSelectCommand::CursorSelectCommand(Connection * conn, const std::strin
 PQ::CursorSelectCommand::~CursorSelectCommand()
 {
 	if (executed && PQtransactionStatus(c->conn) != PQTRANS_INERROR) {
-		c->checkResultFree((PQexec(c->conn, s_close.c_str())), PGRES_COMMAND_OK);
+		c->checkResult(PQexec(c->conn, s_close.c_str()), PGRES_COMMAND_OK);
 	}
 }
 
@@ -45,11 +44,11 @@ PQ::CursorSelectCommand::execute()
 		if (s_declare.empty()) {
 			s_declare = mkdeclare();
 		}
-		c->checkResultFree(PQexecParams(c->conn, s_declare.c_str(), static_cast<int>(values.size()), nullptr,
-								   values.data(), lengths.data(), formats.data(), binary),
+		c->checkResult(PQexecParams(c->conn, s_declare.c_str(), static_cast<int>(values.size()), nullptr, values.data(),
+							   lengths.data(), formats.data(), binary),
 				PGRES_COMMAND_OK);
 		fetchTuples();
-		createColumns(execRes);
+		createColumns();
 		executed = true;
 	}
 }
@@ -59,7 +58,7 @@ PQ::CursorSelectCommand::fetchTuples()
 {
 	execRes = c->checkResult(
 			PQexecParams(c->conn, s_fetch.c_str(), 0, nullptr, nullptr, nullptr, nullptr, binary), PGRES_TUPLES_OK);
-	nTuples = static_cast<decltype(nTuples)>(PQntuples(execRes));
+	nTuples = static_cast<decltype(nTuples)>(PQntuples(execRes.get()));
 	tuple = static_cast<decltype(tuple)>(-1);
 }
 
@@ -69,8 +68,7 @@ PQ::CursorSelectCommand::fetch()
 	execute();
 	if ((tuple + 1 >= nTuples) && (nTuples == fTuples)) {
 		// Delete the previous result set
-		PQclear(execRes);
-		execRes = nullptr;
+		execRes.reset();
 		fetchTuples();
 	}
 	if (++tuple < nTuples) {
@@ -78,8 +76,7 @@ PQ::CursorSelectCommand::fetch()
 	}
 	else {
 		PQclear(PQexec(c->conn, s_close.c_str()));
-		PQclear(execRes);
-		execRes = nullptr;
+		execRes.reset();
 		executed = false;
 		return false;
 	}

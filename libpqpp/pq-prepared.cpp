@@ -26,8 +26,8 @@ PQ::PreparedStatement::prepare() const
 	}
 	std::stringstream psql;
 	prepareSql(psql, sql);
-	c->checkResultFree(PQprepare(c->conn, stmntName.c_str(), std::move(psql).str().c_str(),
-							   static_cast<int>(values.size()), nullptr),
+	c->checkResult(PQprepare(c->conn, stmntName.c_str(), std::move(psql).str().c_str(), static_cast<int>(values.size()),
+						   nullptr),
 			PGRES_COMMAND_OK);
 	return (pstmt = c->preparedStatements.insert({hash, stmntName}).first->second.c_str());
 }

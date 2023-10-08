@@ -12,12 +12,11 @@ namespace PQ {
 
 	protected:
 		SelectBase(const std::string & sql, const PQ::CommandOptionsCPtr & pqco);
-		~SelectBase();
 
-		void createColumns(PGresult *);
+		void createColumns();
 
 		unsigned int nTuples, tuple;
-		PGresult * execRes;
+		ResultPtr execRes;
 		bool binary;
 	};
 }

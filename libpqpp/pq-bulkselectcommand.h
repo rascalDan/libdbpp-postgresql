@@ -17,9 +17,6 @@ namespace PQ {
 
 		bool fetch() override;
 		void execute() override;
-
-	private:
-		mutable bool executed;
 	};
 }
 

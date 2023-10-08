@@ -3,6 +3,7 @@
 
 #include "command_fwd.h"
 #include "pq-error.h"
+#include "pq-helpers.h"
 #include <c++11Helpers.h>
 #include <connection.h>
 #include <cstddef>
@@ -46,8 +47,7 @@ namespace PQ {
 		void endBulkUpload(const char *) override;
 		size_t bulkUploadData(const char *, size_t) const override;
 
-		PGresult * checkResult(PGresult * res, int expected, int alternative = -1) const;
-		void checkResultFree(PGresult * res, int expected, int alternative = -1) const;
+		ResultPtr checkResult(PGresult * res, int expected, int alternative = -1) const;
 
 		PGconn * conn;
 		mutable PreparedStatements preparedStatements;

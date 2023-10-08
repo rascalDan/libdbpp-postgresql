@@ -9,22 +9,14 @@
 #include <string>
 
 PQ::SelectBase::SelectBase(const std::string & sql, const PQ::CommandOptionsCPtr & pqco) :
-	DB::Command(sql), DB::SelectCommand(sql), nTuples(0), tuple(0), execRes(nullptr),
-	binary(pqco ? pqco->fetchBinary : false)
+	DB::Command(sql), DB::SelectCommand(sql), nTuples(0), tuple(0), binary(pqco ? pqco->fetchBinary : false)
 {
-}
-
-PQ::SelectBase::~SelectBase()
-{
-	if (execRes) {
-		PQclear(execRes);
-	}
 }
 
 void
-PQ::SelectBase::createColumns(PGresult * execRes)
+PQ::SelectBase::createColumns()
 {
-	auto nFields = PQnfields(execRes);
+	auto nFields = PQnfields(execRes.get());
 	for (decltype(nFields) f = 0; f < nFields; f += 1) {
 		if (binary) {
 			insertColumn(std::make_unique<BinaryColumn>(this, f));
