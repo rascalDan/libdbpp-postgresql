@@ -1,5 +1,4 @@
-#ifndef PQ_SELECTBASE_H
-#define PQ_SELECTBASE_H
+#pragma once
 
 #include "pq-command.h"
 #include <libpq-fe.h>
@@ -20,5 +19,3 @@ namespace PQ {
 		bool binary;
 	};
 }
-
-#endif

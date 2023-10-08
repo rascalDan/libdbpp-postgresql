@@ -1,5 +1,4 @@
-#ifndef PQ_HELPERS_H
-#define PQ_HELPERS_H
+#pragma once
 
 #include "libpq-fe.h"
 #include <memory>
@@ -15,5 +14,3 @@ namespace PQ {
 
 	using ResultPtr = std::unique_ptr<PGresult, pq_deleter<PQclear>>;
 }
-
-#endif

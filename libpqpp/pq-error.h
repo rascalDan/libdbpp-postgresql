@@ -1,5 +1,4 @@
-#ifndef PQ_ERROR_H
-#define PQ_ERROR_H
+#pragma once
 
 #include "error.h" // IWYU pragma: export
 #include <exception.h>
@@ -19,5 +18,3 @@ namespace PQ {
 		std::string msg;
 	};
 }
-
-#endif

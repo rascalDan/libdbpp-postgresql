@@ -1,5 +1,4 @@
-#ifndef PQ_CURSORSELECTCOMMAND_H
-#define PQ_CURSORSELECTCOMMAND_H
+#pragma once
 
 #include "command_fwd.h"
 #include "pq-command.h"
@@ -31,5 +30,3 @@ namespace PQ {
 		std::string s_close;
 	};
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef PG_BINARY_COLUMN_H
-#define PG_BINARY_COLUMN_H
+#pragma once
 
 #include "pq-column.h"
 
@@ -20,5 +19,3 @@ namespace PQ {
 		template<std::integral T> [[nodiscard]] inline T valueAs() const;
 	};
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef PQ_MODIFYCOMMAND_H
-#define PQ_MODIFYCOMMAND_H
+#pragma once
 
 #include "command_fwd.h"
 #include "pq-prepared.h"
@@ -16,5 +15,3 @@ namespace PQ {
 		unsigned int execute(bool) override;
 	};
 }
-
-#endif

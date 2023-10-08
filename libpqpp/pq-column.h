@@ -1,5 +1,4 @@
-#ifndef PG_COLUMN_H
-#define PG_COLUMN_H
+#pragma once
 
 #include "pq-helpers.h"
 #include <column.h>
@@ -34,5 +33,3 @@ namespace PQ {
 		mutable Buffer buffer;
 	};
 }
-
-#endif

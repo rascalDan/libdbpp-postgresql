@@ -1,5 +1,4 @@
-#ifndef PQ_BULKSELECTCOMMAND_H
-#define PQ_BULKSELECTCOMMAND_H
+#pragma once
 
 #include "command_fwd.h"
 #include "pq-command.h"
@@ -19,5 +18,3 @@ namespace PQ {
 		void execute() override;
 	};
 }
-
-#endif

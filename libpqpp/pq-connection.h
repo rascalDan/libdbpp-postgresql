@@ -1,5 +1,4 @@
-#ifndef PQ_CONNECTION_H
-#define PQ_CONNECTION_H
+#pragma once
 
 #include "command_fwd.h"
 #include "pq-error.h"
@@ -54,5 +53,3 @@ namespace PQ {
 		mutable PreparedStatements preparedStatements;
 	};
 }
-
-#endif

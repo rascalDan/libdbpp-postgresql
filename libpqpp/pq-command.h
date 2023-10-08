@@ -1,5 +1,4 @@
-#ifndef PQ_COMMAND_H
-#define PQ_COMMAND_H
+#pragma once
 
 #include "command.h"
 #include "pq-connection.h"
@@ -81,5 +80,3 @@ namespace PQ {
 		std::vector<std::unique_ptr<std::string>> bufs;
 	};
 }
-
-#endif

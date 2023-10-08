@@ -1,5 +1,4 @@
-#ifndef MOCKPQDATASOURCE_H
-#define MOCKPQDATASOURCE_H
+#pragma once
 
 #include "connection_fwd.h"
 #include <c++11Helpers.h>
@@ -29,5 +28,3 @@ namespace PQ {
 		const int serverVersion;
 	};
 }
-
-#endif
