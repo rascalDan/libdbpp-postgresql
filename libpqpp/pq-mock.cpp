@@ -63,14 +63,16 @@ AND n.oid = c.relnamespace
 ORDER BY 1, 2)SQL");
 		s->bindParamS(0, "pg_catalog");
 		s->bindParamS(1, "information_schema");
-		unsigned int n = 0;
-		do {
-			n = 0;
+		while ([&s, this]() {
+			unsigned int n = 0;
 			for (const auto [nspname, relname] : s->as<std::string, std::string>()) {
 				master->execute(MockSetUnlogged::get(nspname, relname));
 				n += 1;
 			}
-		} while (n);
+			return n;
+		}()) {
+			;
+		}
 	}
 
 	Mock::~Mock()
