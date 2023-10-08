@@ -8,6 +8,7 @@
 
 namespace PQ {
 	class Connection;
+
 	class CursorSelectCommand : public SelectBase, public Command {
 	public:
 		CursorSelectCommand(

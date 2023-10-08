@@ -8,6 +8,7 @@
 namespace Glib {
 	class ustring;
 }
+
 namespace PQ {
 	class Connection;
 }
@@ -15,6 +16,7 @@ namespace PQ {
 NAMEDFACTORY("postgresql", PQ::CommandOptions, DB::CommandOptionsFactory)
 
 AdHocFormatter(PQCommondStatement, "pStatement_id%?");
+
 PQ::Command::Command(Connection * conn, const std::string & sql, const DB::CommandOptionsCPtr & opts) :
 	DB::Command(sql), hash(opts && opts->hash ? *opts->hash : std::hash<std::string>()(sql)),
 	stmntName(PQCommondStatement::get(hash)), c(conn)
@@ -33,6 +35,7 @@ PQ::CommandOptions::CommandOptions(std::size_t hash, unsigned int ft, bool uc, b
 }
 
 AdHocFormatter(PQCommandParamName, "$%?");
+
 void
 PQ::Command::prepareSql(std::stringstream & psql, const std::string & sql) const
 {
@@ -68,6 +71,7 @@ PQ::Command::paramsAtLeast(unsigned int n)
 }
 
 AdHocFormatter(PQCommandParamFmt, "%?");
+
 template<typename... T>
 void
 PQ::Command::paramSet(unsigned int n, T &&... v)
@@ -95,66 +99,79 @@ PQ::Command::bindParamI(unsigned int n, int v)
 {
 	paramSet(n, v);
 }
+
 void
 PQ::Command::bindParamI(unsigned int n, long int v)
 {
 	paramSet(n, v);
 }
+
 void
 PQ::Command::bindParamI(unsigned int n, long long int v)
 {
 	paramSet(n, v);
 }
+
 void
 PQ::Command::bindParamI(unsigned int n, unsigned int v)
 {
 	paramSet(n, v);
 }
+
 void
 PQ::Command::bindParamI(unsigned int n, long unsigned int v)
 {
 	paramSet(n, v);
 }
+
 void
 PQ::Command::bindParamI(unsigned int n, long long unsigned int v)
 {
 	paramSet(n, v);
 }
+
 void
 PQ::Command::bindParamB(unsigned int n, bool v)
 {
 	paramSet(n, v);
 }
+
 void
 PQ::Command::bindParamF(unsigned int n, double v)
 {
 	paramSet(n, v);
 }
+
 void
 PQ::Command::bindParamF(unsigned int n, float v)
 {
 	paramSet(n, v);
 }
+
 void
 PQ::Command::bindParamS(unsigned int n, const Glib::ustring & s)
 {
 	paramSet(n, std::string_view(s.data(), s.bytes()));
 }
+
 void
 PQ::Command::bindParamS(unsigned int n, const std::string_view s)
 {
 	paramSet(n, s);
 }
+
 void
 PQ::Command::bindParamT(unsigned int n, const boost::posix_time::time_duration v)
 {
 	paramSet(n, boost::posix_time::to_simple_string(v));
 }
+
 void
 PQ::Command::bindParamT(unsigned int n, const boost::posix_time::ptime v)
 {
 	paramSet(n, boost::posix_time::to_iso_extended_string(v));
 }
+
 void
 PQ::Command::bindParamBLOB(unsigned int n, const DB::Blob & v)
 {
@@ -164,6 +181,7 @@ PQ::Command::bindParamBLOB(unsigned int n, const DB::Blob & v)
 	values[n] = static_cast<const char *>(v.data);
 	bufs[n].reset();
 }
+
 void
 PQ::Command::bindNull(unsigned int n)
 {

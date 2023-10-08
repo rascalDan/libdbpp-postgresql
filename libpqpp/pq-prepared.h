@@ -7,6 +7,7 @@
 
 namespace PQ {
 	class Connection;
+
 	class PreparedStatement : public Command {
 	protected:
 		PreparedStatement(Connection *, const std::string &, const DB::CommandOptionsCPtr &);

@@ -36,6 +36,7 @@ namespace PQ {
 		bool useCursor;
 		bool fetchBinary;
 	};
+
 	using CommandOptionsPtr = std::shared_ptr<CommandOptions>;
 	using CommandOptionsCPtr = std::shared_ptr<const CommandOptions>;
 

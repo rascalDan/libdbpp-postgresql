@@ -7,6 +7,7 @@
 
 namespace PQ {
 	class SelectBase;
+
 	class Column : public DB::Column {
 	public:
 		Column(const SelectBase *, unsigned int field);
@@ -24,6 +25,7 @@ namespace PQ {
 			std::memcpy(&v, value(), sizeof(T));
 			return v;
 		}
+
 		const char * value() const;
 		std::size_t length() const;
 

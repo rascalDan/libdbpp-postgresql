@@ -19,6 +19,7 @@
 NAMEDFACTORY("postgresql", PQ::Connection, DB::ConnectionFactory)
 
 static void setup() __attribute__((constructor(101)));
+
 static void
 setup()
 {
@@ -92,6 +93,7 @@ PQ::Connection::ping() const
 		// NOLINTNEXTLINE(hicpp-signed-bitwise)
 		PQsocket(conn), POLLRDHUP | POLLERR | POLLHUP | POLLNVAL, 0
 	};
+
 	if (PQstatus(conn) != CONNECTION_OK || poll(&fd, 1, 0)) {
 		if (inTx()) {
 			throw ConnectionError(conn);
@@ -147,6 +149,7 @@ PQ::Connection::checkResultFree(PGresult * res, int expected, int alt) const
 }
 
 AdHocFormatter(PQConnectionCopyFrom, "COPY %? FROM STDIN %?");
+
 void
 PQ::Connection::beginBulkUpload(const char * table, const char * extra)
 {
@@ -182,6 +185,7 @@ PQ::Connection::bulkUploadData(const char * data, size_t len) const
 static const std::string selectLastVal("SELECT lastval()");
 static const DB::CommandOptionsCPtr selectLastValOpts
 		= std::make_shared<DB::CommandOptions>(std::hash<std::string>()(selectLastVal));
+
 int64_t
 PQ::Connection::insertId()
 {

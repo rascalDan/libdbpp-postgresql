@@ -72,8 +72,7 @@ PQ::Column::apply(DB::HandleField & h) const
 			h.floatingpoint(atof(value()));
 			break;
 		case TIMEOID:
-		case INTERVALOID:
-			{
+		case INTERVALOID: {
 			int days = 0, hours = 0, minutes = 0, seconds = 0, fractions = 0, flen1 = 0, flen2 = 0;
 			const char * val = value();
 			// NOLINTNEXTLINE(hicpp-vararg)
@@ -97,8 +96,7 @@ PQ::Column::apply(DB::HandleField & h) const
 		case TIMESTAMPTZOID:
 			h.timestamp(boost::posix_time::time_from_string(value()));
 			break;
-		case BYTEAOID:
-		{
+		case BYTEAOID: {
 			if (buf) {
 				PQfreemem(buf);
 			}

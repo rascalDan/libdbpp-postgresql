@@ -32,6 +32,7 @@ namespace PQ {
 	}
 
 	AdHocFormatter(MockConnStr, "user=postgres dbname=%?");
+
 	DB::ConnectionPtr
 	Mock::openConnection() const
 	{
@@ -39,6 +40,7 @@ namespace PQ {
 	}
 
 	AdHocFormatter(MockSetUnlogged, "ALTER TABLE %?.%? SET UNLOGGED");
+
 	void
 	Mock::SetTablesToUnlogged() const
 	{

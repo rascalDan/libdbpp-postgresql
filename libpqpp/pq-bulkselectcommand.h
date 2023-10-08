@@ -9,6 +9,7 @@
 
 namespace PQ {
 	class Connection;
+
 	class BulkSelectCommand : public SelectBase, public PreparedStatement {
 	public:
 		BulkSelectCommand(Connection *, const std::string & sql, const PQ::CommandOptionsCPtr & pqco,

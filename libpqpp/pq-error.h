@@ -5,6 +5,7 @@
 #include <exception.h>
 #include <libpq-fe.h>
 #include <string>
+
 // IWYU pragma: no_forward_declare DB::Error
 
 namespace PQ {

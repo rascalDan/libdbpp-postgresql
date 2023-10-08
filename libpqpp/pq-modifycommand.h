@@ -8,6 +8,7 @@
 
 namespace PQ {
 	class Connection;
+
 	class ModifyCommand : public DB::ModifyCommand, public PreparedStatement {
 	public:
 		ModifyCommand(Connection *, const std::string & sql, const DB::CommandOptionsCPtr &);
