@@ -89,12 +89,13 @@ PQ::Column::apply(DB::HandleField & h) const
 		case TIMESTAMPTZOID:
 			h.timestamp(boost::posix_time::time_from_string(value()));
 			break;
-		case BYTEAOID: {
-			size_t len = 0;
-			// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-			buf = BufPtr {PQunescapeBytea(reinterpret_cast<const unsigned char *>(value()), &len)};
-			h.blob(DB::Blob(buf.get(), len));
+		case BYTEAOID:
+			if (sc->tuple != buffer.row || !buffer.data) {
+				buffer.data = Buffer::BufPtr {// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+						PQunescapeBytea(reinterpret_cast<const unsigned char *>(value()), &buffer.length)};
+				buffer.row = sc->tuple;
+			}
+			h.blob(DB::Blob(buffer.data.get(), buffer.length));
 			break;
-		}
 	}
 }

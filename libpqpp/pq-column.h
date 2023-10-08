@@ -24,8 +24,14 @@ namespace PQ {
 		const Oid oid;
 
 		// Buffer for PQunescapeBytea
-		using BufPtr = std::unique_ptr<unsigned char, pq_deleter<PQfreemem>>;
-		mutable BufPtr buf;
+		struct Buffer {
+			using BufPtr = std::unique_ptr<unsigned char, pq_deleter<PQfreemem>>;
+			size_t row {};
+			size_t length {};
+			BufPtr data;
+		};
+
+		mutable Buffer buffer;
 	};
 }
 
