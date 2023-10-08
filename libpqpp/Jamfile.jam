@@ -11,7 +11,7 @@ pkg-config.import glibmm : : <name>glibmm-2.4 ;
 
 project
   : requirements
-			<cxxstd>20
+			<cxxstd>23
 			<visibility>hidden
       <linkflags>"-Wl,-z,defs,--warn-once,--gc-sections"
       <variant>release:<lto>on
