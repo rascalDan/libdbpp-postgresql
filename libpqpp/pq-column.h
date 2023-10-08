@@ -11,7 +11,6 @@ namespace PQ {
 	class Column : public DB::Column {
 	public:
 		Column(const SelectBase *, unsigned int field);
-		~Column() override;
 
 		[[nodiscard]] bool isNull() const override;
 		void apply(DB::HandleField &) const override;
@@ -31,8 +30,18 @@ namespace PQ {
 
 		const SelectBase * sc;
 		const Oid oid;
+
 		// Buffer for PQunescapeBytea
-		mutable unsigned char * buf;
+		struct pq_deleter {
+			void
+			operator()(unsigned char * p)
+			{
+				PQfreemem(p);
+			}
+		};
+
+		using BufPtr = std::unique_ptr<unsigned char, pq_deleter>;
+		mutable BufPtr buf;
 	};
 }
 

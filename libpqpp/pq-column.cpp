@@ -9,20 +9,11 @@
 #include <cstdlib>
 #include <cstring>
 #include <libpq-fe.h>
-#include <memory>
 #include <server/catalog/pg_type_d.h>
 
 PQ::Column::Column(const SelectBase * s, unsigned int i) :
-	DB::Column(PQfname(s->execRes, static_cast<int>(i)), i), sc(s), oid(PQftype(sc->execRes, static_cast<int>(colNo))),
-	buf(nullptr)
+	DB::Column(PQfname(s->execRes, static_cast<int>(i)), i), sc(s), oid(PQftype(sc->execRes, static_cast<int>(colNo)))
 {
-}
-
-PQ::Column::~Column()
-{
-	if (buf) {
-		PQfreemem(buf);
-	}
 }
 
 bool
@@ -97,12 +88,10 @@ PQ::Column::apply(DB::HandleField & h) const
 			h.timestamp(boost::posix_time::time_from_string(value()));
 			break;
 		case BYTEAOID: {
-			if (buf) {
-				PQfreemem(buf);
-			}
-			size_t len;
-			buf = PQunescapeBytea(reinterpret_cast<const unsigned char *>(value()), &len);
-			h.blob(DB::Blob(buf, len));
+			size_t len = 0;
+			// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+			buf = BufPtr {PQunescapeBytea(reinterpret_cast<const unsigned char *>(value()), &len)};
+			h.blob(DB::Blob(buf.get(), len));
 			break;
 		}
 	}
