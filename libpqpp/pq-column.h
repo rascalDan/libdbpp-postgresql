@@ -1,6 +1,7 @@
 #ifndef PG_COLUMN_H
 #define PG_COLUMN_H
 
+#include "pq-helpers.h"
 #include <column.h>
 #include <cstring>
 #include <libpq-fe.h>
@@ -32,15 +33,7 @@ namespace PQ {
 		const Oid oid;
 
 		// Buffer for PQunescapeBytea
-		struct pq_deleter {
-			void
-			operator()(unsigned char * p)
-			{
-				PQfreemem(p);
-			}
-		};
-
-		using BufPtr = std::unique_ptr<unsigned char, pq_deleter>;
+		using BufPtr = std::unique_ptr<unsigned char, pq_deleter<PQfreemem>>;
 		mutable BufPtr buf;
 	};
 }
