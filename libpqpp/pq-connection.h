@@ -47,13 +47,11 @@ namespace PQ {
 		void endBulkUpload(const char *) override;
 		size_t bulkUploadData(const char *, size_t) const override;
 
-		ResultPtr checkResult(PGresult * res, int expected, int alternative = -1) const;
+		template<std::same_as<ExecStatusType>... Expected>
+		ResultPtr checkResult(PGresult * res, Expected... expected) const;
 
 		PGconn * conn;
 		mutable PreparedStatements preparedStatements;
-
-	private:
-		static bool checkResultInt(PGresult * res, int expected, int alternative);
 	};
 }
 

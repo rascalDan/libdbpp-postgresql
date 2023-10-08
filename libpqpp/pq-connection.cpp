@@ -124,16 +124,11 @@ PQ::Connection::modify(const std::string & sql, const DB::CommandOptionsCPtr & o
 	return std::make_shared<ModifyCommand>(this, sql, opts);
 }
 
-bool
-PQ::Connection::checkResultInt(PGresult * res, int expected, int alt)
-{
-	return (PQresultStatus(res) == expected) || (alt != -1 && (PQresultStatus(res) == alt));
-}
-
+template<std::same_as<ExecStatusType>... Expected>
 PQ::ResultPtr
-PQ::Connection::checkResult(PGresult * res, int expected, int alt) const
+PQ::Connection::checkResult(PGresult * res, Expected... expected) const
 {
-	if (!checkResultInt(res, expected, alt)) {
+	if (const auto status = PQresultStatus(res); (... && (status != expected))) {
 		PQclear(res);
 		throw Error(conn);
 	}
